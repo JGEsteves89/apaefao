@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="pt">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Doçura ou Travessura — APAEF</title>
+  <meta name="description" content="Inscrição no Doçura ou Travessura da APAEF, sábado 31 de outubro, em Fão.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="logo.svg" type="image/svg+xml">
+  <style>
+    body { background: #17121f; color: #f3eee6; }
+    header.topo { background: #17121f; border-color: #2e2540; }
+    nav a { color: #b9aecb; }
+    nav a:hover, nav a[aria-current] { color: #fff; }
+    .noite {
+      background: radial-gradient(circle at 80% 0%, #3a2a55 0%, #17121f 60%);
+      padding: 48px 0 24px; position: relative; overflow: hidden;
+    }
+    .lua { position: absolute; right: 8%; top: 28px; width: 90px; height: 90px; border-radius: 50%;
+           background: #f6e7b0; box-shadow: 0 0 60px #f6e7b055; }
+    .titulo { font-family: "Creepster", "Nunito", cursive; font-size: clamp(40px, 9vw, 72px);
+              color: #f7a64a; margin: 0; line-height: 1; letter-spacing: 1px; position: relative; }
+    .sub { color: #cfc5e0; font-size: 18px; margin: 12px 0 0; max-width: 560px; position: relative; }
+    .info { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin: 28px 0 8px; }
+    .info div { background: #221a30; border: 1px solid #33284a; border-radius: 12px; padding: 12px 14px; }
+    .info b { display: block; color: #f7a64a; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; }
+    .grelha { display: grid; grid-template-columns: 1.2fr 1fr; gap: 24px; align-items: start; padding: 24px 0 8px; }
+    form { background: #221a30; border: 1px solid #33284a; border-radius: 16px; padding: 22px; }
+    form h2 { margin: 0 0 4px; }
+    form p.ajuda { margin: 0 0 18px; color: #b9aecb; font-size: 14px; }
+    label { display: block; font-weight: 700; margin: 14px 0 6px; }
+    label small { font-weight: 400; color: #b9aecb; }
+    input[type=text], input[type=tel], input[type=number], select, textarea {
+      width: 100%; padding: 12px 14px; border-radius: 10px; border: 1px solid #44375e;
+      background: #17121f; color: #fff; font: inherit; font-size: 16px;
+    }
+    input:focus, select:focus, textarea:focus { outline: 2px solid #f7a64a; border-color: transparent; }
+    .escolha { display: flex; gap: 10px; flex-wrap: wrap; }
+    .escolha label { display: flex; align-items: center; gap: 8px; margin: 0; font-weight: 600;
+                     background: #17121f; border: 1px solid #44375e; border-radius: 999px; padding: 8px 14px; cursor: pointer; }
+    .escolha input { accent-color: #f7a64a; }
+    .consent { display: flex; gap: 10px; align-items: flex-start; font-weight: 400; font-size: 14px; color: #cfc5e0; margin-top: 18px; }
+    .consent input { margin-top: 4px; accent-color: #f7a64a; }
+    .botao { background: #f7a64a; margin-top: 20px; width: 100%; font-size: 17px; }
+    #casa-extra { display: none; }
+    .regras { background: transparent; }
+    .regras h3 { margin: 0 0 10px; color: #f7a64a; }
+    .regras ul { margin: 0 0 20px; padding-left: 20px; color: #d9d3e8; }
+    .regras li { margin-bottom: 6px; }
+    .ok { display: none; text-align: center; padding: 30px 10px; }
+    .ok .abobora { font-size: 56px; }
+    .erro { color: #ff9b8a; font-size: 14px; margin-top: 10px; display: none; }
+    footer { border-color: #2e2540; color: #8f84a3; }
+    @media (max-width: 720px) { .grelha { grid-template-columns: 1fr; } .lua { width: 60px; height: 60px; } }
+  </style>
+</head>
+<body>
+  <header class="topo">
+    <div class="wrap">
+      <a class="marca" href="index.html"><img src="logo.svg" alt="" width="40" height="40"><span>APAEF</span></a>
+      <nav>
+        <a href="index.html#atividades">Atividades</a>
+        <a href="index.html#sobre">Sobre</a>
+        <a href="halloween.html" aria-current="page">Halloween</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="noite">
+    <div class="lua" aria-hidden="true"></div>
+    <div class="wrap">
+      <h1 class="titulo">Doçura ou Travessura</h1>
+      <p class="sub">Vem connosco pelas ruas de Fão, mascarado, à procura de doces! Organizado pela Associação de Pais.</p>
+      <div class="info">
+        <div><b>Quando</b>Sábado, 31 de outubro</div>
+        <div><b>Hora</b>17h às 19h</div>
+        <div><b>Onde</b>Percurso em Fão (enviado aos inscritos)</div>
+        <div><b>Inscrições</b>Até 23 de outubro</div>
+      </div>
+    </div>
+  </div>
+
+  <main class="wrap">
+    <div class="grelha">
+      <form id="form" novalidate>
+        <div id="campos">
+          <h2>Inscrição</h2>
+          <p class="ajuda">Uma inscrição por família. Leva 1 minuto.</p>
+
+          <label for="nome">Nome do adulto responsável</label>
+          <input id="nome" name="nome" type="text" autocomplete="name" required>
+
+          <label for="telemovel">Telemóvel <small>(para enviarmos o percurso)</small></label>
+          <input id="telemovel" name="telemovel" type="tel" autocomplete="tel" inputmode="tel" required>
+
+          <label for="criancas">Quantas crianças vêm?</label>
+          <input id="criancas" name="criancas" type="number" min="1" max="10" value="1" required>
+
+          <label for="turma">Sala / turma <small>(opcional)</small></label>
+          <select id="turma" name="turma">
+            <option value="">—</option>
+            <option>Pré-escolar · Sala 1</option><option>Pré-escolar · Sala 2</option>
+            <option>Pré-escolar · Sala 3</option><option>Pré-escolar · Sala 4</option>
+            <option>1.º F</option><option>2.º F</option><option>3.º FA</option>
+            <option>3.º FB</option><option>4.º FA</option><option>4.º FB</option>
+            <option>Várias / outra</option>
+          </select>
+
+          <label>Pode receber crianças em sua casa?</label>
+          <div class="escolha">
+            <label><input type="radio" name="recebe" value="Sim"> Sim, com doces!</label>
+            <label><input type="radio" name="recebe" value="Não" checked> Não</label>
+          </div>
+
+          <div id="casa-extra">
+            <label for="rua">Rua <small>(só para planear o percurso)</small></label>
+            <input id="rua" name="rua" type="text" autocomplete="street-address">
+            <label for="ajuda">Precisa de ajuda? <small>(opcional)</small></label>
+            <select id="ajuda" name="ajuda">
+              <option value="">Não, está tudo bem</option>
+              <option>Com a decoração</option>
+              <option>Com os doces</option>
+              <option>Com as duas</option>
+            </select>
+          </div>
+
+          <label class="consent">
+            <input type="checkbox" id="consent" name="consent" required>
+            <span>Aceito que a APAEF use estes dados só para organizar este evento. Os dados são apagados depois.</span>
+          </label>
+
+          <button class="botao" type="submit">Inscrever 🎃</button>
+          <p class="erro" id="erro">Preencha o nome, o telemóvel e aceite o uso dos dados.</p>
+        </div>
+
+        <div class="ok" id="ok">
+          <div class="abobora">🎃</div>
+          <h2>Inscrição feita!</h2>
+          <p>Enviamos o percurso por mensagem até 26 de outubro. Até lá, preparem as máscaras!</p>
+        </div>
+      </form>
+
+      <div class="regras">
+        <h3>Como funciona</h3>
+        <ul>
+          <li>O grupo percorre algumas ruas de Fão, a pé.</li>
+          <li>Só batemos às portas com uma <b>abóbora ou sinal</b>.</li>
+          <li>Cada criança vai sempre com um <b>adulto responsável</b>.</li>
+          <li>O percurso é enviado aos inscritos até 26/10.</li>
+        </ul>
+        <h3>Quer receber as crianças?</h3>
+        <ul>
+          <li>Decore a porta com o que tiver em casa.</li>
+          <li>Tenha alguns doces à mão.</li>
+          <li>Esteja em casa entre as 17h e as 19h.</li>
+        </ul>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="wrap">APAEF · Associação de Pais de Fão · <a href="mailto:apaefao@gmail.com">apaefao@gmail.com</a></div>
+  </footer>
+
+  <script>
+    // Endereço do Google Apps Script que guarda as respostas numa Google Sheet.
+    // Enquanto estiver vazio, o formulário funciona em modo de teste (não guarda nada).
+    const ENDPOINT = "";
+
+    const form = document.getElementById("form");
+    const extra = document.getElementById("casa-extra");
+    form.querySelectorAll('input[name="recebe"]').forEach(r =>
+      r.addEventListener("change", () => { extra.style.display = form.recebe.value === "Sim" ? "block" : "none"; })
+    );
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const erro = document.getElementById("erro");
+      if (!form.nome.value.trim() || !form.telemovel.value.trim() || !form.consent.checked) {
+        erro.style.display = "block"; return;
+      }
+      erro.style.display = "none";
+      const dados = Object.fromEntries(new FormData(form));
+      dados.evento = "Halloween 2026";
+      dados.data = new Date().toISOString();
+      try {
+        if (ENDPOINT) {
+          await fetch(ENDPOINT, { method: "POST", mode: "no-cors", body: JSON.stringify(dados) });
+        } else {
+          console.log("Modo de teste — dados não enviados:", dados);
+        }
+        document.getElementById("campos").style.display = "none";
+        document.getElementById("ok").style.display = "block";
+      } catch (err) {
+        erro.textContent = "Não foi possível enviar. Tente outra vez ou fale connosco no apaefao@gmail.com.";
+        erro.style.display = "block";
+      }
+    });
+  </script>
+</body>
+</html>
