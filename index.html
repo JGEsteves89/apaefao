@@ -1,21 +1,74 @@
 <!doctype html>
-<html lang="pt">
+<html lang="pt-PT">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>APAEF — Associação de Pais de Fão</title>
-  <meta name="description" content="Associação de Pais e Amigos do Jardim de Infância e Escola do 1.º Ciclo de Fão.">
+  <title>APAEF — Associação de Pais de Fão · Agenda 2026/27</title>
+  <meta name="description" content="Associação de Pais e Amigos do Jardim de Infância e Escolas do 1.º Ciclo de Fão (Esposende). Agenda das atividades 2026/27 e inscrições.">
+  <link rel="canonical" href="https://apaefao.pt/">
+  <meta name="theme-color" content="#ebce58">
+
+  <!-- Pré-visualização ao partilhar (WhatsApp, Facebook…) -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="APAEF Fão">
+  <meta property="og:locale" content="pt_PT">
+  <meta property="og:url" content="https://apaefao.pt/">
+  <meta property="og:title" content="APAEF — Associação de Pais de Fão">
+  <meta property="og:description" content="Agenda das atividades 2026/27 e inscrições. As novidades e fotos estão na nossa página do Facebook.">
+  <meta property="og:image" content="https://apaefao.pt/img/og-image.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="457">
+  <meta property="og:image:alt" content="Capa da APAEF: crianças felizes à frente do girassol da associação">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <!-- Ícones -->
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" href="/favicon-96.png" type="image/png" sizes="96x96">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
-  <link rel="icon" href="logo.svg" type="image/svg+xml">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "APAEF — Associação de Pais e Amigos do Jardim de Infância e Escolas do 1.º Ciclo de Fão",
+    "alternateName": "APAEF",
+    "url": "https://apaefao.pt/",
+    "logo": "https://apaefao.pt/img/logo.png",
+    "email": "apaefao@gmail.com",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Escola Básica de Fão, Rua da Caixa de Água",
+      "postalCode": "4740-364",
+      "addressLocality": "Fão",
+      "addressRegion": "Esposende",
+      "addressCountry": "PT"
+    },
+    "sameAs": ["https://www.facebook.com/profile.php?id=61555363610929"]
+  }
+  </script>
 </head>
 <body>
+  <div class="aviso-fb">
+    <div class="wrap">
+      <span>📣 As novidades e fotos estão na nossa página oficial do Facebook.</span>
+      <a class="botao botao-fb" href="https://www.facebook.com/profile.php?id=61555363610929" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.5 22v-8h2.7l.4-3.2h-3.1V8.8c0-.9.3-1.5 1.6-1.5h1.7V4.4c-.3 0-1.3-.1-2.5-.1-2.5 0-4.1 1.5-4.1 4.2v2.3H7.4V14h2.8v8h3.3z"/></svg>
+        Seguir no Facebook
+      </a>
+    </div>
+  </div>
+
   <header class="topo">
     <div class="wrap">
-      <a class="marca" href="index.html"><img src="logo.svg" alt="" width="40" height="40"><span>APAEF</span></a>
+      <a class="marca" href="./"><img src="img/logo.png" alt="Logótipo da APAEF" width="52" height="52"><span>APAEF</span></a>
       <nav>
-        <a href="#atividades">Atividades</a>
+        <a href="#agenda">Agenda</a>
         <a href="#sobre">Sobre</a>
         <a href="halloween.html">Halloween</a>
       </nav>
@@ -23,49 +76,184 @@
   </header>
 
   <main class="wrap">
-    <div class="heroi">
-      <h1>Pais de Fão, <span class="destaque">juntos</span> pela escola dos nossos filhos.</h1>
-      <p>Somos a Associação de Pais e Amigos do Jardim de Infância e da Escola do 1.º Ciclo de Fão. Organizamos festas, feiras e tradições, e angariamos fundos para melhorar a escola.</p>
+    <div class="capa">
+      <img src="img/capa.jpg" alt="Crianças de braços no ar, felizes, à frente do girassol da APAEF" width="1726" height="657">
     </div>
 
-    <section>
-      <div class="proximo">
-        <div>
-          <small>Próxima atividade</small>
-          <h3>Doçura ou Travessura 🎃</h3>
-          <p>Sábado, 31 de outubro · 17h às 19h · pelas ruas de Fão</p>
-        </div>
-        <a class="botao" href="halloween.html">Inscrever</a>
-      </div>
-    </section>
+    <div class="heroi">
+      <h1>Pais de Fão, <span class="destaque">juntos</span> pela escola dos nossos filhos.</h1>
+      <p>Somos a Associação de Pais e Amigos do Jardim de Infância e das Escolas do 1.º Ciclo de Fão. Aqui encontra a agenda do ano e as inscrições. As novidades e as fotos estão no Facebook.</p>
+    </div>
 
-    <section id="atividades">
-      <h2>Atividades 2026/2027</h2>
-      <p class="nota">O plano de atividades vai ser aprovado na reunião de 26 de outubro. As datas podem mudar.</p>
+    <section id="agenda">
+      <h2>Agenda 2026/27</h2>
+      <p class="nota">O plano de atividades é aprovado a 26 de outubro. As datas podem mudar.</p>
 
-      <div class="periodo">
-        <h3>1.º período</h3>
-        <ul class="lista">
-          <li><span class="data">31 out</span><span>Doçura ou Travessura <span class="novo">novo</span></span></li>
-          <li><span class="data">11 nov</span><span>Magusto (S. Martinho)</span></li>
-          <li><span class="data">novembro</span><span>Rifas de S. Martinho <span class="novo">novo</span></span></li>
-          <li><span class="data">25 nov</span><span>Feirinha de Outono</span></li>
-          <li><span class="data">dezembro</span><span>Foto de Natal</span></li>
-          <li><span class="data">11 dez</span><span>Jantar de Natal (a confirmar)</span></li>
-        </ul>
-      </div>
+      <ol class="timeline">
+        <li class="evento" data-fim="2026-10-31">
+          <div class="evento-cartao">
+            <img src="img/halloween.jpg" alt="Abóboras de Halloween" loading="lazy" width="560" height="373">
+            <div class="evento-texto">
+              <span class="selo-proxima">⭐ Próxima atividade</span><br>
+              <span class="quando">Sábado, 31 out · 17h–19h <span class="etiqueta">novo!</span></span>
+              <h3>Doçura ou Travessura</h3>
+              <p>Pela primeira vez, vamos andar mascarados pelas ruas de Fão à procura de doces! Tragam as fantasias mais assustadoras e um saco bem grande.</p>
+              <a class="botao" href="halloween.html">Inscrever 🎃</a>
+            </div>
+          </div>
+        </li>
 
-      <div class="periodo">
-        <h3>2.º e 3.º períodos (com base no ano passado)</h3>
-        <ul class="lista">
-          <li><span class="data">janeiro</span><span>Cantar as Janeiras</span></li>
-          <li><span class="data">a definir</span><span>Noite das Sopas</span></li>
-          <li><span class="data">fevereiro</span><span>Carnaval</span></li>
-          <li><span class="data">março</span><span>Dia da Árvore</span></li>
-          <li><span class="data">abril</span><span>Dia do Livro · Marchas Luminosas do Senhor Bom Jesus</span></li>
-          <li><span class="data">a definir</span><span>Feira da Primavera e Caminhada da Família</span></li>
-          <li><span class="data">25 jun</span><span>Festa de Encerramento do ano letivo</span></li>
-        </ul>
+        <li class="evento" data-fim="2026-11-11">
+          <div class="evento-cartao">
+            <img src="img/magusto.jpg" alt="Cartaz do Magusto da APAEF" loading="lazy">
+            <div class="evento-texto">
+              <span class="selo-proxima">⭐ Próxima atividade</span><br>
+              <span class="quando">11 nov · na escola</span>
+              <h3>Magusto</h3>
+              <p>Chegou o S. Martinho! Castanhas quentinhas, folhas de outono e muita alegria no recreio, ao lanche, com os nossos pequenos.</p>
+            </div>
+          </div>
+        </li>
+
+        <li class="evento" data-fim="2026-11-30">
+          <div class="evento-cartao">
+            <img src="img/rifas.jpg" alt="Castanhas de outono" loading="lazy">
+            <div class="evento-texto">
+              <span class="selo-proxima">⭐ Próxima atividade</span><br>
+              <span class="quando">novembro <span class="etiqueta confirmar">data a confirmar</span></span>
+              <h3>Rifas de S. Martinho</h3>
+              <p>Uma rifa, um pequeno gesto que ajuda a escola. Fique atento: os prémios e a data do sorteio vão ser anunciados no Facebook.</p>
+            </div>
+          </div>
+        </li>
+
+        <li class="evento" data-fim="2026-11-25">
+          <div class="evento-cartao">
+            <img src="img/feirinha.jpg" alt="Caixas com legumes e abóboras da Feirinha de Outono" loading="lazy">
+            <div class="evento-texto">
+              <span class="selo-proxima">⭐ Próxima atividade</span><br>
+              <span class="quando">Quarta, 25 nov · Centro Escolar de Fão</span>
+              <h3>Feirinha de Outono</h3>
+              <p>Doces caseiros, compotas, legumes e fruta da época, roupa e brinquedos. Uma manhã de partilha em que cada compra ajuda a nossa escola.</p>
+            </div>
+          </div>
+        </li>
+
+        <li class="evento" data-fim="2026-12-15">
+          <div class="evento-cartao">
+            <img src="img/natal.jpg" alt="Luzes de Natal" loading="lazy">
+            <div class="evento-texto">
+              <span class="selo-proxima">⭐ Próxima atividade</span><br>
+              <span class="quando">dezembro <span class="etiqueta confirmar">data a confirmar</span></span>
+              <h3>Foto de Natal</h3>
+              <p>Depois da estreia do ano passado, a Foto de Natal está de volta, para guardar a magia desta época com um sorriso.</p>
+            </div>
+          </div>
+        </li>
+
+        <li class="evento" data-fim="2026-12-11">
+          <div class="evento-cartao">
+            <img src="img/jantar-natal.jpg" alt="Cartaz do Jantar de Natal da APAEF" loading="lazy">
+            <div class="evento-texto">
+              <span class="selo-proxima">⭐ Próxima atividade</span><br>
+              <span class="quando">11 dez <span class="etiqueta confirmar">a confirmar</span></span>
+              <h3>Jantar de Natal</h3>
+              <p>Uma noite em família à volta da mesa, com surpresas e muita animação. As inscrições abrem mais perto da data.</p>
+            </div>
+          </div>
+        </li>
+
+        <li class="evento" data-fim="2027-01-31">
+          <div class="evento-cartao">
+            <img src="img/janeiras.jpg" alt="Cartaz Vamos cantar as Janeiras" loading="lazy">
+            <div class="evento-texto">
+              <span class="selo-proxima">⭐ Próxima atividade</span><br>
+              <span class="quando">janeiro <span class="etiqueta confirmar">datas a confirmar</span></span>
+              <h3>Cantar as Janeiras + Rifas de Reis</h3>
+              <p>Bombos, vozes e casacos quentes: vamos levar as Janeiras de porta em porta, como manda a tradição. E há rifas de Reis com prémios!</p>
+            </div>
+          </div>
+        </li>
+
+        <li class="evento" data-fim="2027-02-28">
+          <div class="evento-cartao">
+            <img src="img/carnaval.jpg" alt="Máscaras e confetes de Carnaval" loading="lazy">
+            <div class="evento-texto">
+              <span class="selo-proxima">⭐ Próxima atividade</span><br>
+              <span class="quando">fevereiro <span class="etiqueta confirmar">data a confirmar</span></span>
+              <h3>Carnaval · Baile de Máscaras</h3>
+              <p>Hora de escolher a fantasia! Uma noite de música, cor e gargalhadas para miúdos e graúdos.</p>
+            </div>
+          </div>
+        </li>
+
+        <li class="evento" data-fim="2027-03-31">
+          <div class="evento-cartao">
+            <img src="img/noite-sopas.jpg" alt="Cartaz da Noite das Sopas" loading="lazy">
+            <div class="evento-texto">
+              <span class="selo-proxima">⭐ Próxima atividade</span><br>
+              <span class="quando">fevereiro/março <span class="etiqueta confirmar">data a confirmar</span></span>
+              <h3>Noite das Sopas</h3>
+              <p>Sopas que aquecem a alma, petiscos e sobremesas feitas com carinho. Uma das noites mais saborosas do ano.</p>
+            </div>
+          </div>
+        </li>
+
+        <li class="evento" data-fim="2027-04-30">
+          <div class="evento-cartao">
+            <img src="img/feira-livro.jpg" alt="Cartaz da Feira do Livro" loading="lazy">
+            <div class="evento-texto">
+              <span class="selo-proxima">⭐ Próxima atividade</span><br>
+              <span class="quando">março/abril <span class="etiqueta confirmar">data a confirmar</span></span>
+              <h3>Feira do Livro</h3>
+              <p>Ler é criar mundos. Uma semana para descobrir livros novos e levar para casa uma história preferida.</p>
+            </div>
+          </div>
+        </li>
+
+        <li class="evento" data-fim="2027-04-30">
+          <div class="evento-cartao">
+            <img src="img/marchas.jpg" alt="Cartaz das Marchas Luminosas" loading="lazy">
+            <div class="evento-texto">
+              <span class="selo-proxima">⭐ Próxima atividade</span><br>
+              <span class="quando">abril <span class="etiqueta confirmar">data a confirmar</span></span>
+              <h3>Marchas Luminosas do Senhor Bom Jesus</h3>
+              <p>Luzes, música e muitos ensaios: os nossos pequenos voltam a marchar pelas ruas de Fão numa noite cheia de cor.</p>
+            </div>
+          </div>
+        </li>
+
+        <li class="evento" data-fim="2027-05-31">
+          <div class="evento-cartao">
+            <img src="img/caminhada.jpg" alt="Cartaz da Caminhada da Família" loading="lazy">
+            <div class="evento-texto">
+              <span class="selo-proxima">⭐ Próxima atividade</span><br>
+              <span class="quando">maio <span class="etiqueta confirmar">data a confirmar</span></span>
+              <h3>Caminhada da Família · Feira da Primavera</h3>
+              <p>Ténis calçados e boa disposição! Uma caminhada em família e uma feira cheia de flores, livros e sabores da primavera.</p>
+            </div>
+          </div>
+        </li>
+
+        <li class="evento" data-fim="2027-06-25">
+          <div class="evento-cartao">
+            <img src="img/festa.jpg" alt="Bandeirinhas de festa" loading="lazy">
+            <div class="evento-texto">
+              <span class="selo-proxima">⭐ Próxima atividade</span><br>
+              <span class="quando">Sexta, 25 jun</span>
+              <h3>Festa de Final de Ano</h3>
+              <p>O ano termina em festa! Canções, despedidas dos finalistas e um arraial para celebrarmos juntos tudo o que crescemos.</p>
+            </div>
+          </div>
+        </li>
+      </ol>
+
+      <div class="fim-timeline">
+        <p>Quer ver as fotos e saber das novidades primeiro?</p>
+        <a class="botao botao-fb botao-grande" href="https://www.facebook.com/profile.php?id=61555363610929" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.5 22v-8h2.7l.4-3.2h-3.1V8.8c0-.9.3-1.5 1.6-1.5h1.7V4.4c-.3 0-1.3-.1-2.5-.1-2.5 0-4.1 1.5-4.1 4.2v2.3H7.4V14h2.8v8h3.3z"/></svg>
+          Seguir no Facebook
+        </a>
       </div>
     </section>
 
@@ -90,9 +278,26 @@
 
   <footer>
     <div class="wrap">
-      APAEF · Escola Básica de Fão, Rua da Caixa de Água, 4740-364 Fão ·
-      <a href="mailto:apaefao@gmail.com">apaefao@gmail.com</a>
+      <a class="botao botao-fb" href="https://www.facebook.com/profile.php?id=61555363610929" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.5 22v-8h2.7l.4-3.2h-3.1V8.8c0-.9.3-1.5 1.6-1.5h1.7V4.4c-.3 0-1.3-.1-2.5-.1-2.5 0-4.1 1.5-4.1 4.2v2.3H7.4V14h2.8v8h3.3z"/></svg>
+        Seguir no Facebook
+      </a>
+      <div>APAEF · Escola Básica de Fão, Rua da Caixa de Água, 4740-364 Fão · <a href="mailto:apaefao@gmail.com">apaefao@gmail.com</a></div>
+      <div class="creditos">Cartazes e logótipo: APAEF (cartazes 2025/26 © Raquel Lopes). Fotos de abóboras, castanhas, luzes de Natal, máscaras e bandeirinhas: Steven Van Elk, Ilona Frey, kaleb tapp, Llanydd Lloyd e Photos by Lanty, no <a href="https://unsplash.com" target="_blank" rel="noopener">Unsplash</a> (licença livre).</div>
     </div>
   </footer>
+
+  <script>
+    // Põe em destaque a próxima atividade e esbate as que já passaram.
+    (function () {
+      const hoje = new Date(); hoje.setHours(0, 0, 0, 0);
+      let destaque = false;
+      document.querySelectorAll(".evento").forEach(function (ev) {
+        const fim = new Date(ev.dataset.fim + "T23:59:59");
+        if (fim < hoje) { ev.classList.add("passou"); }
+        else if (!destaque) { ev.classList.add("proxima"); destaque = true; }
+      });
+    })();
+  </script>
 </body>
 </html>
