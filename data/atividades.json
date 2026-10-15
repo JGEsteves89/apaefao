@@ -1,0 +1,927 @@
+{
+ "versao": "2026-10-15",
+ "datas": [
+  {
+   "id": "halloween",
+   "data": "2026-10-31",
+   "quando": "Sáb, 31 out",
+   "nome": "Halloween",
+   "emoji": "🎃",
+   "estado": "confirmado",
+   "nota": "Doçura ou Travessura pelas ruas de Fão (já em preparação)",
+   "atividades": [
+    "docura-travessura",
+    "banca-bolos-halloween",
+    "kit-docura",
+    "concurso-mascaras"
+   ]
+  },
+  {
+   "id": "sao-martinho",
+   "data": "2026-11-11",
+   "quando": "Qua, 11 nov",
+   "nome": "S. Martinho / Magusto",
+   "emoji": "🌰",
+   "estado": "confirmado",
+   "nota": "Magusto da escola, ao lanche. A APAEF paga castanhas e carvão.",
+   "atividades": [
+    "magusto-escola",
+    "cartuchos-castanhas",
+    "rifas-sao-martinho",
+    "doces-magusto-vila",
+    "castanhas-bolos"
+   ]
+  },
+  {
+   "id": "pijama",
+   "data": "2026-11-20",
+   "quando": "Sex, 20 nov",
+   "nome": "Dia Nacional do Pijama / Direitos da Criança",
+   "emoji": "🧸",
+   "estado": "ideia",
+   "nota": "Campanha solidária nacional — o dinheiro costuma ir para a Mundos de Vida, não para a APAEF.",
+   "atividades": [
+    "dia-pijama",
+    "cinema-dentro"
+   ]
+  },
+  {
+   "id": "feirinha",
+   "data": "2026-11-25",
+   "quando": "Qua, 25 nov",
+   "nome": "Feirinha de Outono",
+   "emoji": "🍂",
+   "estado": "confirmado",
+   "nota": "Mista escola + APAEF. Venda de produtos doados.",
+   "atividades": [
+    "feirinha-outono",
+    "banca-cafe-bolos",
+    "roupa-fabricas",
+    "livros-doados",
+    "massagens"
+   ]
+  },
+  {
+   "id": "deficiencia",
+   "data": "2026-12-03",
+   "quando": "Qui, 3 dez",
+   "nome": "Dia Internacional das Pessoas com Deficiência",
+   "emoji": "🤝",
+   "estado": "ideia",
+   "nota": "Data de sensibilização — não usar para angariar dinheiro.",
+   "atividades": [
+    "atividade-inclusao"
+   ]
+  },
+  {
+   "id": "natal",
+   "data": "2026-12-11",
+   "quando": "Sex, 11 dez (a confirmar)",
+   "nome": "Natal",
+   "emoji": "🎄",
+   "estado": "confirmado",
+   "nota": "Sondagem do jantar: 11/12 a ganhar. Férias de Natal começam a 16/12.",
+   "atividades": [
+    "jantar-natal",
+    "foto-natal",
+    "rifa-cabaz-jantar",
+    "postais-criancas",
+    "teatro-criancas"
+   ]
+  },
+  {
+   "id": "janeiras",
+   "data": "2027-01-06",
+   "quando": "Janeiro",
+   "nome": "Janeiras e Reis",
+   "emoji": "🎶",
+   "estado": "confirmado",
+   "nota": "Cantar pelas ruas de Fão (e Apúlia). Ensaios em nov/dez.",
+   "atividades": [
+    "cantar-janeiras",
+    "rifas-reis"
+   ]
+  },
+  {
+   "id": "afetos",
+   "data": "2027-02-14",
+   "quando": "Dom, 14 fev",
+   "nome": "Dia dos Afetos / S. Valentim",
+   "emoji": "💌",
+   "estado": "ideia",
+   "nota": "",
+   "atividades": [
+    "correio-afetos",
+    "postais-criancas"
+   ]
+  },
+  {
+   "id": "carnaval",
+   "data": "2027-02-09",
+   "quando": "Fevereiro",
+   "nome": "Carnaval",
+   "emoji": "🎭",
+   "estado": "confirmado",
+   "nota": "Férias de Carnaval: 8–10 fev.",
+   "atividades": [
+    "baile-mascaras",
+    "baile-escola-familias",
+    "desfile-fantasias"
+   ]
+  },
+  {
+   "id": "sopas",
+   "data": "2027-03-05",
+   "quando": "Fev/Mar (a definir)",
+   "nome": "Noite das Sopas",
+   "emoji": "🍲",
+   "estado": "confirmado",
+   "nota": "No ano passado foi a 13 de março.",
+   "atividades": [
+    "noite-sopas",
+    "dia-sopas-doces"
+   ]
+  },
+  {
+   "id": "dia-pai",
+   "data": "2027-03-19",
+   "quando": "Sex, 19 mar",
+   "nome": "Dia do Pai",
+   "emoji": "👨‍👧",
+   "estado": "ideia",
+   "nota": "",
+   "atividades": [
+    "workshop-casas-passaros",
+    "futebol-pais",
+    "sueca"
+   ]
+  },
+  {
+   "id": "arvore",
+   "data": "2027-03-21",
+   "quando": "Dom, 21 mar",
+   "nome": "Dia da Árvore e da Poesia",
+   "emoji": "🌳",
+   "estado": "confirmado",
+   "nota": "No ano passado: plantar uma árvore + visita ao pinhal.",
+   "atividades": [
+    "plantar-arvore",
+    "venda-plantas",
+    "brincadeiras-sujar"
+   ]
+  },
+  {
+   "id": "pascoa",
+   "data": "2027-03-19",
+   "quando": "Antes das férias da Páscoa (22 mar – 2 abr)",
+   "nome": "Páscoa",
+   "emoji": "🐣",
+   "estado": "ideia",
+   "nota": "Rifas de Páscoa já se fizeram em 2026.",
+   "atividades": [
+    "pintar-ovos",
+    "caca-ovo",
+    "rifas-pascoa"
+   ]
+  },
+  {
+   "id": "livro",
+   "data": "2027-04-23",
+   "quando": "Abril (Livro Infantil 2/4 · Dia do Livro 23/4)",
+   "nome": "Livro",
+   "emoji": "📚",
+   "estado": "confirmado",
+   "nota": "2 de abril calha nas férias da Páscoa.",
+   "atividades": [
+    "feira-livro",
+    "livros-doados",
+    "teatro-criancas"
+   ]
+  },
+  {
+   "id": "marchas",
+   "data": "2027-04-16",
+   "quando": "Abril (data da Festa do Bom Jesus)",
+   "nome": "Marchas Luminosas do Senhor Bom Jesus",
+   "emoji": "✨",
+   "estado": "confirmado",
+   "nota": "Inscrições em fevereiro, ensaios na escola.",
+   "atividades": [
+    "marchas-luminosas"
+   ]
+  },
+  {
+   "id": "liberdade",
+   "data": "2027-04-25",
+   "quando": "Dom, 25 abr",
+   "nome": "Dia da Liberdade",
+   "emoji": "🌹",
+   "estado": "ideia",
+   "nota": "",
+   "atividades": [
+    "cravos-criancas"
+   ]
+  },
+  {
+   "id": "dia-mae",
+   "data": "2027-05-02",
+   "quando": "Dom, 2 mai",
+   "nome": "Dia da Mãe",
+   "emoji": "💐",
+   "estado": "ideia",
+   "nota": "",
+   "atividades": [
+    "venda-flores",
+    "workshop-velas",
+    "ioga-familias"
+   ]
+  },
+  {
+   "id": "familia",
+   "data": "2027-05-15",
+   "quando": "Sáb, 15 mai",
+   "nome": "Dia da Família",
+   "emoji": "👨‍👩‍👧‍👦",
+   "estado": "confirmado",
+   "nota": "Caminhada da Família + Feira da Primavera (como em 2025).",
+   "atividades": [
+    "caminhada-familia",
+    "feira-primavera",
+    "picnic-criancas",
+    "futebol-pais"
+   ]
+  },
+  {
+   "id": "crianca",
+   "data": "2027-06-01",
+   "quando": "Ter, 1 jun",
+   "nome": "Dia Mundial da Criança",
+   "emoji": "🎈",
+   "estado": "ideia",
+   "nota": "",
+   "atividades": [
+    "picnic-criancas",
+    "brincadeiras-sujar",
+    "cinema-fora",
+    "acampar-escola"
+   ]
+  },
+  {
+   "id": "ambiente",
+   "data": "2027-06-05",
+   "quando": "Sáb, 5 jun (Bicicleta: 3 jun)",
+   "nome": "Dia do Ambiente e da Bicicleta",
+   "emoji": "♻️",
+   "estado": "ideia",
+   "nota": "",
+   "atividades": [
+    "troca-brinquedos",
+    "passeio-bicicleta",
+    "desfile-reciclado"
+   ]
+  },
+  {
+   "id": "festa-final",
+   "data": "2027-06-25",
+   "quando": "Sex, 25 jun",
+   "nome": "Festa de Final de Ano + Santos Populares",
+   "emoji": "🎉",
+   "estado": "confirmado",
+   "nota": "Arraial no exterior.",
+   "atividades": [
+    "festa-final",
+    "arraial-bar",
+    "jogos-tradicionais",
+    "photobooth-criancas",
+    "tarot",
+    "massagens",
+    "casino-familias"
+   ]
+  },
+  {
+   "id": "qualquer-altura",
+   "data": null,
+   "quando": "Em qualquer altura do ano",
+   "nome": "Sem data marcada",
+   "emoji": "📅",
+   "estado": "ideia",
+   "nota": "Ideias que podem encaixar onde fizer falta.",
+   "atividades": [
+    "cinema-fora",
+    "sueca",
+    "acampar-escola",
+    "desafio-online",
+    "dia-sopas-doces",
+    "workshop-velas",
+    "teatro-criancas",
+    "baile-escola-familias"
+   ]
+  }
+ ],
+ "atividades": [
+  {
+   "id": "docura-travessura",
+   "nome": "Doçura ou Travessura",
+   "emoji": "🎃",
+   "tipo": "ludica",
+   "texto": "Percurso pelas ruas de Fão, mascarados, a bater às portas com abóbora.",
+   "esforco": 2,
+   "diversao": 3,
+   "dinheiro": 0
+  },
+  {
+   "id": "banca-bolos-halloween",
+   "nome": "Banca de bolos de Halloween",
+   "emoji": "🧁",
+   "tipo": "angariacao",
+   "texto": "Bolos e doces assustadores à venda no ponto de encontro.",
+   "esforco": 1,
+   "diversao": 1,
+   "dinheiro": 2
+  },
+  {
+   "id": "kit-docura",
+   "nome": "Kit Doçura",
+   "emoji": "🍬",
+   "tipo": "angariacao",
+   "texto": "Saco decorado + mapa do percurso, vendido a 2€ antes da saída.",
+   "esforco": 1,
+   "diversao": 2,
+   "dinheiro": 2
+  },
+  {
+   "id": "concurso-mascaras",
+   "nome": "Concurso de máscaras",
+   "emoji": "🧛",
+   "tipo": "ambas",
+   "texto": "Inscrição simbólica e um pequeno prémio para a máscara mais criativa.",
+   "esforco": 1,
+   "diversao": 3,
+   "dinheiro": 1
+  },
+  {
+   "id": "magusto-escola",
+   "nome": "Magusto na escola",
+   "emoji": "🌰",
+   "tipo": "ludica",
+   "texto": "Castanhas assadas ao lanche para todos os meninos.",
+   "esforco": 1,
+   "diversao": 3,
+   "dinheiro": 0
+  },
+  {
+   "id": "cartuchos-castanhas",
+   "nome": "Cartuchos desenhados",
+   "emoji": "🎨",
+   "tipo": "ludica",
+   "texto": "Cada criança desenha um cartucho e recebe as castanhas no desenho de um colega.",
+   "esforco": 1,
+   "diversao": 2,
+   "dinheiro": 0
+  },
+  {
+   "id": "rifas-sao-martinho",
+   "nome": "Rifas de S. Martinho",
+   "emoji": "🎟️",
+   "tipo": "angariacao",
+   "texto": "Rifas com prémios doados, sorteio em direto.",
+   "esforco": 2,
+   "diversao": 1,
+   "dinheiro": 3
+  },
+  {
+   "id": "doces-magusto-vila",
+   "nome": "Doces no Magusto da Vila",
+   "emoji": "🍰",
+   "tipo": "angariacao",
+   "texto": "Banca de doces caseiros no magusto da Junta (como em 2025).",
+   "esforco": 2,
+   "diversao": 1,
+   "dinheiro": 2
+  },
+  {
+   "id": "castanhas-bolos",
+   "nome": "Venda de castanhas e bolos",
+   "emoji": "🥧",
+   "tipo": "angariacao",
+   "texto": "Cartuchos de castanhas e fatias de bolo à saída da escola.",
+   "esforco": 1,
+   "diversao": 1,
+   "dinheiro": 2
+  },
+  {
+   "id": "dia-pijama",
+   "nome": "Dia do Pijama",
+   "emoji": "🧸",
+   "tipo": "ludica",
+   "texto": "Meninos vão de pijama à escola, pelos direitos das crianças.",
+   "esforco": 1,
+   "diversao": 3,
+   "dinheiro": 0,
+   "atencao": "O dinheiro desta campanha vai para a Mundos de Vida."
+  },
+  {
+   "id": "cinema-dentro",
+   "nome": "Sessão de cinema na escola",
+   "emoji": "🍿",
+   "tipo": "ambas",
+   "texto": "Filme com pipocas, de pijama.",
+   "esforco": 1,
+   "diversao": 3,
+   "dinheiro": 1
+  },
+  {
+   "id": "feirinha-outono",
+   "nome": "Feirinha de Outono",
+   "emoji": "🍂",
+   "tipo": "angariacao",
+   "texto": "Legumes, compotas, roupa e brinquedos doados, à venda na escola.",
+   "esforco": 3,
+   "diversao": 1,
+   "dinheiro": 3
+  },
+  {
+   "id": "banca-cafe-bolos",
+   "nome": "Banca de café e bolos",
+   "emoji": "☕",
+   "tipo": "angariacao",
+   "texto": "Para quem visita a feirinha ficar mais um bocadinho.",
+   "esforco": 1,
+   "diversao": 1,
+   "dinheiro": 2
+  },
+  {
+   "id": "roupa-fabricas",
+   "nome": "Roupa doada por fábricas",
+   "emoji": "👕",
+   "tipo": "angariacao",
+   "texto": "Caixas de roupa com pequenos defeitos, vendida a preço baixo.",
+   "esforco": 1,
+   "diversao": 0,
+   "dinheiro": 2
+  },
+  {
+   "id": "livros-doados",
+   "nome": "Banca de livros doados",
+   "emoji": "📖",
+   "tipo": "angariacao",
+   "texto": "Os pais doam livros que já leram, vende-se a 1€.",
+   "esforco": 1,
+   "diversao": 1,
+   "dinheiro": 1
+  },
+  {
+   "id": "massagens",
+   "nome": "Massagens para os pais",
+   "emoji": "💆",
+   "tipo": "angariacao",
+   "texto": "10 minutos de massagem por um preço simbólico (com um profissional voluntário).",
+   "esforco": 2,
+   "diversao": 0,
+   "dinheiro": 2
+  },
+  {
+   "id": "atividade-inclusao",
+   "nome": "Atividade de inclusão",
+   "emoji": "🤝",
+   "tipo": "ludica",
+   "texto": "Jogos e histórias para falar de diferença e respeito.",
+   "esforco": 1,
+   "diversao": 2,
+   "dinheiro": 0
+  },
+  {
+   "id": "jantar-natal",
+   "nome": "Jantar de Natal",
+   "emoji": "🎄",
+   "tipo": "ambas",
+   "texto": "Jantar no Centro Escolar com Pai Natal e prémios.",
+   "esforco": 3,
+   "diversao": 2,
+   "dinheiro": 3
+  },
+  {
+   "id": "foto-natal",
+   "nome": "Foto de Natal",
+   "emoji": "📸",
+   "tipo": "angariacao",
+   "texto": "Foto de Natal de cada criança, com capa nova (só para os pais).",
+   "esforco": 2,
+   "diversao": 1,
+   "dinheiro": 2
+  },
+  {
+   "id": "rifa-cabaz-jantar",
+   "nome": "Rifa de um cabaz no jantar",
+   "emoji": "🧺",
+   "tipo": "angariacao",
+   "texto": "Um cabaz de Natal sorteado durante o jantar.",
+   "esforco": 1,
+   "diversao": 1,
+   "dinheiro": 2
+  },
+  {
+   "id": "postais-criancas",
+   "nome": "Postais feitos pelas crianças",
+   "emoji": "✉️",
+   "tipo": "angariacao",
+   "texto": "Os meninos desenham postais e vendem-nos à família.",
+   "esforco": 1,
+   "diversao": 2,
+   "dinheiro": 1
+  },
+  {
+   "id": "teatro-criancas",
+   "nome": "Teatro das crianças",
+   "emoji": "🎭",
+   "tipo": "ambas",
+   "texto": "Os meninos fazem uma peça; a entrada é paga.",
+   "esforco": 3,
+   "diversao": 3,
+   "dinheiro": 2
+  },
+  {
+   "id": "cantar-janeiras",
+   "nome": "Cantar as Janeiras",
+   "emoji": "🎶",
+   "tipo": "ambas",
+   "texto": "Pelas ruas de Fão com bombos e cantigas.",
+   "esforco": 2,
+   "diversao": 3,
+   "dinheiro": 2
+  },
+  {
+   "id": "rifas-reis",
+   "nome": "Rifas de Reis",
+   "emoji": "👑",
+   "tipo": "angariacao",
+   "texto": "Rifas com sorteio em direto no Facebook.",
+   "esforco": 2,
+   "diversao": 1,
+   "dinheiro": 3
+  },
+  {
+   "id": "correio-afetos",
+   "nome": "Correio dos afetos",
+   "emoji": "💌",
+   "tipo": "angariacao",
+   "texto": "Postais a 1€ entregues às crianças na escola.",
+   "esforco": 1,
+   "diversao": 2,
+   "dinheiro": 1
+  },
+  {
+   "id": "baile-mascaras",
+   "nome": "Baile de máscaras",
+   "emoji": "🎭",
+   "tipo": "ambas",
+   "texto": "DJ, prémio para a melhor fantasia, entrada com bebida.",
+   "esforco": 2,
+   "diversao": 3,
+   "dinheiro": 2
+  },
+  {
+   "id": "baile-escola-familias",
+   "nome": "Baile na escola (pais e filhos)",
+   "emoji": "💃",
+   "tipo": "ambas",
+   "texto": "Uma noite de música para dançar em família.",
+   "esforco": 2,
+   "diversao": 3,
+   "dinheiro": 2
+  },
+  {
+   "id": "desfile-fantasias",
+   "nome": "Desfile de fantasias",
+   "emoji": "🦸",
+   "tipo": "ludica",
+   "texto": "Passerelle para os meninos mostrarem as fantasias.",
+   "esforco": 1,
+   "diversao": 3,
+   "dinheiro": 0
+  },
+  {
+   "id": "noite-sopas",
+   "nome": "Noite das Sopas",
+   "emoji": "🍲",
+   "tipo": "angariacao",
+   "texto": "Sopas, petiscos e sobremesas, com animação.",
+   "esforco": 3,
+   "diversao": 1,
+   "dinheiro": 3
+  },
+  {
+   "id": "dia-sopas-doces",
+   "nome": "Dia das sopas / Dia dos doces",
+   "emoji": "🍮",
+   "tipo": "angariacao",
+   "texto": "Uma versão mais pequena: cada família traz uma sopa ou um doce.",
+   "esforco": 2,
+   "diversao": 1,
+   "dinheiro": 2
+  },
+  {
+   "id": "workshop-casas-passaros",
+   "nome": "Workshop: casas de passarinhos",
+   "emoji": "🐦",
+   "tipo": "ambas",
+   "texto": "Pais e filhos constroem uma casa de pássaros. Inscrição paga.",
+   "esforco": 2,
+   "diversao": 3,
+   "dinheiro": 1
+  },
+  {
+   "id": "futebol-pais",
+   "nome": "Jogo: pais de meninos vs pais de meninas",
+   "emoji": "⚽",
+   "tipo": "ludica",
+   "texto": "Jogo de futebol com claque das crianças.",
+   "esforco": 1,
+   "diversao": 2,
+   "dinheiro": 0
+  },
+  {
+   "id": "sueca",
+   "nome": "Campeonato de sueca",
+   "emoji": "🃏",
+   "tipo": "angariacao",
+   "texto": "Torneio com inscrição por dupla e bar.",
+   "esforco": 1,
+   "diversao": 0,
+   "dinheiro": 2
+  },
+  {
+   "id": "plantar-arvore",
+   "nome": "Plantar uma árvore",
+   "emoji": "🌱",
+   "tipo": "ludica",
+   "texto": "Plantação no recinto da escola.",
+   "esforco": 1,
+   "diversao": 2,
+   "dinheiro": 0
+  },
+  {
+   "id": "venda-plantas",
+   "nome": "Venda de plantas",
+   "emoji": "🪴",
+   "tipo": "angariacao",
+   "texto": "Vasos decorados pelas crianças, à venda.",
+   "esforco": 1,
+   "diversao": 2,
+   "dinheiro": 1
+  },
+  {
+   "id": "brincadeiras-sujar",
+   "nome": "Brincadeiras de sujar ao ar livre",
+   "emoji": "🎨",
+   "tipo": "ludica",
+   "texto": "Tintas, lama e água — roupa velha obrigatória!",
+   "esforco": 2,
+   "diversao": 3,
+   "dinheiro": 0
+  },
+  {
+   "id": "pintar-ovos",
+   "nome": "Pintar ovos da Páscoa",
+   "emoji": "🥚",
+   "tipo": "ludica",
+   "texto": "Oficina de pintura de ovos.",
+   "esforco": 1,
+   "diversao": 3,
+   "dinheiro": 0
+  },
+  {
+   "id": "caca-ovo",
+   "nome": "Caça ao ovo",
+   "emoji": "🐣",
+   "tipo": "ludica",
+   "texto": "Ovos escondidos no recreio para encontrar.",
+   "esforco": 1,
+   "diversao": 3,
+   "dinheiro": 0
+  },
+  {
+   "id": "rifas-pascoa",
+   "nome": "Rifas de Páscoa",
+   "emoji": "🎟️",
+   "tipo": "angariacao",
+   "texto": "Como em 2026.",
+   "esforco": 2,
+   "diversao": 1,
+   "dinheiro": 2
+  },
+  {
+   "id": "feira-livro",
+   "nome": "Feira do Livro",
+   "emoji": "📚",
+   "tipo": "ambas",
+   "texto": "Com a escola — livros novos e usados.",
+   "esforco": 2,
+   "diversao": 2,
+   "dinheiro": 1
+  },
+  {
+   "id": "marchas-luminosas",
+   "nome": "Marchas Luminosas",
+   "emoji": "✨",
+   "tipo": "ludica",
+   "texto": "A escola desfila na Festa do Senhor Bom Jesus.",
+   "esforco": 3,
+   "diversao": 3,
+   "dinheiro": 0
+  },
+  {
+   "id": "cravos-criancas",
+   "nome": "Cravos feitos pelas crianças",
+   "emoji": "🌹",
+   "tipo": "ludica",
+   "texto": "Oficina de cravos de papel e uma conversa sobre liberdade.",
+   "esforco": 1,
+   "diversao": 2,
+   "dinheiro": 0
+  },
+  {
+   "id": "venda-flores",
+   "nome": "Venda de flores",
+   "emoji": "💐",
+   "tipo": "angariacao",
+   "texto": "Flores ou vasos à porta da escola para oferecer às mães.",
+   "esforco": 1,
+   "diversao": 1,
+   "dinheiro": 2
+  },
+  {
+   "id": "workshop-velas",
+   "nome": "Workshop de velas",
+   "emoji": "🕯️",
+   "tipo": "ambas",
+   "texto": "Fazer velas decoradas. Inscrição paga.",
+   "esforco": 2,
+   "diversao": 2,
+   "dinheiro": 1
+  },
+  {
+   "id": "ioga-familias",
+   "nome": "Ioga em família",
+   "emoji": "🧘",
+   "tipo": "ambas",
+   "texto": "Aula ao ar livre para pais e filhos.",
+   "esforco": 1,
+   "diversao": 2,
+   "dinheiro": 1
+  },
+  {
+   "id": "caminhada-familia",
+   "nome": "Caminhada da Família",
+   "emoji": "🚶",
+   "tipo": "angariacao",
+   "texto": "Inscrição com t-shirt e água.",
+   "esforco": 2,
+   "diversao": 2,
+   "dinheiro": 2
+  },
+  {
+   "id": "feira-primavera",
+   "nome": "Feira da Primavera",
+   "emoji": "🌼",
+   "tipo": "angariacao",
+   "texto": "Produtos doados, bolos e flores.",
+   "esforco": 3,
+   "diversao": 2,
+   "dinheiro": 3
+  },
+  {
+   "id": "picnic-criancas",
+   "nome": "Picnic das crianças",
+   "emoji": "🧺",
+   "tipo": "ludica",
+   "texto": "Toalhas no relvado, lanche partilhado e jogos.",
+   "esforco": 1,
+   "diversao": 3,
+   "dinheiro": 0
+  },
+  {
+   "id": "cinema-fora",
+   "nome": "Cinema ao ar livre",
+   "emoji": "🎬",
+   "tipo": "ambas",
+   "texto": "Filme no recreio ao fim do dia, com pipocas à venda.",
+   "esforco": 2,
+   "diversao": 3,
+   "dinheiro": 2
+  },
+  {
+   "id": "acampar-escola",
+   "nome": "Acampar na escola",
+   "emoji": "⛺",
+   "tipo": "ludica",
+   "texto": "Uma noite de tendas no recreio (com pais).",
+   "esforco": 3,
+   "diversao": 3,
+   "dinheiro": 0,
+   "atencao": "Precisa de autorização da escola e de seguro."
+  },
+  {
+   "id": "troca-brinquedos",
+   "nome": "Feira de troca de brinquedos",
+   "emoji": "🧩",
+   "tipo": "ambas",
+   "texto": "Brinquedos usados: troca-se ou vende-se a 1€.",
+   "esforco": 1,
+   "diversao": 2,
+   "dinheiro": 1
+  },
+  {
+   "id": "passeio-bicicleta",
+   "nome": "Passeio de bicicleta",
+   "emoji": "🚲",
+   "tipo": "ludica",
+   "texto": "Volta curta em família pelas ruas de Fão.",
+   "esforco": 2,
+   "diversao": 3,
+   "dinheiro": 0
+  },
+  {
+   "id": "desfile-reciclado",
+   "nome": "Desfile de moda reciclada",
+   "emoji": "♻️",
+   "tipo": "ludica",
+   "texto": "Roupas feitas com materiais reciclados, em passerelle.",
+   "esforco": 2,
+   "diversao": 2,
+   "dinheiro": 0
+  },
+  {
+   "id": "festa-final",
+   "nome": "Festa de Final de Ano",
+   "emoji": "🎉",
+   "tipo": "ambas",
+   "texto": "Espetáculo dos alunos, diplomas e arraial.",
+   "esforco": 3,
+   "diversao": 3,
+   "dinheiro": 3
+  },
+  {
+   "id": "arraial-bar",
+   "nome": "Bar do arraial",
+   "emoji": "🍢",
+   "tipo": "angariacao",
+   "texto": "Bifanas, cachorros, caldo verde e bebidas.",
+   "esforco": 3,
+   "diversao": 1,
+   "dinheiro": 3
+  },
+  {
+   "id": "jogos-tradicionais",
+   "nome": "Jogos tradicionais",
+   "emoji": "🥫",
+   "tipo": "ambas",
+   "texto": "Derrubar latas, molhar o palhaço, corrida de sacos — cada jogada 0,50€.",
+   "esforco": 2,
+   "diversao": 3,
+   "dinheiro": 2
+  },
+  {
+   "id": "photobooth-criancas",
+   "nome": "Photobooth: as crianças tiram a foto",
+   "emoji": "📷",
+   "tipo": "angariacao",
+   "texto": "As crianças são os fotógrafos dos pais. Foto impressa à venda.",
+   "esforco": 2,
+   "diversao": 3,
+   "dinheiro": 2
+  },
+  {
+   "id": "tarot",
+   "nome": "Banca de tarot (a brincar)",
+   "emoji": "🔮",
+   "tipo": "angariacao",
+   "texto": "Leituras divertidas para os adultos.",
+   "esforco": 1,
+   "diversao": 0,
+   "dinheiro": 1
+  },
+  {
+   "id": "casino-familias",
+   "nome": "Noite de jogos (casino a fingir)",
+   "emoji": "🎲",
+   "tipo": "angariacao",
+   "texto": "Fichas a fingir compradas à entrada, prémios doados.",
+   "esforco": 2,
+   "diversao": 1,
+   "dinheiro": 2,
+   "atencao": "Confirmar o que é permitido por lei (jogos e apostas)."
+  },
+  {
+   "id": "desafio-online",
+   "nome": "Desafio solidário em direto",
+   "emoji": "🎮",
+   "tipo": "angariacao",
+   "texto": "Um pai faz um desafio em direto (ex.: maratona de jogo) e quem assiste doa.",
+   "esforco": 2,
+   "diversao": 1,
+   "dinheiro": 2,
+   "atencao": "Sem crianças no vídeo."
+  }
+ ]
+}
