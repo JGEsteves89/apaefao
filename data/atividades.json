@@ -1,5 +1,5 @@
 {
- "versao": "2026-10-15",
+ "versao": "2026-10-15b",
  "datas": [
   {
    "id": "halloween",
@@ -85,7 +85,6 @@
     "jantar-natal",
     "foto-natal",
     "rifa-cabaz-jantar",
-    "postais-criancas",
     "teatro-criancas"
    ]
   },
@@ -125,7 +124,6 @@
    "nota": "Férias de Carnaval: 8–10 fev.",
    "atividades": [
     "baile-mascaras",
-    "baile-escola-familias",
     "desfile-fantasias"
    ]
   },
@@ -138,8 +136,7 @@
    "estado": "confirmado",
    "nota": "No ano passado foi a 13 de março.",
    "atividades": [
-    "noite-sopas",
-    "dia-sopas-doces"
+    "noite-sopas"
    ]
   },
   {
@@ -292,10 +289,8 @@
     "festa-final",
     "arraial-bar",
     "jogos-tradicionais",
-    "photobooth-criancas",
-    "tarot",
-    "massagens",
-    "casino-familias"
+    "baile-escola-familias",
+    "massagens"
    ]
   },
   {
@@ -314,7 +309,8 @@
     "dia-sopas-doces",
     "workshop-velas",
     "teatro-criancas",
-    "baile-escola-familias"
+    "baile-escola-familias",
+    "livros-doados"
    ]
   }
  ],
@@ -324,7 +320,7 @@
    "nome": "Doçura ou Travessura",
    "emoji": "🎃",
    "tipo": "ludica",
-   "texto": "Percurso pelas ruas de Fão, mascarados, a bater às portas com abóbora.",
+   "texto": "percurso pelas ruas de Fão, mascarados, a bater às portas com abóbora",
    "esforco": 2,
    "diversao": 3,
    "dinheiro": 0
@@ -334,17 +330,17 @@
    "nome": "Banca de bolos de Halloween",
    "emoji": "🧁",
    "tipo": "angariacao",
-   "texto": "Bolos e doces assustadores à venda no ponto de encontro.",
+   "texto": "bolos e doces assustadores à venda no ponto de encontro",
    "esforco": 1,
    "diversao": 1,
    "dinheiro": 2
   },
   {
    "id": "kit-docura",
-   "nome": "Kit Doçura",
+   "nome": "Kit Doçura (2€)",
    "emoji": "🍬",
    "tipo": "angariacao",
-   "texto": "Saco decorado + mapa do percurso, vendido a 2€ antes da saída.",
+   "texto": "saco decorado + mapa do percurso, vendido antes da saída",
    "esforco": 1,
    "diversao": 2,
    "dinheiro": 2
@@ -354,7 +350,7 @@
    "nome": "Concurso de máscaras",
    "emoji": "🧛",
    "tipo": "ambas",
-   "texto": "Inscrição simbólica e um pequeno prémio para a máscara mais criativa.",
+   "texto": "inscrição simbólica e um pequeno prémio para a máscara mais criativa",
    "esforco": 1,
    "diversao": 3,
    "dinheiro": 1
@@ -364,7 +360,7 @@
    "nome": "Magusto na escola",
    "emoji": "🌰",
    "tipo": "ludica",
-   "texto": "Castanhas assadas ao lanche para todos os meninos.",
+   "texto": "castanhas assadas ao lanche para todos os meninos",
    "esforco": 1,
    "diversao": 3,
    "dinheiro": 0
@@ -374,7 +370,7 @@
    "nome": "Cartuchos desenhados",
    "emoji": "🎨",
    "tipo": "ludica",
-   "texto": "Cada criança desenha um cartucho e recebe as castanhas no desenho de um colega.",
+   "texto": "cada criança desenha um cartucho e recebe as castanhas no desenho de um colega",
    "esforco": 1,
    "diversao": 2,
    "dinheiro": 0
@@ -384,7 +380,7 @@
    "nome": "Rifas de S. Martinho",
    "emoji": "🎟️",
    "tipo": "angariacao",
-   "texto": "Rifas com prémios doados, sorteio em direto.",
+   "texto": "rifas com prémios doados, sorteio em direto",
    "esforco": 2,
    "diversao": 1,
    "dinheiro": 3
@@ -394,17 +390,17 @@
    "nome": "Doces no Magusto da Vila",
    "emoji": "🍰",
    "tipo": "angariacao",
-   "texto": "Banca de doces caseiros no magusto da Junta (como em 2025).",
+   "texto": "banca de doces caseiros no magusto da Junta (como em 2025)",
    "esforco": 2,
    "diversao": 1,
    "dinheiro": 2
   },
   {
    "id": "castanhas-bolos",
-   "nome": "Venda de castanhas e bolos",
+   "nome": "Castanhas e bolos",
    "emoji": "🥧",
    "tipo": "angariacao",
-   "texto": "Cartuchos de castanhas e fatias de bolo à saída da escola.",
+   "texto": "venda à saída da escola",
    "esforco": 1,
    "diversao": 1,
    "dinheiro": 2
@@ -414,7 +410,7 @@
    "nome": "Dia do Pijama",
    "emoji": "🧸",
    "tipo": "ludica",
-   "texto": "Meninos vão de pijama à escola, pelos direitos das crianças.",
+   "texto": "meninos vão de pijama à escola, pelos direitos das crianças",
    "esforco": 1,
    "diversao": 3,
    "dinheiro": 0,
@@ -425,7 +421,7 @@
    "nome": "Sessão de cinema na escola",
    "emoji": "🍿",
    "tipo": "ambas",
-   "texto": "Filme com pipocas, de pijama.",
+   "texto": "filme com pipocas, de pijama",
    "esforco": 1,
    "diversao": 3,
    "dinheiro": 1
@@ -435,7 +431,7 @@
    "nome": "Feirinha de Outono",
    "emoji": "🍂",
    "tipo": "angariacao",
-   "texto": "Legumes, compotas, roupa e brinquedos doados, à venda na escola.",
+   "texto": "legumes, compotas, roupa e brinquedos doados, à venda na escola",
    "esforco": 3,
    "diversao": 1,
    "dinheiro": 3
@@ -445,7 +441,7 @@
    "nome": "Banca de café e bolos",
    "emoji": "☕",
    "tipo": "angariacao",
-   "texto": "Para quem visita a feirinha ficar mais um bocadinho.",
+   "texto": "para quem visita a feirinha ficar mais um bocadinho",
    "esforco": 1,
    "diversao": 1,
    "dinheiro": 2
@@ -455,7 +451,7 @@
    "nome": "Roupa doada por fábricas",
    "emoji": "👕",
    "tipo": "angariacao",
-   "texto": "Caixas de roupa com pequenos defeitos, vendida a preço baixo.",
+   "texto": "caixas de roupa com pequenos defeitos, vendida a preço baixo",
    "esforco": 1,
    "diversao": 0,
    "dinheiro": 2
@@ -465,7 +461,7 @@
    "nome": "Banca de livros doados",
    "emoji": "📖",
    "tipo": "angariacao",
-   "texto": "Os pais doam livros que já leram, vende-se a 1€.",
+   "texto": "banca de livros usados a 1€",
    "esforco": 1,
    "diversao": 1,
    "dinheiro": 1
@@ -475,7 +471,7 @@
    "nome": "Massagens para os pais",
    "emoji": "💆",
    "tipo": "angariacao",
-   "texto": "10 minutos de massagem por um preço simbólico (com um profissional voluntário).",
+   "texto": "10 minutos de massagem por um preço simbólico (com um profissional voluntário)",
    "esforco": 2,
    "diversao": 0,
    "dinheiro": 2
@@ -485,7 +481,7 @@
    "nome": "Atividade de inclusão",
    "emoji": "🤝",
    "tipo": "ludica",
-   "texto": "Jogos e histórias para falar de diferença e respeito.",
+   "texto": "jogos e histórias para falar de diferença e respeito",
    "esforco": 1,
    "diversao": 2,
    "dinheiro": 0
@@ -495,7 +491,7 @@
    "nome": "Jantar de Natal",
    "emoji": "🎄",
    "tipo": "ambas",
-   "texto": "Jantar no Centro Escolar com Pai Natal e prémios.",
+   "texto": "jantar no Centro Escolar com Pai Natal e prémios",
    "esforco": 3,
    "diversao": 2,
    "dinheiro": 3
@@ -505,7 +501,7 @@
    "nome": "Foto de Natal",
    "emoji": "📸",
    "tipo": "angariacao",
-   "texto": "Foto de Natal de cada criança, com capa nova (só para os pais).",
+   "texto": "foto de Natal de cada criança, com capa nova (só para os pais)",
    "esforco": 2,
    "diversao": 1,
    "dinheiro": 2
@@ -515,17 +511,17 @@
    "nome": "Rifa de um cabaz no jantar",
    "emoji": "🧺",
    "tipo": "angariacao",
-   "texto": "Um cabaz de Natal sorteado durante o jantar.",
+   "texto": "um cabaz de Natal sorteado durante o jantar",
    "esforco": 1,
    "diversao": 1,
    "dinheiro": 2
   },
   {
    "id": "postais-criancas",
-   "nome": "Postais feitos pelas crianças",
-   "emoji": "✉️",
+   "nome": "Postais do S. Valentim",
+   "emoji": "💌",
    "tipo": "angariacao",
-   "texto": "Os meninos desenham postais e vendem-nos à família.",
+   "texto": "os miúdos fazem postais e vendem à família",
    "esforco": 1,
    "diversao": 2,
    "dinheiro": 1
@@ -535,7 +531,7 @@
    "nome": "Teatro das crianças",
    "emoji": "🎭",
    "tipo": "ambas",
-   "texto": "Os meninos fazem uma peça; a entrada é paga.",
+   "texto": "peça feita por eles, com entrada paga",
    "esforco": 3,
    "diversao": 3,
    "dinheiro": 2
@@ -545,7 +541,7 @@
    "nome": "Cantar as Janeiras",
    "emoji": "🎶",
    "tipo": "ambas",
-   "texto": "Pelas ruas de Fão com bombos e cantigas.",
+   "texto": "pelas ruas de Fão com bombos e cantigas",
    "esforco": 2,
    "diversao": 3,
    "dinheiro": 2
@@ -555,7 +551,7 @@
    "nome": "Rifas de Reis",
    "emoji": "👑",
    "tipo": "angariacao",
-   "texto": "Rifas com sorteio em direto no Facebook.",
+   "texto": "rifas com sorteio em direto no Facebook",
    "esforco": 2,
    "diversao": 1,
    "dinheiro": 3
@@ -565,7 +561,7 @@
    "nome": "Correio dos afetos",
    "emoji": "💌",
    "tipo": "angariacao",
-   "texto": "Postais a 1€ entregues às crianças na escola.",
+   "texto": "postais a 1€ entregues às crianças na escola",
    "esforco": 1,
    "diversao": 2,
    "dinheiro": 1
@@ -575,17 +571,17 @@
    "nome": "Baile de máscaras",
    "emoji": "🎭",
    "tipo": "ambas",
-   "texto": "DJ, prémio para a melhor fantasia, entrada com bebida.",
+   "texto": "DJ, prémio para a melhor fantasia, entrada com bebida",
    "esforco": 2,
    "diversao": 3,
    "dinheiro": 2
   },
   {
    "id": "baile-escola-familias",
-   "nome": "Baile na escola (pais e filhos)",
+   "nome": "Baile de fim de ano",
    "emoji": "💃",
    "tipo": "ambas",
-   "texto": "Uma noite de música para dançar em família.",
+   "texto": "estilo baile americano (prom), para pais e filhos",
    "esforco": 2,
    "diversao": 3,
    "dinheiro": 2
@@ -594,28 +590,28 @@
    "id": "desfile-fantasias",
    "nome": "Desfile de fantasias",
    "emoji": "🦸",
-   "tipo": "ludica",
-   "texto": "Passerelle para os meninos mostrarem as fantasias.",
+   "tipo": "ambas",
+   "texto": "passerelle para os miúdos mostrarem as fantasias, com entrada paga",
    "esforco": 1,
    "diversao": 3,
-   "dinheiro": 0
+   "dinheiro": 1
   },
   {
    "id": "noite-sopas",
    "nome": "Noite das Sopas",
    "emoji": "🍲",
    "tipo": "angariacao",
-   "texto": "Sopas, petiscos e sobremesas, com animação.",
+   "texto": "sopas, petiscos e sobremesas, com animação",
    "esforco": 3,
    "diversao": 1,
    "dinheiro": 3
   },
   {
    "id": "dia-sopas-doces",
-   "nome": "Dia das sopas / Dia dos doces",
+   "nome": "Dia dos doces",
    "emoji": "🍮",
    "tipo": "angariacao",
-   "texto": "Uma versão mais pequena: cada família traz uma sopa ou um doce.",
+   "texto": "cada família traz um doce para vender",
    "esforco": 2,
    "diversao": 1,
    "dinheiro": 2
@@ -625,17 +621,17 @@
    "nome": "Workshop: casas de passarinhos",
    "emoji": "🐦",
    "tipo": "ambas",
-   "texto": "Pais e filhos constroem uma casa de pássaros. Inscrição paga.",
+   "texto": "pais e filhos constroem uma casa de pássaros, com inscrição paga",
    "esforco": 2,
    "diversao": 3,
    "dinheiro": 1
   },
   {
    "id": "futebol-pais",
-   "nome": "Jogo: pais de meninos vs pais de meninas",
+   "nome": "Futebol: pais de meninos vs pais de meninas",
    "emoji": "⚽",
    "tipo": "ludica",
-   "texto": "Jogo de futebol com claque das crianças.",
+   "texto": "com claque das crianças",
    "esforco": 1,
    "diversao": 2,
    "dinheiro": 0
@@ -645,7 +641,7 @@
    "nome": "Campeonato de sueca",
    "emoji": "🃏",
    "tipo": "angariacao",
-   "texto": "Torneio com inscrição por dupla e bar.",
+   "texto": "inscrição por dupla e bar",
    "esforco": 1,
    "diversao": 0,
    "dinheiro": 2
@@ -655,7 +651,7 @@
    "nome": "Plantar uma árvore",
    "emoji": "🌱",
    "tipo": "ludica",
-   "texto": "Plantação no recinto da escola.",
+   "texto": "plantação no recinto da escola",
    "esforco": 1,
    "diversao": 2,
    "dinheiro": 0
@@ -665,7 +661,7 @@
    "nome": "Venda de plantas",
    "emoji": "🪴",
    "tipo": "angariacao",
-   "texto": "Vasos decorados pelas crianças, à venda.",
+   "texto": "vasos decorados pelas crianças, à venda",
    "esforco": 1,
    "diversao": 2,
    "dinheiro": 1
@@ -674,28 +670,28 @@
    "id": "brincadeiras-sujar",
    "nome": "Brincadeiras de sujar ao ar livre",
    "emoji": "🎨",
-   "tipo": "ludica",
-   "texto": "Tintas, lama e água — roupa velha obrigatória!",
+   "tipo": "ambas",
+   "texto": "tintas, lama e água, com inscrição paga",
    "esforco": 2,
    "diversao": 3,
-   "dinheiro": 0
+   "dinheiro": 1
   },
   {
    "id": "pintar-ovos",
-   "nome": "Pintar ovos da Páscoa",
+   "nome": "Workshop de pintura de ovos",
    "emoji": "🥚",
-   "tipo": "ludica",
-   "texto": "Oficina de pintura de ovos.",
+   "tipo": "ambas",
+   "texto": "workshop pago para pintar ovos da Páscoa",
    "esforco": 1,
    "diversao": 3,
-   "dinheiro": 0
+   "dinheiro": 1
   },
   {
    "id": "caca-ovo",
    "nome": "Caça ao ovo",
    "emoji": "🐣",
    "tipo": "ludica",
-   "texto": "Ovos escondidos no recreio para encontrar.",
+   "texto": "ovos escondidos no recreio para as crianças encontrarem",
    "esforco": 1,
    "diversao": 3,
    "dinheiro": 0
@@ -705,7 +701,7 @@
    "nome": "Rifas de Páscoa",
    "emoji": "🎟️",
    "tipo": "angariacao",
-   "texto": "Como em 2026.",
+   "texto": "como em 2026",
    "esforco": 2,
    "diversao": 1,
    "dinheiro": 2
@@ -715,7 +711,7 @@
    "nome": "Feira do Livro",
    "emoji": "📚",
    "tipo": "ambas",
-   "texto": "Com a escola — livros novos e usados.",
+   "texto": "com a escola — livros novos e usados",
    "esforco": 2,
    "diversao": 2,
    "dinheiro": 1
@@ -725,7 +721,7 @@
    "nome": "Marchas Luminosas",
    "emoji": "✨",
    "tipo": "ludica",
-   "texto": "A escola desfila na Festa do Senhor Bom Jesus.",
+   "texto": "A escola desfila na Festa do Senhor Bom Jesus",
    "esforco": 3,
    "diversao": 3,
    "dinheiro": 0
@@ -735,7 +731,7 @@
    "nome": "Cravos feitos pelas crianças",
    "emoji": "🌹",
    "tipo": "ludica",
-   "texto": "Oficina de cravos de papel e uma conversa sobre liberdade.",
+   "texto": "oficina de cravos de papel e uma conversa sobre liberdade",
    "esforco": 1,
    "diversao": 2,
    "dinheiro": 0
@@ -745,7 +741,7 @@
    "nome": "Venda de flores",
    "emoji": "💐",
    "tipo": "angariacao",
-   "texto": "Flores ou vasos à porta da escola para oferecer às mães.",
+   "texto": "flores ou vasos à porta da escola para oferecer às mães",
    "esforco": 1,
    "diversao": 1,
    "dinheiro": 2
@@ -755,7 +751,7 @@
    "nome": "Workshop de velas",
    "emoji": "🕯️",
    "tipo": "ambas",
-   "texto": "Fazer velas decoradas. Inscrição paga.",
+   "texto": "fazer velas decoradas, com inscrição paga",
    "esforco": 2,
    "diversao": 2,
    "dinheiro": 1
@@ -765,7 +761,7 @@
    "nome": "Ioga em família",
    "emoji": "🧘",
    "tipo": "ambas",
-   "texto": "Aula ao ar livre para pais e filhos.",
+   "texto": "aula ao ar livre para pais e filhos",
    "esforco": 1,
    "diversao": 2,
    "dinheiro": 1
@@ -775,7 +771,7 @@
    "nome": "Caminhada da Família",
    "emoji": "🚶",
    "tipo": "angariacao",
-   "texto": "Inscrição com t-shirt e água.",
+   "texto": "inscrição com t-shirt e água",
    "esforco": 2,
    "diversao": 2,
    "dinheiro": 2
@@ -785,7 +781,7 @@
    "nome": "Feira da Primavera",
    "emoji": "🌼",
    "tipo": "angariacao",
-   "texto": "Produtos doados, bolos e flores.",
+   "texto": "produtos doados, bolos e flores",
    "esforco": 3,
    "diversao": 2,
    "dinheiro": 3
@@ -794,18 +790,18 @@
    "id": "picnic-criancas",
    "nome": "Picnic das crianças",
    "emoji": "🧺",
-   "tipo": "ludica",
-   "texto": "Toalhas no relvado, lanche partilhado e jogos.",
+   "tipo": "ambas",
+   "texto": "com venda de bebidas, comidas e sobremesas",
    "esforco": 1,
    "diversao": 3,
-   "dinheiro": 0
+   "dinheiro": 1
   },
   {
    "id": "cinema-fora",
    "nome": "Cinema ao ar livre",
    "emoji": "🎬",
    "tipo": "ambas",
-   "texto": "Filme no recreio ao fim do dia, com pipocas à venda.",
+   "texto": "filme no recreio ao fim do dia, com pipocas à venda",
    "esforco": 2,
    "diversao": 3,
    "dinheiro": 2
@@ -815,7 +811,7 @@
    "nome": "Acampar na escola",
    "emoji": "⛺",
    "tipo": "ludica",
-   "texto": "Uma noite de tendas no recreio (com pais).",
+   "texto": "uma noite de tendas no recreio, com os pais",
    "esforco": 3,
    "diversao": 3,
    "dinheiro": 0,
@@ -826,7 +822,7 @@
    "nome": "Feira de troca de brinquedos",
    "emoji": "🧩",
    "tipo": "ambas",
-   "texto": "Brinquedos usados: troca-se ou vende-se a 1€.",
+   "texto": "brinquedos usados: troca-se ou vende-se a 1€",
    "esforco": 1,
    "diversao": 2,
    "dinheiro": 1
@@ -836,7 +832,7 @@
    "nome": "Passeio de bicicleta",
    "emoji": "🚲",
    "tipo": "ludica",
-   "texto": "Volta curta em família pelas ruas de Fão.",
+   "texto": "volta curta em família pelas ruas de Fão",
    "esforco": 2,
    "diversao": 3,
    "dinheiro": 0
@@ -845,18 +841,18 @@
    "id": "desfile-reciclado",
    "nome": "Desfile de moda reciclada",
    "emoji": "♻️",
-   "tipo": "ludica",
-   "texto": "Roupas feitas com materiais reciclados, em passerelle.",
+   "tipo": "ambas",
+   "texto": "passerelle com roupas de materiais reciclados, com entrada paga",
    "esforco": 2,
    "diversao": 2,
-   "dinheiro": 0
+   "dinheiro": 1
   },
   {
    "id": "festa-final",
    "nome": "Festa de Final de Ano",
    "emoji": "🎉",
    "tipo": "ambas",
-   "texto": "Espetáculo dos alunos, diplomas e arraial.",
+   "texto": "espetáculo dos alunos, diplomas e arraial",
    "esforco": 3,
    "diversao": 3,
    "dinheiro": 3
@@ -866,62 +862,31 @@
    "nome": "Bar do arraial",
    "emoji": "🍢",
    "tipo": "angariacao",
-   "texto": "Bifanas, cachorros, caldo verde e bebidas.",
+   "texto": "bifanas, cachorros, caldo verde e bebidas",
    "esforco": 3,
    "diversao": 1,
    "dinheiro": 3
   },
   {
    "id": "jogos-tradicionais",
-   "nome": "Jogos tradicionais",
-   "emoji": "🥫",
+   "nome": "Feira de barraquinhas",
+   "emoji": "🎪",
    "tipo": "ambas",
-   "texto": "Derrubar latas, molhar o palhaço, corrida de sacos — cada jogada 0,50€.",
-   "esforco": 2,
+   "texto": "estilo feira americana: cada barraquinha com um jogo para pais e crianças (derrubar latas, molhar o palhaço, photobooth em que são as crianças a tirar a foto, tarot, massagens…)",
+   "esforco": 3,
    "diversao": 3,
-   "dinheiro": 2
-  },
-  {
-   "id": "photobooth-criancas",
-   "nome": "Photobooth: as crianças tiram a foto",
-   "emoji": "📷",
-   "tipo": "angariacao",
-   "texto": "As crianças são os fotógrafos dos pais. Foto impressa à venda.",
-   "esforco": 2,
-   "diversao": 3,
-   "dinheiro": 2
-  },
-  {
-   "id": "tarot",
-   "nome": "Banca de tarot (a brincar)",
-   "emoji": "🔮",
-   "tipo": "angariacao",
-   "texto": "Leituras divertidas para os adultos.",
-   "esforco": 1,
-   "diversao": 0,
-   "dinheiro": 1
-  },
-  {
-   "id": "casino-familias",
-   "nome": "Noite de jogos (casino a fingir)",
-   "emoji": "🎲",
-   "tipo": "angariacao",
-   "texto": "Fichas a fingir compradas à entrada, prémios doados.",
-   "esforco": 2,
-   "diversao": 1,
-   "dinheiro": 2,
-   "atencao": "Confirmar o que é permitido por lei (jogos e apostas)."
+   "dinheiro": 3
   },
   {
    "id": "desafio-online",
-   "nome": "Desafio solidário em direto",
-   "emoji": "🎮",
+   "nome": "Termómetro da angariação",
+   "emoji": "🌡️",
    "tipo": "angariacao",
-   "texto": "Um pai faz um desafio em direto (ex.: maratona de jogo) e quem assiste doa.",
+   "texto": "mostrar a meta do ano, quanto já juntámos e os melhores doadores (empresas, turmas ou famílias)",
    "esforco": 2,
    "diversao": 1,
    "dinheiro": 2,
-   "atencao": "Sem crianças no vídeo."
+   "atencao": "Nomes dos doadores só com autorização."
   }
  ]
 }

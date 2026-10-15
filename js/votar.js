@@ -72,9 +72,11 @@
   const icones = (ic, n) => n > 0 ? ic.repeat(n) : `<span class="zero">${ic}</span>`;
   const notas = a => a.nova ? "💡 Ideia de um membro"
     : `<span aria-hidden="true">${icones("🎈", a.diversao || 0)} · ${icones("💰", a.dinheiro || 0)} · ${icones("🛠️", a.esforco || 1)}</span>`;
+  const TIPO_LONGO = { angariacao: "💰 Serve para angariar dinheiro", ludica: "🎈 Só para diversão", ambas: "💰🎈 Diverte e angaria dinheiro" };
+  const maiuscula = t => t ? t.charAt(0).toUpperCase() + t.slice(1) : "";
   const notasPalavras = a => [DIVERSAO[a.diversao || 0], DINHEIRO[a.dinheiro || 0], TRABALHO[a.esforco || 1]].join(" · ");
 
-  function htmlDetalhe(a) {
+  function htmlDetalhe(a, d) {
     if (a.nova) {
       let apagar = "";
       if (a.minha && !fechado()) {
@@ -86,7 +88,15 @@
       }
       return `<div class="o-detalhe"><p>💡 Ideia nova, sugerida por um membro.</p>${a.minha ? "<p>Esta ideia é tua. Só tu a podes apagar.</p>" : ""}${apagar}</div>`;
     }
-    return `<div class="o-detalhe"><p class="o-palavras">${notasPalavras(a)}</p><p>${escapar(a.texto)}</p>${a.atencao ? `<p class="atencao">⚠️ ${escapar(a.atencao)}</p>` : ""}</div>`;
+    // Mais contexto: o que é, para que serve, e noutras datas onde também aparece.
+    const outras = datas.filter(x => x.id !== d.id && x.atividades.includes(a.id)).map(x => x.nome);
+    return `<div class="o-detalhe">
+      <p>${escapar(maiuscula(a.texto))}.</p>
+      <p class="o-palavras">${notasPalavras(a)}</p>
+      <p>${TIPO_LONGO[a.tipo] || ""}</p>
+      ${outras.length ? `<p>📅 Também proposta para: ${outras.map(escapar).join(", ")}.</p>` : ""}
+      ${a.atencao ? `<p class="atencao">⚠️ ${escapar(a.atencao)}</p>` : ""}
+    </div>`;
   }
 
   function temVotos(e) { return Object.values(e.votos || {}).some(v => v.atividades.length || (v.ideias || []).length); }
@@ -118,7 +128,7 @@
           <span class="o-n">${n}</span>
         </button>
         <button class="o-info" type="button" data-detalhe="${a.id}" aria-expanded="${aberto}" aria-label="Detalhes de ${escapar(a.nome)}">ⓘ</button>
-      </li>${aberto ? `<li class="op-detalhe">${htmlDetalhe(a)}</li>` : ""}`;
+      </li>${aberto ? `<li class="op-detalhe">${htmlDetalhe(a, d)}</li>` : ""}`;
     }).join("") + "</ul>";
   }
 
@@ -363,6 +373,7 @@
     } catch (e) {
       lista.innerHTML = "<p>Não foi possível carregar as atividades. Tenta outra vez daqui a pouco.</p>"; return;
     }
+    Object.values(estado.votos).forEach(v => { v.atividades = (v.atividades || []).filter(a => ativ[a] || a.startsWith("i-")); });
     await carregarResultados();
     // Em modo teste os números são falsos e nunca incluem o meu voto.
     naBase = ENDPOINT ? enviado : { enviadoEm: null, votos: {} };
