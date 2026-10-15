@@ -221,3 +221,6 @@ footer .creditos { font-size: 12px; }
 .o-notas .zero { opacity: .25; filter: grayscale(1); }
 .o-palavras { font-weight: 800; color: var(--tinta); }
 .o-nova { font-size: 12px; font-weight: 800; background: var(--tinta); color: var(--sol); border-radius: 99px; padding: 0 7px; white-space: nowrap; }
+.ponto-plano { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: var(--sol-escuro); margin-left: 6px; vertical-align: 2px; }
+.legenda { font-size: 14px; color: var(--suave); margin: 2px 0 4px; }
+.legenda .ponto-plano { margin: 0 2px 0 0; }

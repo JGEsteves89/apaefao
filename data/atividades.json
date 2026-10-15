@@ -30,7 +30,8 @@
     "rifas-sao-martinho",
     "doces-magusto-vila",
     "castanhas-bolos"
-   ]
+   ],
+   "anoPassado": true
   },
   {
    "id": "pijama",
@@ -59,7 +60,8 @@
     "roupa-fabricas",
     "livros-doados",
     "massagens"
-   ]
+   ],
+   "anoPassado": true
   },
   {
    "id": "deficiencia",
@@ -86,7 +88,8 @@
     "foto-natal",
     "rifa-cabaz-jantar",
     "teatro-criancas"
-   ]
+   ],
+   "anoPassado": true
   },
   {
    "id": "janeiras",
@@ -99,7 +102,8 @@
    "atividades": [
     "cantar-janeiras",
     "rifas-reis"
-   ]
+   ],
+   "anoPassado": true
   },
   {
    "id": "afetos",
@@ -125,7 +129,8 @@
    "atividades": [
     "baile-mascaras",
     "desfile-fantasias"
-   ]
+   ],
+   "anoPassado": true
   },
   {
    "id": "sopas",
@@ -137,7 +142,8 @@
    "nota": "No ano passado foi a 13 de março.",
    "atividades": [
     "noite-sopas"
-   ]
+   ],
+   "anoPassado": true
   },
   {
    "id": "dia-pai",
@@ -165,7 +171,8 @@
     "plantar-arvore",
     "venda-plantas",
     "brincadeiras-sujar"
-   ]
+   ],
+   "anoPassado": true
   },
   {
    "id": "pascoa",
@@ -179,7 +186,8 @@
     "pintar-ovos",
     "caca-ovo",
     "rifas-pascoa"
-   ]
+   ],
+   "anoPassado": true
   },
   {
    "id": "livro",
@@ -193,7 +201,8 @@
     "feira-livro",
     "livros-doados",
     "teatro-criancas"
-   ]
+   ],
+   "anoPassado": true
   },
   {
    "id": "marchas",
@@ -205,7 +214,8 @@
    "nota": "Inscrições em fevereiro, ensaios na escola.",
    "atividades": [
     "marchas-luminosas"
-   ]
+   ],
+   "anoPassado": true
   },
   {
    "id": "liberdade",
@@ -246,7 +256,8 @@
     "feira-primavera",
     "picnic-criancas",
     "futebol-pais"
-   ]
+   ],
+   "anoPassado": true
   },
   {
    "id": "crianca",
@@ -291,7 +302,8 @@
     "jogos-tradicionais",
     "baile-escola-familias",
     "massagens"
-   ]
+   ],
+   "anoPassado": true
   },
   {
    "id": "qualquer-altura",

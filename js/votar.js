@@ -7,6 +7,9 @@
   const CHAVE_RASCUNHO = "apaef_votacao_rascunho";   // o meu boletim atual
   const CHAVE_ENVIADO = "apaef_votacao_enviado";     // o último boletim que o servidor recebeu
   const CHAVE_TESTE = "apaef_votacao_teste";
+  // Mudar este valor apaga em todos os telemóveis os votos e ideias guardados antes (recomeçar do zero).
+  const RECOMECO = "2026-10-15-zero";
+  const CHAVE_RECOMECO = "apaef_votacao_recomeco";
   const TURMAS = ["Pré A", "Pré B", "Pré C", "Pré D", "1.º ano", "2.º ano", "3.º ano", "4.º ano", "Prefiro não dizer"];
   const MESES = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
 
@@ -153,7 +156,7 @@
     const aberta = abertas.has(d.id);
     return `<div class="data-item" id="${d.id}">
       <button class="d-linha" type="button" aria-expanded="${aberta}" aria-controls="p-${d.id}" data-abrir="${d.id}">
-        <span class="d-titulo">${d.emoji} ${escapar(d.nome)}</span>
+        <span class="d-titulo">${d.emoji} ${escapar(d.nome)}${d.anoPassado ? '<span class="ponto-plano" title="Já fizemos no ano passado" aria-label="Já fizemos no ano passado"></span>' : ""}</span>
         <span class="d-quando">${escapar(quandoCurto(d))}</span>
         <span class="d-top">${topLinha(d)}</span>
         <span class="d-lado">${meus(d.id).length ? '<span class="d-meu">✓ votaste</span>' : ""}<span class="d-seta" aria-hidden="true">⌄</span></span>
@@ -345,6 +348,10 @@
 
 
   async function iniciar() {
+    if (ler(CHAVE_RECOMECO) !== RECOMECO) {
+      try { [CHAVE_RASCUNHO, CHAVE_ENVIADO, CHAVE_TESTE].forEach(k => localStorage.removeItem(k)); } catch (e) { /* ignora */ }
+      gravar(CHAVE_RECOMECO, RECOMECO);
+    }
     voterId = ler(CHAVE_ID);
     if (!voterId) { voterId = novoId(); gravar(CHAVE_ID, voterId); }
     estado = lerJSON(CHAVE_RASCUNHO, { nome: "", turma: "", votos: {} });
