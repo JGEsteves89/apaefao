@@ -1,6 +1,6 @@
 // Endereço do Google Apps Script (o mesmo do halloween.html).
 // Enquanto estiver vazio, a votação funciona em MODO TESTE: guarda só neste telemóvel e mostra resultados falsos.
-const ENDPOINT = "";
+const ENDPOINT = "https://script.google.com/macros/s/AKfycbzkDekJna7Yb_CBh2rxkVyHN9RcO0ScqDrl5lkEHzeDCuQwaZQSoLLWODxv9lhvbc-5/exec";
 
 // A votação fecha no fim de 25/10/2026 (hora de Lisboa).
 const VOTACAO_FECHA = new Date("2026-10-26T00:00:00Z");
