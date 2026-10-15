@@ -10,6 +10,9 @@
   const TURMAS = ["Pré A", "Pré B", "Pré C", "Pré D", "1.º ano", "2.º ano", "3.º ano", "4.º ano", "Prefiro não dizer"];
   const MESES = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
 
+  // Modo teste (números falsos + faixa de aviso) só no computador (localhost) e sem ENDPOINT.
+  // No site publicado começa sempre a zero, sem números falsos.
+  const TESTE = !ENDPOINT && /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
   const lista = document.getElementById("lista");
   let datas = [], ativ = {}, res = null;
   let estado, enviado, naBase, voterId, temporizador = null, aEnviar = false;
@@ -275,7 +278,7 @@
   }
 
   async function carregarResultados() {
-    if (!ENDPOINT) { res = resultadosFalsos(); return; }
+    if (!ENDPOINT) { res = TESTE ? resultadosFalsos() : { total: 0, porData: {}, ajudo: {}, novas: {} }; return; }
     try {
       const r = await fetch(ENDPOINT + "?acao=resultados&t=" + Date.now());
       res = await r.json();
@@ -356,7 +359,7 @@
       v.ideias.forEach(i => { if (!estado.criadas.includes(i.id)) estado.criadas.push(i.id); });
     });
     enviado = lerJSON(CHAVE_ENVIADO, { enviadoEm: null, votos: {} });
-    if (!ENDPOINT) document.getElementById("faixa-teste").hidden = false;
+    if (TESTE) document.getElementById("faixa-teste").hidden = false;
     if (fechado()) document.getElementById("fechada").hidden = false;
 
     const nome = document.getElementById("nome"), turma = document.getElementById("turma");
