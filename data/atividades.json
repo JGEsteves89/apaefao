@@ -1,5 +1,5 @@
 {
- "versao": "2026-10-15b",
+ "versao": "2026-10-19",
  "datas": [
   {
    "id": "halloween",
@@ -13,7 +13,8 @@
     "docura-travessura",
     "banca-bolos-halloween",
     "kit-docura",
-    "concurso-mascaras"
+    "concurso-mascaras",
+    "workshop-aboboras"
    ]
   },
   {
@@ -87,7 +88,8 @@
     "jantar-natal",
     "foto-natal",
     "rifa-cabaz-jantar",
-    "teatro-criancas"
+    "teatro-criancas",
+    "jantar-epe"
    ],
    "anoPassado": true
   },
@@ -156,7 +158,8 @@
    "atividades": [
     "workshop-casas-passaros",
     "futebol-pais",
-    "sueca"
+    "sueca",
+    "workshop-penteados"
    ]
   },
   {
@@ -322,7 +325,11 @@
     "workshop-velas",
     "teatro-criancas",
     "baile-escola-familias",
-    "livros-doados"
+    "livros-doados",
+    "banca-confianca",
+    "workshop-penteados",
+    "jantar-epe",
+    "lavagem-carros"
    ]
   }
  ],
@@ -899,6 +906,60 @@
    "diversao": 1,
    "dinheiro": 2,
    "atencao": "Nomes dos doadores só com autorização."
+  },
+  {
+   "id": "banca-confianca",
+   "nome": "Banca self-service para peregrinos",
+   "emoji": "🍎",
+   "tipo": "angariacao",
+   "texto": "banca à beira da escola, onde passam os peregrinos: água, fruta, pensos para os calos, conchas… cada um põe o que quiser num cofre",
+   "esforco": 1,
+   "diversao": 1,
+   "dinheiro": 2,
+   "atencao": "Ver se a Junta e a escola autorizam, e o risco de roubo."
+  },
+  {
+   "id": "workshop-penteados",
+   "nome": "Workshop de penteados (para pais)",
+   "emoji": "💇",
+   "tipo": "ambas",
+   "texto": "os pais aprendem a fazer penteados às filhas, com perucas e boa disposição",
+   "esforco": 2,
+   "diversao": 3,
+   "dinheiro": 1,
+   "atencao": "Bebidas alcoólicas na escola provavelmente não são permitidas."
+  },
+  {
+   "id": "jantar-epe",
+   "nome": "Jantar com a EPE",
+   "emoji": "🍽️",
+   "tipo": "angariacao",
+   "texto": "os alunos da EPE fazem e servem o jantar, como treino das aulas",
+   "esforco": 2,
+   "diversao": 2,
+   "dinheiro": 3,
+   "atencao": "Falta falar com a EPE."
+  },
+  {
+   "id": "workshop-aboboras",
+   "nome": "Workshop de abóboras",
+   "emoji": "🎃",
+   "tipo": "ambas",
+   "texto": "pais e filhos decoram abóboras de Halloween, com inscrição paga",
+   "esforco": 2,
+   "diversao": 3,
+   "dinheiro": 1
+  },
+  {
+   "id": "lavagem-carros",
+   "nome": "Lavagem de carros",
+   "emoji": "🚗",
+   "tipo": "angariacao",
+   "texto": "lavamos o carro em 10 minutos enquanto os pais deixam ou vão buscar os filhos",
+   "esforco": 2,
+   "diversao": 1,
+   "dinheiro": 2,
+   "atencao": "Precisa de espaço, água e autorização da escola."
   }
  ]
 }
