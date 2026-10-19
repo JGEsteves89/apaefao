@@ -329,7 +329,8 @@
     "banca-confianca",
     "workshop-penteados",
     "jantar-epe",
-    "lavagem-carros"
+    "lavagem-carros",
+    "palestra-educar-positiva"
    ]
   }
  ],
@@ -960,6 +961,17 @@
    "diversao": 1,
    "dinheiro": 2,
    "atencao": "Precisa de espaço, água e autorização da escola."
+  },
+  {
+   "id": "palestra-educar-positiva",
+   "nome": "Palestra Educar pela Positiva",
+   "emoji": "🧠",
+   "tipo": "ambas",
+   "texto": "palestra para pais sobre educação positiva (menos gritos, mais conexão), aberta a todo o concelho, no auditório municipal",
+   "esforco": 2,
+   "diversao": 1,
+   "dinheiro": 1,
+   "atencao": "Só avança se a Câmara pagar ou se dividirmos o custo."
   }
  ]
 }
