@@ -9,7 +9,7 @@ const APOIANTES = [
   { nome: "Chalé Tapas Bar", img: "img/apoiantes/chale-tapas-bar.jpg", peso: 20, link: "https://maps.google.com/?cid=17522394796189714683" },
   { nome: "OfirDent", peso: 50, link: "https://maps.google.com/?cid=6608242803670963054" },
   { nome: "Empresa anónima", peso: 100 },
-  { nome: "Claudia Carvalho", peso: 15 },
+  { nome: "Apoiante privado", peso: 15 },
   { nome: "Supermercado Ramalhão", img: "img/apoiantes/supermercado-ramalhao.jpg", peso: 20, link: "https://www.google.com/maps/place/?q=place_id:ChIJO1xgYd5LJA0RHo5goycyXEU" },
   { nome: "Restaurante Paladar", img: "img/apoiantes/restaurante-paladar.jpg", peso: 15, link: "https://www.google.com/maps/place/?q=place_id:ChIJl558D_VLJA0RBaTuS1vDRkI" },
   { nome: "Rituais de Beleza", img: "img/apoiantes/rituais-de-beleza.jpg", peso: 40, link: "https://www.google.com/maps/place/?q=place_id:ChIJ1wUav95LJA0R58wAuYgrJ3U" },
