@@ -1,0 +1,102 @@
+[
+  {
+    "titulo": "Ementa da cantina",
+    "descricao": "O que os nossos filhos comem esta semana (Edubox).",
+    "url": "https://node1.siga.edubox.pt/webapp/menus",
+    "icone": "🍽️",
+    "categoria": "Escola"
+  },
+  {
+    "titulo": "Edubox — senhas da cantina",
+    "descricao": "Marcar e desmarcar as refeições e ver o Cheque-Educação.",
+    "url": "https://edubox.pt/",
+    "icone": "🎟️",
+    "categoria": "Escola"
+  },
+  {
+    "titulo": "Inovar — faltas e avaliações",
+    "descricao": "Justificar faltas e ver avaliações (também no pré-escolar). App: Inovar SIGE.",
+    "url": "https://acoliveira.inovarmais.com/Consulta/app/index.html#/login",
+    "icone": "📱",
+    "categoria": "Escola",
+    "linhas": [
+      "O login e a senha chegam por email ao encarregado de educação.",
+      "Não recebeste? Pede à educadora ou professora para reenviar."
+    ]
+  },
+  {
+    "titulo": "Calendário escolar 2026/27",
+    "descricao": "As datas do ano letivo.",
+    "url": "",
+    "icone": "📅",
+    "categoria": "Escola",
+    "linhas": [
+      "Início: 14 de setembro",
+      "Natal: 16 de dezembro a 3 de janeiro",
+      "Carnaval: 8 a 10 de fevereiro",
+      "Páscoa: 22 de março a 2 de abril",
+      "Fim das aulas: 25 de junho"
+    ]
+  },
+  {
+    "titulo": "Escola Básica de Fão",
+    "descricao": "Rua da Caixa de Água, 4740-364 Fão",
+    "url": "https://esposende-educa.pt/escola/escola-basica-de-fao/",
+    "icone": "🏫",
+    "categoria": "Escola",
+    "linhas": [
+      "Telefone: 253 982 780",
+      "Email: escoladefao@gmail.com"
+    ]
+  },
+  {
+    "titulo": "Agrupamento de Escolas António Correia de Oliveira",
+    "descricao": "O agrupamento da nossa escola: avisos, contactos e documentos.",
+    "url": "https://www.acoliveira.pt/",
+    "icone": "🎒",
+    "categoria": "Escola"
+  },
+  {
+    "titulo": "Transportes escolares",
+    "descricao": "Horários e inscrições, no portal Esposende Educa da Câmara.",
+    "url": "https://esposende-educa.pt/noticias/transporte-escolar/",
+    "icone": "🚌",
+    "categoria": "Escola"
+  },
+  {
+    "titulo": "Junta de Freguesia de Fão",
+    "descricao": "Serviços e notícias da freguesia (inclui o ATL).",
+    "url": "https://jffao.pt/",
+    "icone": "🏛️",
+    "categoria": "Fão"
+  },
+  {
+    "titulo": "Regulamento do ATL / AAAF 2026/27",
+    "descricao": "Regras do ATL da Junta de Fão.",
+    "url": "https://jffao.pt/wp-content/uploads/2026/03/REGULAMENTO-DO-ATL-AAAF-Atividades-de-animacao-e-apoio-a-familia-2026_2027.pdf",
+    "icone": "🧸",
+    "categoria": "Fão"
+  },
+  {
+    "titulo": "Cheque-Educação",
+    "descricao": "Lojas aderentes para o material escolar.",
+    "url": "https://www.startesposende.pt/noticias/cheque-educacao-estabelecimentos-aderentes/",
+    "icone": "🛍️",
+    "categoria": "Fão"
+  },
+  {
+    "titulo": "Facebook da APAEF",
+    "descricao": "As novidades e as fotos das atividades.",
+    "url": "https://www.facebook.com/profile.php?id=61555363610929",
+    "icone": "👍",
+    "categoria": "APAEF"
+  },
+  {
+    "titulo": "Email da APAEF",
+    "descricao": "apaefao@gmail.com",
+    "url": "mailto:apaefao@gmail.com",
+    "icone": "✉️",
+    "categoria": "APAEF",
+    "largo": true
+  }
+]

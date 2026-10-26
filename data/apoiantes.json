@@ -1,0 +1,113 @@
+[
+ {
+  "nome": "CMT – Casa Penetra",
+  "oferta": "Kit de cremes",
+  "evento": "",
+  "logo": "img/apoiantes/casa-penetra.jpg",
+  "tipo": "loja",
+  "maps_url": "https://maps.google.com/?cid=3777675272025239271",
+  "publicar": true,
+  "tamanho": "largo"
+ },
+ {
+  "nome": "Florista Bela Arte",
+  "oferta": "Uma orquídea",
+  "evento": "",
+  "logo": "img/apoiantes/florista-bela-arte.jpg",
+  "tipo": "florista",
+  "maps_url": "https://maps.google.com/?cid=1245702966496861534",
+  "publicar": true,
+  "tamanho": "pequeno"
+ },
+ {
+  "nome": "Chalé Tapas Bar",
+  "oferta": "Um bolo",
+  "evento": "",
+  "logo": "img/apoiantes/chale-tapas-bar.jpg",
+  "tipo": "restaurante",
+  "maps_url": "https://maps.google.com/?cid=17522394796189714683",
+  "publicar": true,
+  "tamanho": "pequeno"
+ },
+ {
+  "nome": "OfirDent",
+  "oferta": "Voucher de destartarização",
+  "evento": "",
+  "logo": "",
+  "tipo": "dentista",
+  "maps_url": "https://maps.google.com/?cid=6608242803670963054",
+  "publicar": true,
+  "tamanho": "grande"
+ },
+ {
+  "nome": "Empresa anónima",
+  "oferta": "Roupa de criança",
+  "evento": "",
+  "logo": "",
+  "tipo": "roupa",
+  "maps_url": "",
+  "publicar": true,
+  "tamanho": "grande"
+ },
+ {
+  "nome": "Apoiante privado",
+  "oferta": "Vinho do Porto",
+  "evento": "",
+  "logo": "",
+  "tipo": "particular",
+  "maps_url": "",
+  "publicar": true,
+  "tamanho": "pequeno"
+ },
+ {
+  "nome": "Supermercado Ramalhão",
+  "oferta": "Carvão para o Magusto",
+  "evento": "Magusto",
+  "logo": "img/apoiantes/supermercado-ramalhao.jpg",
+  "tipo": "supermercado",
+  "maps_url": "https://www.google.com/maps/place/?q=place_id:ChIJO1xgYd5LJA0RHo5goycyXEU",
+  "publicar": true,
+  "tamanho": "pequeno"
+ },
+ {
+  "nome": "Restaurante Paladar",
+  "oferta": "Workshop de Natal para uma criança",
+  "evento": "",
+  "logo": "img/apoiantes/restaurante-paladar.jpg",
+  "tipo": "restaurante",
+  "maps_url": "https://www.google.com/maps/place/?q=place_id:ChIJl558D_VLJA0RBaTuS1vDRkI",
+  "publicar": true,
+  "tamanho": "pequeno"
+ },
+ {
+  "nome": "Rituais de Beleza",
+  "oferta": "Voucher de massagem",
+  "evento": "",
+  "logo": "img/apoiantes/rituais-de-beleza.jpg",
+  "tipo": "beleza",
+  "maps_url": "https://www.google.com/maps/place/?q=place_id:ChIJ1wUav95LJA0R58wAuYgrJ3U",
+  "publicar": true,
+  "tamanho": "alto"
+ },
+ {
+  "nome": "Doce e Granulado",
+  "oferta": "Brigadeiros ou cookies",
+  "evento": "",
+  "logo": "img/apoiantes/doce-e-granulado.jpg",
+  "logoInteiro": true,
+  "tipo": "pastelaria",
+  "maps_url": "https://www.instagram.com/doce_e_granulado/",
+  "publicar": true,
+  "tamanho": "pequeno"
+ },
+ {
+  "nome": "Bica d'Ofir",
+  "oferta": "Vale ou produtos",
+  "evento": "",
+  "logo": "img/apoiantes/bica-dofir.jpg",
+  "tipo": "cafe",
+  "maps_url": "https://www.google.com/maps/place/?q=place_id:ChIJhUkax19LJA0RO9oeZrZFQQM",
+  "publicar": true,
+  "tamanho": "pequeno"
+ }
+]

@@ -1,0 +1,37 @@
+[
+  {
+    "id": "ag-2026-10-26",
+    "titulo": "Assembleia Geral Ordinária",
+    "tipo": "convocatoria",
+    "data": "2026-10-26",
+    "hora": "18:00",
+    "duracao": 90,
+    "local": "Escola Básica de Fão, Rua da Caixa de Água, 4740-364 Fão",
+    "resumo": "Contas de 2025/26 e Plano de Atividades 2026/27. Todos os pais podem votar na AG.",
+    "ordem": [
+      "Relatório de contas do ano letivo 2025/26 e parecer do Conselho Fiscal. Votação.",
+      "Plano de Atividades da APAEF para 2026/27. Votação.",
+      "Outros assuntos."
+    ],
+    "nota": "Se às 18h não estiverem mais de metade dos sócios, a reunião começa às 18h30 com quem estiver.",
+    "ficheiro": "docs/convocatoria-ag-2026-10-26.jpg",
+    "destaque": true
+  },
+  {
+    "id": "plano-2026-27",
+    "titulo": "Plano de Atividades 2026/27",
+    "tipo": "plano",
+    "data": "2026-10-26",
+    "resumo": "As atividades do ano, aprovadas na Assembleia Geral.",
+    "ficheiro": "",
+    "rascunho": true
+  },
+  {
+    "id": "estatutos",
+    "titulo": "Estatutos da APAEF",
+    "tipo": "estatutos",
+    "data": "",
+    "resumo": "As regras da associação.",
+    "ficheiro": ""
+  }
+]

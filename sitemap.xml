@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://apaefao.pt/</loc><lastmod>2026-10-14</lastmod></url>
+  <url><loc>https://apaefao.pt/</loc><lastmod>2026-10-25</lastmod></url>
   <url><loc>https://apaefao.pt/halloween.html</loc><lastmod>2026-10-14</lastmod></url>
-  <url><loc>https://apaefao.pt/votar.html</loc><lastmod>2026-10-15</lastmod></url>
-  <url><loc>https://apaefao.pt/apoiantes.html</loc><lastmod>2026-10-23</lastmod></url>
+  <url><loc>https://apaefao.pt/apoiantes.html</loc><lastmod>2026-10-25</lastmod></url>
+  <url><loc>https://apaefao.pt/documentos.html</loc><lastmod>2026-10-25</lastmod></url>
+  <url><loc>https://apaefao.pt/socios.html</loc><lastmod>2026-10-25</lastmod></url>
+  <url><loc>https://apaefao.pt/quem-somos.html</loc><lastmod>2026-10-25</lastmod></url>
+  <url><loc>https://apaefao.pt/sugestoes.html</loc><lastmod>2026-10-25</lastmod></url>
+  <url><loc>https://apaefao.pt/links.html</loc><lastmod>2026-10-25</lastmod></url>
+  <url><loc>https://apaefao.pt/noticias.html</loc><lastmod>2026-10-25</lastmod></url>
+  <url><loc>https://apaefao.pt/agenda.html</loc><lastmod>2026-10-25</lastmod></url>
 </urlset>

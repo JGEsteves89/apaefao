@@ -1,0 +1,136 @@
+{
+  "orgaos": [
+    {
+      "nome": "Direção",
+      "membros": [
+        {
+          "cargo": "Presidente",
+          "nome": "Daniela Sousa",
+          "publicar": true
+        },
+        {
+          "cargo": "Vice-presidente",
+          "nome": "Virgílio Gomes",
+          "publicar": true
+        },
+        {
+          "cargo": "Tesoureira",
+          "nome": "Liliana Sousa",
+          "publicar": true
+        },
+        {
+          "cargo": "1.º Secretário",
+          "nome": "Catarina Vasconcelos",
+          "publicar": true
+        },
+        {
+          "cargo": "2.º Secretário",
+          "nome": "Teresa Pereira",
+          "publicar": true
+        },
+        {
+          "cargo": "Vogal",
+          "nome": "Raquel Novo",
+          "publicar": true
+        },
+        {
+          "cargo": "Vogal",
+          "nome": "Tiago Priegue",
+          "publicar": true
+        }
+      ]
+    },
+    {
+      "nome": "Mesa da AG",
+      "membros": [
+        {
+          "cargo": "Presidente",
+          "nome": "Ana Filipa Bandeira",
+          "publicar": true
+        },
+        {
+          "cargo": "1.º Secretário",
+          "nome": "Raquel Lopes",
+          "publicar": true
+        },
+        {
+          "cargo": "2.º Secretário",
+          "nome": "Joana Patrão",
+          "publicar": true
+        }
+      ]
+    },
+    {
+      "nome": "Conselho Fiscal",
+      "membros": [
+        {
+          "cargo": "Presidente",
+          "nome": "Hugo Baptista",
+          "publicar": true
+        },
+        {
+          "cargo": "Vogal",
+          "nome": "Ana Rita Anjo",
+          "publicar": true
+        },
+        {
+          "cargo": "Vogal",
+          "nome": "Hélder Tenente",
+          "publicar": true
+        }
+      ]
+    }
+  ],
+  "representantes": [
+    {
+      "turma": "Pré A",
+      "nome": "Hélder Tenente",
+      "publicar": true
+    },
+    {
+      "turma": "Pré B",
+      "nome": "Henann Costa Rodrigues",
+      "publicar": true
+    },
+    {
+      "turma": "Pré C",
+      "nome": "Márcia Rodrigues",
+      "publicar": true
+    },
+    {
+      "turma": "Pré D",
+      "nome": "Nuno Pereira",
+      "publicar": true
+    },
+    {
+      "turma": "1.º ano",
+      "nome": "Bi Oliveira",
+      "publicar": true
+    },
+    {
+      "turma": "2.º ano",
+      "nome": "Ana Rita Anjo",
+      "publicar": true
+    },
+    {
+      "turma": "3.º A",
+      "nome": "Teresa Pereira",
+      "publicar": true
+    },
+    {
+      "turma": "3.º B",
+      "nome": "Hugo Baptista",
+      "publicar": true
+    },
+    {
+      "turma": "4.º A",
+      "nome": "Raquel Novo",
+      "publicar": true
+    },
+    {
+      "turma": "4.º B",
+      "nome": "Catarina Vasconcelos",
+      "publicar": true
+    }
+  ]
+}

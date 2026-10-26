@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sugestões e reclamações — APAEF Fão</title>
+  <meta name="description" content="Tens uma ideia ou viste alguma coisa que pode melhorar na escola? Diz à APAEF. Pode ser anónimo.">
+  <link rel="canonical" href="https://apaefao.pt/sugestoes.html">
+  <meta name="theme-color" content="#ebce58">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="APAEF Fão">
+  <meta property="og:locale" content="pt_PT">
+  <meta property="og:url" content="https://apaefao.pt/sugestoes.html">
+  <meta property="og:title" content="Sugestões e reclamações — APAEF">
+  <meta property="og:description" content="Tens uma ideia ou viste alguma coisa que pode melhorar na escola? Diz à APAEF. Pode ser anónimo.">
+  <meta property="og:image" content="https://apaefao.pt/img/preview.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="457">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="favicon.ico" sizes="any">
+  <link rel="icon" href="favicon-96.png" type="image/png" sizes="96x96">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="manifest" href="site.webmanifest">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topo">
+    <div class="wrap">
+      <a class="marca" href="./"><img src="img/logo.png" alt="Logótipo da APAEF" width="52" height="52"><span>APAEF</span></a>
+      <button class="menu-botao" type="button" aria-expanded="false" aria-controls="menu"><span class="abrir">☰ Menu</span><span class="fechar">✕ Fechar</span></button>
+      <nav class="menu" id="menu" aria-label="Menu principal">
+        <a href="agenda.html"><span aria-hidden="true">📅</span>Agenda</a>
+        <a href="documentos.html"><span aria-hidden="true">📄</span>Documentos</a>
+        <a href="socios.html"><span aria-hidden="true">🤝</span>Sócios</a>
+        <a href="quem-somos.html"><span aria-hidden="true">🌻</span>Quem somos</a>
+        <a href="noticias.html"><span aria-hidden="true">📰</span>Notícias</a>
+        <a href="sugestoes.html"><span aria-hidden="true">💬</span>Sugestões</a>
+        <a href="links.html"><span aria-hidden="true">🔗</span>Links</a>
+        <a href="apoiantes.html"><span aria-hidden="true">💛</span>Apoiantes</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap pagina">
+    <h1 class="titulo-pagina">Sugestões e reclamações 💬</h1>
+    <p class="intro">Viste alguma coisa que pode melhorar? Tens uma ideia? Diz-nos. Lemos tudo.</p>
+    <p class="nota">Mensagens anónimas também contam. Não escrevas dados de crianças.</p>
+
+    <div class="carta-zona">
+      <form id="form-sugestao" class="formulario carta" novalidate>
+        <fieldset class="escolha">
+          <legend>Sobre o quê?</legend>
+          <label><input type="radio" name="tema" value="Cantina" required> Cantina</label>
+          <label><input type="radio" name="tema" value="Recreio"> Recreio</label>
+          <label><input type="radio" name="tema" value="Atividades"> Atividades</label>
+          <label><input type="radio" name="tema" value="Transporte"> Transporte</label>
+          <label><input type="radio" name="tema" value="Outro"> Outro</label>
+        </fieldset>
+        <label>A tua mensagem
+          <textarea name="mensagem" required maxlength="1500" rows="6"></textarea>
+        </label>
+        <div class="campos">
+          <label>Nome <small>(opcional)</small>
+            <input name="nome" maxlength="80" autocomplete="name">
+          </label>
+          <label>Email <small>(opcional)</small>
+            <input name="email" type="email" maxlength="120" autocomplete="email">
+          </label>
+        </div>
+        <label class="check"><input type="checkbox" name="resposta"> <span>Quero resposta (deixa o teu email)</span></label>
+        <p class="erro-form" role="alert"></p>
+        <button class="botao botao-grande" type="submit">Enviar ✉️</button>
+      </form>
+      <div class="envelope" hidden aria-hidden="true"></div>
+      <div id="sugestao-ok" class="sucesso" hidden tabindex="-1">
+        <h3>Recebido! ✉️</h3>
+        <p>A Direção vai ler. Obrigado por ajudares a melhorar a escola.</p>
+        <button class="b-peq" type="button" id="outra">Escrever outra</button>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <a class="botao botao-fb" href="https://www.facebook.com/profile.php?id=61555363610929" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.5 22v-8h2.7l.4-3.2h-3.1V8.8c0-.9.3-1.5 1.6-1.5h1.7V4.4c-.3 0-1.3-.1-2.5-.1-2.5 0-4.1 1.5-4.1 4.2v2.3H7.4V14h2.8v8h3.3z"/></svg>
+        Seguir no Facebook
+      </a>
+      <div>APAEF · Escola Básica de Fão, Rua da Caixa de Água, 4740-364 Fão · <a href="mailto:apaefao@gmail.com">apaefao@gmail.com</a></div>
+    </div>
+  </footer>
+
+  <script src="js/config.js"></script>
+  <script src="js/comum.js"></script>
+  <script src="js/sugestoes.js"></script>
+  <!-- Contador de visitas (GoatCounter: sem cookies) -->
+  <script data-goatcounter="https://apaefao.goatcounter.com/count"
+          async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>

@@ -1,6 +1,6 @@
 // Google Apps Script — recebe as respostas dos formulários do site e guarda numa Google Sheet.
 // Como instalar (por agora numa conta Google pessoal do Jose; depois mudar para apaefao@gmail.com):
-// 1. Criar uma Google Sheet "Inscrições APAEF".
+// 1. A Google Sheet chama-se "Votacoes APAEF" (é lá que está este código).
 // 2. Extensões → Apps Script → colar este código.
 // 3. Implementar → Nova implementação → Tipo "Aplicação Web"
 //    Executar como: Eu · Quem tem acesso: Qualquer pessoa.
@@ -14,6 +14,7 @@ const VOTACAO_FECHA = new Date("2026-10-26T00:00:00Z");
 function doPost(e) {
   const dados = JSON.parse(e.postData.contents);
   if (dados.evento === "votacao") return guardarVoto(dados);
+  if (CAMPOS_FORMULARIO[dados.evento]) return guardarFormulario(dados);
 
   const folha = SpreadsheetApp.getActiveSpreadsheet();
   const nome = dados.evento || "Respostas";
@@ -22,6 +23,27 @@ function doPost(e) {
   if (aba.getLastRow() === 0) aba.appendRow(campos);
   aba.appendRow(campos.map(c => dados[c] || ""));
   return ContentService.createTextOutput("ok");
+}
+
+// Ficha de sócio e sugestões: uma linha por envio, cada um na sua folha, e um email de aviso.
+// Por agora o aviso vai para o Jose (testes). Depois: apaefao@gmail.com.
+const EMAIL_AVISOS = "ijimiguel@gmail.com";
+const CAMPOS_FORMULARIO = {
+  socio: { folha: "socios", campos: ["aluno", "turma", "encarregado", "telefone", "email", "recibo", "nif", "reciboEmail", "imagem", "rgpd"] },
+  sugestao: { folha: "sugestoes", campos: ["tema", "mensagem", "nome", "email", "resposta"] },
+};
+
+function guardarFormulario(dados) {
+  if (dados.evento === "socio" && dados.rgpd !== true) return json({ ok: false, erro: "sem rgpd" });
+  const f = CAMPOS_FORMULARIO[dados.evento];
+  const folha = SpreadsheetApp.getActiveSpreadsheet();
+  const aba = folha.getSheetByName(f.folha) || folha.insertSheet(f.folha);
+  if (aba.getLastRow() === 0) aba.appendRow(["timestamp"].concat(f.campos));
+  const valores = f.campos.map(c => limpar(dados[c], c === "mensagem" ? 1500 : 120));
+  aba.appendRow([new Date()].concat(valores));
+  const assunto = dados.evento === "socio" ? "Nova ficha de sócio: " + valores[0] + " (" + valores[1] + ")" : "Nova sugestão: " + valores[0];
+  MailApp.sendEmail(EMAIL_AVISOS, "[APAEF site] " + assunto, f.campos.map((c, i) => c + ": " + valores[i]).join("\n"));
+  return json({ ok: true });
 }
 
 function doGet(e) {

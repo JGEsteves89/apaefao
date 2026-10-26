@@ -1,0 +1,222 @@
+[
+ {
+  "fim": "2026-10-31",
+  "quando": "Sábado, 31 out · 17h–19h",
+  "etiqueta": "novo!",
+  "confirmar": false,
+  "titulo": "Doçura ou Travessura",
+  "texto": "Pela primeira vez, vamos andar mascarados pelas ruas de Fão à procura de doces! Tragam as fantasias mais assustadoras e um saco bem grande.",
+  "imagem": "img/halloween.jpg",
+  "alt": "Abóboras de Halloween",
+  "emoji": ""
+ },
+ {
+  "fim": "2026-11-05",
+  "quando": "5 nov",
+  "etiqueta": "novo!",
+  "confirmar": false,
+  "titulo": "Dia do Cinema",
+  "texto": "Com a Esposende 2000, a APAEF oferece a cada criança da escola um bilhete de cinema. Um dia de filme para todos!",
+  "imagem": "",
+  "alt": "",
+  "emoji": "🎬"
+ },
+ {
+  "fim": "2026-11-11",
+  "quando": "Quarta, 11 nov · na escola",
+  "etiqueta": "",
+  "confirmar": false,
+  "titulo": "Magusto",
+  "texto": "Chegou o S. Martinho! As crianças fazem os saquinhos na sala. A APAEF ajuda com o carvão e a assadora.",
+  "imagem": "img/magusto.jpg",
+  "alt": "Cartaz do Magusto da APAEF",
+  "emoji": ""
+ },
+ {
+  "fim": "2026-11-30",
+  "quando": "novembro",
+  "etiqueta": "",
+  "confirmar": false,
+  "titulo": "Rifas de S. Martinho",
+  "texto": "Para melhorar o recreio. Este ano tentamos enviar menos: se possível, só 1 bloco de 15 rifas por aluno.",
+  "imagem": "img/rifas.jpg",
+  "alt": "Castanhas de outono",
+  "emoji": ""
+ },
+ {
+  "fim": "2026-11-27",
+  "quando": "Sexta, 27 nov · Centro Escolar de Fão",
+  "etiqueta": "nova data",
+  "confirmar": false,
+  "titulo": "Feirinha de Outono",
+  "texto": "Doces caseiros, compotas, legumes e fruta da época, roupa e brinquedos. Uma manhã de partilha em que cada compra ajuda a nossa escola.",
+  "imagem": "img/feirinha.jpg",
+  "alt": "Caixas com legumes e abóboras da Feirinha de Outono",
+  "emoji": ""
+ },
+ {
+  "fim": "2026-12-12",
+  "quando": "Sábado, 12 dez",
+  "etiqueta": "nova data",
+  "confirmar": false,
+  "titulo": "Jantar de Natal",
+  "texto": "Uma noite em família à volta da mesa, com surpresas e muita animação. Este ano é ao sábado, para ser mais fácil para todos. As inscrições abrem mais perto da data.",
+  "imagem": "img/jantar-natal.jpg",
+  "alt": "Cartaz do Jantar de Natal da APAEF",
+  "emoji": ""
+ },
+ {
+  "fim": "2026-12-15",
+  "quando": "dezembro",
+  "etiqueta": "data a confirmar",
+  "confirmar": true,
+  "titulo": "Foto de Natal",
+  "texto": "A Foto de Natal está de volta, para guardar a magia desta época com um sorriso.",
+  "imagem": "img/natal.jpg",
+  "alt": "Luzes de Natal",
+  "emoji": ""
+ },
+ {
+  "fim": "2026-12-15",
+  "quando": "dezembro",
+  "etiqueta": "data a confirmar",
+  "confirmar": true,
+  "titulo": "Cabaz de Natal e Rifas",
+  "texto": "Juntamos donativos e sorteamos um cabaz de Natal. Cada rifa ajuda a escola.",
+  "imagem": "",
+  "alt": "",
+  "emoji": "🎁"
+ },
+ {
+  "fim": "2027-01-05",
+  "quando": "5 jan · Porto",
+  "etiqueta": "novo!",
+  "confirmar": false,
+  "titulo": "Espetáculo no Gelo",
+  "texto": "Os alunos vão ao Porto ver um espetáculo no gelo.",
+  "imagem": "",
+  "alt": "",
+  "emoji": "⛸️"
+ },
+ {
+  "fim": "2027-01-31",
+  "quando": "janeiro · fins de semana",
+  "etiqueta": "",
+  "confirmar": false,
+  "titulo": "Cantar as Janeiras",
+  "texto": "Bombos, vozes e casacos quentes: vamos cantar as Janeiras com os alunos, aos fins de semana, pelas ruas de Fão e Apúlia.",
+  "imagem": "img/janeiras.jpg",
+  "alt": "Cartaz Vamos cantar as Janeiras",
+  "emoji": ""
+ },
+ {
+  "fim": "2027-02-06",
+  "quando": "5 ou 6 fev",
+  "etiqueta": "dia a definir",
+  "confirmar": true,
+  "titulo": "Noite das Sopas",
+  "texto": "Regressa um dos nossos eventos preferidos! Este ano mais cedo, em fevereiro, para uma noite bem aconchegante.",
+  "imagem": "img/noite-sopas.jpg",
+  "alt": "Cartaz da Noite das Sopas",
+  "emoji": ""
+ },
+ {
+  "fim": "2027-02-10",
+  "quando": "fevereiro",
+  "etiqueta": "data a confirmar",
+  "confirmar": true,
+  "titulo": "Carnaval · Baile de Máscaras",
+  "texto": "Em conjunto com a Junta de Freguesia. Se houver desfile na rua, acabamos com uma festa na escola, com DJ e comes e bebes!",
+  "imagem": "img/carnaval.jpg",
+  "alt": "Máscaras e confetes de Carnaval",
+  "emoji": ""
+ },
+ {
+  "fim": "2027-03-19",
+  "quando": "março · última semana de aulas",
+  "etiqueta": "",
+  "confirmar": false,
+  "titulo": "Páscoa",
+  "texto": "Workshop de ovos de cerâmica (ou pintura de ovos cozidos trazidos de casa). E a venda e o sorteio das Rifas de Páscoa.",
+  "imagem": "",
+  "alt": "",
+  "emoji": "🥚"
+ },
+ {
+  "fim": "2027-03-19",
+  "quando": "19 mar",
+  "etiqueta": "novo!",
+  "confirmar": false,
+  "titulo": "Dia da Árvore",
+  "texto": "Cada turma planta uma árvore: 10 árvores novas para dar sombra e beleza ao recreio. Com a Câmara e a Junta de Freguesia.",
+  "imagem": "",
+  "alt": "",
+  "emoji": "🌳"
+ },
+ {
+  "fim": "2027-04-02",
+  "quando": "2 abr",
+  "etiqueta": "",
+  "confirmar": false,
+  "titulo": "Marchas Luminosas",
+  "texto": "Luzes, música e muitos ensaios: os nossos pequenos voltam a marchar nas festas do Senhor de Fão.",
+  "imagem": "img/marchas.jpg",
+  "alt": "Cartaz das Marchas Luminosas",
+  "emoji": ""
+ },
+ {
+  "fim": "2027-04-30",
+  "quando": "3.º período",
+  "etiqueta": "data a confirmar",
+  "confirmar": true,
+  "titulo": "Feira do Livro · novo formato",
+  "texto": "Cada aluno doa um livro usado. No dia da feira, cada criança recebe um livro por sorteio: todos levam um livro para casa! E vamos tentar uma peça de teatro do pré-escolar.",
+  "imagem": "img/feira-livro.jpg",
+  "alt": "Cartaz da Feira do Livro",
+  "emoji": ""
+ },
+ {
+  "fim": "2027-05-31",
+  "quando": "um sábado",
+  "etiqueta": "data a confirmar",
+  "confirmar": true,
+  "titulo": "Dia da Família",
+  "texto": "Em vez do Dia do Pai e do Dia da Mãe: um sábado com atividades para toda a família. Futebol, penteados, jogos tradicionais como a sueca e lanches.",
+  "imagem": "",
+  "alt": "",
+  "emoji": "👨‍👩‍👧"
+ },
+ {
+  "fim": "2027-06-01",
+  "quando": "1 jun",
+  "etiqueta": "",
+  "confirmar": false,
+  "titulo": "Dia Mundial da Criança",
+  "texto": "Um dia de animação no recreio: pinturas faciais, insufláveis, brincadeiras ao ar livre e um piquenique especial.",
+  "imagem": "",
+  "alt": "",
+  "emoji": "🎈"
+ },
+ {
+  "fim": "2027-06-05",
+  "quando": "5 jun",
+  "etiqueta": "",
+  "confirmar": false,
+  "titulo": "Dia da Bicicleta",
+  "texto": "Um dia para andar de bicicleta e fazer desporto na escola.",
+  "imagem": "",
+  "alt": "",
+  "emoji": "🚲"
+ },
+ {
+  "fim": "2027-06-25",
+  "quando": "junho",
+  "etiqueta": "data a confirmar",
+  "confirmar": true,
+  "titulo": "Festa de Final de Ano",
+  "texto": "O ano termina em festa! Canções, um arraial e uma grande homenagem aos nossos finalistas.",
+  "imagem": "img/festa.jpg",
+  "alt": "Bandeirinhas de festa",
+  "emoji": ""
+ }
+]
