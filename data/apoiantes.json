@@ -5,7 +5,7 @@
   "evento": "",
   "logo": "img/apoiantes/casa-penetra.jpg",
   "tipo": "loja",
-  "maps_url": "https://maps.google.com/?cid=3777675272025239271",
+  "maps_url": "https://www.google.com/maps/search/?api=1&query=CMT%20%E2%80%93%20Casa%20Penetra%2C%20F%C3%A3o&query_place_id=ChIJhyrpzltLJA0R527XGaX_bDQ",
   "publicar": true,
   "tamanho": "largo"
  },
@@ -15,7 +15,7 @@
   "evento": "",
   "logo": "img/apoiantes/florista-bela-arte.jpg",
   "tipo": "florista",
-  "maps_url": "https://maps.google.com/?cid=1245702966496861534",
+  "maps_url": "https://www.google.com/maps/search/?api=1&query=Florista%20Bela%20Arte%2C%20F%C3%A3o&query_place_id=ChIJ5_pRWKFLJA0RXh2yfT-gSRE",
   "publicar": true,
   "tamanho": "pequeno"
  },
@@ -25,7 +25,7 @@
   "evento": "",
   "logo": "img/apoiantes/chale-tapas-bar.jpg",
   "tipo": "restaurante",
-  "maps_url": "https://maps.google.com/?cid=17522394796189714683",
+  "maps_url": "https://www.google.com/maps/search/?api=1&query=Chal%C3%A9%20Tapas%20Bar%2C%20F%C3%A3o&query_place_id=ChIJfZTGNedLJA0R-4gKwToNLPM",
   "publicar": true,
   "tamanho": "pequeno"
  },
@@ -35,7 +35,7 @@
   "evento": "",
   "logo": "",
   "tipo": "dentista",
-  "maps_url": "https://maps.google.com/?cid=6608242803670963054",
+  "maps_url": "https://www.google.com/maps/search/?api=1&query=OfirDent%2C%20F%C3%A3o&query_place_id=ChIJi2J7VOdLJA0RbtNWZtExtVs",
   "publicar": true,
   "tamanho": "grande"
  },
@@ -65,7 +65,7 @@
   "evento": "Magusto",
   "logo": "img/apoiantes/supermercado-ramalhao.jpg",
   "tipo": "supermercado",
-  "maps_url": "https://www.google.com/maps/place/?q=place_id:ChIJO1xgYd5LJA0RHo5goycyXEU",
+  "maps_url": "https://www.google.com/maps/search/?api=1&query=Supermercado%20Ramalh%C3%A3o%2C%20F%C3%A3o&query_place_id=ChIJO1xgYd5LJA0RHo5goycyXEU",
   "publicar": true,
   "tamanho": "pequeno"
  },
@@ -75,7 +75,7 @@
   "evento": "",
   "logo": "img/apoiantes/restaurante-paladar.jpg",
   "tipo": "restaurante",
-  "maps_url": "https://www.google.com/maps/place/?q=place_id:ChIJl558D_VLJA0RBaTuS1vDRkI",
+  "maps_url": "https://www.google.com/maps/search/?api=1&query=Restaurante%20Paladar%2C%20F%C3%A3o&query_place_id=ChIJl558D_VLJA0RBaTuS1vDRkI",
   "publicar": true,
   "tamanho": "pequeno"
  },
@@ -85,7 +85,7 @@
   "evento": "",
   "logo": "img/apoiantes/rituais-de-beleza.jpg",
   "tipo": "beleza",
-  "maps_url": "https://www.google.com/maps/place/?q=place_id:ChIJ1wUav95LJA0R58wAuYgrJ3U",
+  "maps_url": "https://www.google.com/maps/search/?api=1&query=Rituais%20de%20Beleza%2C%20F%C3%A3o&query_place_id=ChIJ1wUav95LJA0R58wAuYgrJ3U",
   "publicar": true,
   "tamanho": "alto"
  },
@@ -106,7 +106,7 @@
   "evento": "",
   "logo": "img/apoiantes/bica-dofir.jpg",
   "tipo": "cafe",
-  "maps_url": "https://www.google.com/maps/place/?q=place_id:ChIJhUkax19LJA0RO9oeZrZFQQM",
+  "maps_url": "https://www.google.com/maps/search/?api=1&query=Bica%20d%27Ofir%2C%20F%C3%A3o&query_place_id=ChIJhUkax19LJA0RO9oeZrZFQQM",
   "publicar": true,
   "tamanho": "pequeno"
  }
