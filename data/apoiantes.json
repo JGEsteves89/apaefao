@@ -1,7 +1,6 @@
 [
  {
   "nome": "CMT – Casa Penetra",
-  "oferta": "Kit de cremes",
   "evento": "",
   "logo": "img/apoiantes/casa-penetra.jpg",
   "tipo": "loja",
@@ -11,7 +10,6 @@
  },
  {
   "nome": "Florista Bela Arte",
-  "oferta": "Uma orquídea",
   "evento": "",
   "logo": "img/apoiantes/florista-bela-arte.jpg",
   "tipo": "florista",
@@ -21,7 +19,6 @@
  },
  {
   "nome": "Chalé Tapas Bar",
-  "oferta": "Um bolo",
   "evento": "",
   "logo": "img/apoiantes/chale-tapas-bar.jpg",
   "tipo": "restaurante",
@@ -31,7 +28,6 @@
  },
  {
   "nome": "OfirDent",
-  "oferta": "Voucher de destartarização",
   "evento": "",
   "logo": "",
   "tipo": "dentista",
@@ -41,7 +37,6 @@
  },
  {
   "nome": "Empresa anónima",
-  "oferta": "Roupa de criança",
   "evento": "",
   "logo": "",
   "tipo": "roupa",
@@ -51,7 +46,6 @@
  },
  {
   "nome": "Apoiante privado",
-  "oferta": "Vinho do Porto",
   "evento": "",
   "logo": "",
   "tipo": "particular",
@@ -61,7 +55,6 @@
  },
  {
   "nome": "Supermercado Ramalhão",
-  "oferta": "Carvão para o Magusto",
   "evento": "Magusto",
   "logo": "img/apoiantes/supermercado-ramalhao.jpg",
   "tipo": "supermercado",
@@ -71,7 +64,6 @@
  },
  {
   "nome": "Restaurante Paladar",
-  "oferta": "Workshop de Natal para uma criança",
   "evento": "",
   "logo": "img/apoiantes/restaurante-paladar.jpg",
   "tipo": "restaurante",
@@ -81,7 +73,6 @@
  },
  {
   "nome": "Rituais de Beleza",
-  "oferta": "Voucher de massagem",
   "evento": "",
   "logo": "img/apoiantes/rituais-de-beleza.jpg",
   "tipo": "beleza",
@@ -91,7 +82,6 @@
  },
  {
   "nome": "Doce e Granulado",
-  "oferta": "Brigadeiros ou cookies",
   "evento": "",
   "logo": "img/apoiantes/doce-e-granulado.jpg",
   "logoInteiro": true,
@@ -102,7 +92,6 @@
  },
  {
   "nome": "Bica d'Ofir",
-  "oferta": "Vale ou produtos",
   "evento": "",
   "logo": "img/apoiantes/bica-dofir.jpg",
   "tipo": "cafe",

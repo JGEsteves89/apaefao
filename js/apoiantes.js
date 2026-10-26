@@ -10,7 +10,7 @@ const ICONES = {
   supermercado: "🛒", loja: "🧴", roupa: "👕", particular: "💛",
 };
 
-function cartaoApoiante(a, i, comOferta) {
+function cartaoApoiante(a, i) {
   const el = document.createElement("div");
   el.className = "apoiante";
   const imagem = a.logo
@@ -19,8 +19,7 @@ function cartaoApoiante(a, i, comOferta) {
   const link = a.maps_url
     ? `<a href="${escapar(a.maps_url)}" target="_blank" rel="noopener">${a.maps_url.includes("instagram.com") ? "📷 Ver no Instagram" : "📍 Ver no mapa"}</a>`
     : "";
-  el.innerHTML = imagem + `<h3>${escapar(a.nome)}</h3>` +
-    (comOferta && a.oferta ? `<p class="apoiante-oferta">${escapar(a.oferta)}</p>` : "") + link;
+  el.innerHTML = imagem + `<h3>${escapar(a.nome)}</h3>` + link;
   return el;
 }
 
@@ -64,7 +63,7 @@ async function grelhaApoiantes(el, contador) {
     ...por.largo, ...por.grande.slice(1), ...por.pequeno,
   ];
   ordem.forEach(([a, i]) => {
-    const c = cartaoApoiante(a, i, true);
+    const c = cartaoApoiante(a, i);
     c.classList.add(tamanho(a));
     el.appendChild(c);
   });

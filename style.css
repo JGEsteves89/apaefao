@@ -437,7 +437,6 @@ a.tile:active { transform: translate(1px, 1px); box-shadow: 2px 2px 0 var(--linh
 .apoiante-img img.inteiro { object-fit: contain; }
 .apoiante-img.icone { display: grid; place-items: center; font-size: 52px; background: hsl(var(--h) 60% 88%); }
 .apoiante h3 { font-size: 17px; margin: 0; }
-.apoiante-oferta { margin: 0; font-size: 14px; color: var(--suave); }
 .apoiante a { margin-top: auto; display: inline-flex; align-items: center; min-height: 44px; font-size: 14px; font-weight: 800; color: var(--suave); }
 .apoiante a:hover { color: var(--tinta); }
 .ver-apoiantes { text-align: center; margin: 14px 0 0; }
@@ -459,7 +458,6 @@ a.tile:active { transform: translate(1px, 1px); box-shadow: 2px 2px 0 var(--linh
 .grelha-apoiantes .apoiante { min-width: 0; gap: 0; padding: 0; overflow: hidden; }
 .grelha-apoiantes .apoiante-img { aspect-ratio: auto; flex: 1; min-height: 0; border: 0; border-radius: 0; }
 .grelha-apoiantes .apoiante h3 { padding: 8px 10px 0; }
-.grelha-apoiantes .apoiante-oferta { padding: 0 10px; }
 .grelha-apoiantes .apoiante a { margin-top: 0; padding: 0 10px; }
 .grelha-apoiantes .apoiante > :last-child:not(a) { padding-bottom: 10px; }
 .grelha-apoiantes .grande { grid-column: span 2; grid-row: span 2; }
