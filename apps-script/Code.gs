@@ -14,6 +14,7 @@ const VOTACAO_FECHA = new Date("2026-10-26T00:00:00Z");
 function doPost(e) {
   const dados = JSON.parse(e.postData.contents);
   if (dados.evento === "votacao") return guardarVoto(dados);
+  if (dados.evento === "responsavel") return guardarResponsavel(dados);
   if (CAMPOS_FORMULARIO[dados.evento]) return guardarFormulario(dados);
 
   const folha = SpreadsheetApp.getActiveSpreadsheet();
@@ -48,6 +49,7 @@ function guardarFormulario(dados) {
 
 function doGet(e) {
   if (e && e.parameter && e.parameter.acao === "resultados") return json(resultados());
+  if (e && e.parameter && e.parameter.acao === "responsaveis") return json(responsaveis());
   return json({ ok: true });
 }
 
@@ -146,4 +148,46 @@ function limpar(texto, max) {
 
 function json(obj) {
   return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON);
+}
+
+// ---------- Halloween: responsáveis de cada percurso (página percursos-halloween) ----------
+// Folha "responsaveis": uma linha por inscrição. O telemóvel só fica na folha (nunca aparece no site).
+// Para tirar um nome da página: escrever "sim" na coluna "ocultar".
+function abaResponsaveis() {
+  const folha = SpreadsheetApp.getActiveSpreadsheet();
+  const aba = folha.getSheetByName("responsaveis") || folha.insertSheet("responsaveis");
+  if (aba.getLastRow() === 0) aba.appendRow(["timestamp", "percurso", "nome", "telemovel", "ocultar (escrever sim)"]);
+  return aba;
+}
+
+function guardarResponsavel(dados) {
+  const percurso = parseInt(dados.percurso, 10);
+  const nome = limpar(dados.nome, 60);
+  if (!percurso || percurso < 1 || percurso > 20 || !nome || dados.autoriza !== true) return json({ ok: false });
+  const lock = LockService.getScriptLock();
+  lock.waitLock(10000);
+  try {
+    abaResponsaveis().appendRow([new Date(), percurso, nome, limpar(dados.telemovel, 20), ""]);
+  } finally {
+    lock.releaseLock();
+  }
+  CacheService.getScriptCache().remove("responsaveis");
+  MailApp.sendEmail(EMAIL_AVISOS, "[APAEF site] Responsável Halloween: percurso " + percurso, nome + (dados.telemovel ? " · " + limpar(dados.telemovel, 20) : ""));
+  return json({ ok: true });
+}
+
+// Só nomes por percurso (sem telemóvel).
+function responsaveis() {
+  const cache = CacheService.getScriptCache();
+  const guardado = cache.get("responsaveis");
+  if (guardado) return JSON.parse(guardado);
+  const aba = abaResponsaveis(), r = {};
+  if (aba.getLastRow() > 1) {
+    aba.getRange(2, 1, aba.getLastRow() - 1, 5).getValues().forEach(([, percurso, nome, , ocultar]) => {
+      if (!percurso || !nome || /^(sim|s|x|true)$/i.test(String(ocultar).trim())) return;
+      (r[percurso] = r[percurso] || []).push(limpar(nome, 60));
+    });
+  }
+  cache.put("responsaveis", JSON.stringify(r), 30);
+  return r;
 }
