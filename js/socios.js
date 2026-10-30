@@ -17,7 +17,7 @@
     ref.textContent = "QUOTA " + aluno + " " + turma;
     mail.href = "mailto:apaefao@gmail.com?subject=" + encodeURIComponent("Comprovativo quota " + aluno + " " + turma);
 
-    // NIF do aluno e recibo por email: só para quem quer recibo.
+    // NIF do encarregado de educação e recibo por email: só para quem quer recibo.
     const querRecibo = form.recibo.value === "sim";
     seRecibo.hidden = !querRecibo;
     form.nif.required = querRecibo;
@@ -33,7 +33,7 @@
     erro.textContent = "";
     if (!form.checkValidity()) {
       erro.textContent = form.rgpd.checked
-        ? "Falta preencher alguma coisa. O NIF do aluno tem 9 números."
+        ? "Falta preencher alguma coisa. O NIF do encarregado de educação tem 9 números."
         : "Falta preencher alguma coisa, e aceitar a última caixa.";
       form.reportValidity();
       return;
