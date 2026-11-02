@@ -15,6 +15,7 @@ function doPost(e) {
   const dados = JSON.parse(e.postData.contents);
   if (dados.evento === "votacao") return guardarVoto(dados);
   if (dados.evento === "responsavel") return guardarResponsavel(dados);
+  if (dados.evento === "foto") return mudarFoto(dados);
   if (CAMPOS_FORMULARIO[dados.evento]) return guardarFormulario(dados);
 
   const folha = SpreadsheetApp.getActiveSpreadsheet();
@@ -127,6 +128,30 @@ function juntarDonativos() {
   Logger.log(n + " ofertas passadas para a folha apoiantes.");
 }
 
+// Muda a "foto" e/ou o "link" de um apoiante (usado pelo assistente do Jose quando junta uma imagem ou um link ao site).
+// Só funciona com a chave secreta: Apps Script → Definições do projeto → Propriedades do script → CHAVE_ADMIN.
+// A chave nunca está neste ficheiro.
+function mudarFoto(d) {
+  const chave = PropertiesService.getScriptProperties().getProperty("CHAVE_ADMIN");
+  if (!chave || d.chave !== chave) return json({ ok: false, erro: "sem autorização" });
+  const foto = String(d.foto || "").trim(), link = String(d.link || "").trim();
+  if (foto && !/^(img\/apoiantes\/[a-z0-9-]+\.(jpg|png)|https:\/\/\S+)$/.test(foto)) return json({ ok: false, erro: "foto inválida" });
+  if (link && !/^https:\/\/\S+$/.test(link)) return json({ ok: false, erro: "link inválido" });
+  if (!foto && !link) return json({ ok: false, erro: "nada para mudar" });
+  const aba = abaApoiantes(), cab = cabecalho(aba);
+  const cNome = cab.indexOf("nome"), cFoto = cab.indexOf("foto"), cLink = cab.indexOf("link");
+  const nomes = aba.getRange(1, cNome + 1, aba.getLastRow(), 1).getValues().map(l => String(l[0]).trim().toLowerCase());
+  const alvo = String(d.nome || "").trim().toLowerCase();
+  const linhas = nomes.map((n, i) => n === alvo ? i + 1 : 0).filter(i => i > 1);
+  if (!linhas.length) return json({ ok: false, erro: "não encontrei " + d.nome });
+  linhas.forEach(l => {
+    if (foto) aba.getRange(l, cFoto + 1).setValue(foto);
+    if (link) aba.getRange(l, cLink + 1).setValue(link);
+  });
+  CacheService.getScriptCache().remove("apoiantes");
+  return json({ ok: true, linhas: linhas.length });
+}
+
 function sim(v) { return v === true || /^(sim|s|x|true|verdadeiro)$/i.test(String(v).trim()); }
 
 function tamanhoApoiante(valor) {
@@ -140,15 +165,22 @@ function apoiantes() {
   if (guardado) return JSON.parse(guardado);
   const linhas = abaApoiantes().getDataRange().getValues();
   const cab = linhas.shift().map(c => String(c).trim().toLowerCase());
-  const lista = linhas.map(l => Object.fromEntries(cab.map((c, i) => [c, l[i]])))
+  // Várias linhas com o mesmo nome (ex.: "Pais e amigos", ou uma loja que ajuda duas vezes) → um só cartão; os valores somam.
+  const porNome = {};
+  linhas.map(l => Object.fromEntries(cab.map((c, i) => [c, l[i]])))
     .filter(a => sim(a.publicar) && String(a.nome).trim() && !/^(não|nao|n|false)$/i.test(String(a["aceita aparecer"]).trim()))
-    .map(a => {
+    .forEach(a => {
+      const nome = limpar(a.nome, 80), chave = nome.toLowerCase();
       const foto = String(a.foto || "").trim(), link = String(a.link || "").trim();
-      return {
-        nome: limpar(a.nome, 80), tipo: limpar(a["tipo de negócio"], 30).toLowerCase(), tamanho: tamanhoApoiante(a["valor estimado €"]),
-        logo: /^(img\/|https:\/\/)/.test(foto) ? foto : "", maps_url: /^https:\/\//.test(link) ? link : "", publicar: true,
-      };
+      const c = porNome[chave] = porNome[chave] || { nome, tipo: "", valor: 0, logo: "", maps_url: "" };
+      c.tipo = c.tipo || limpar(a["tipo de negócio"], 30).toLowerCase();
+      c.valor += parseFloat(String(a["valor estimado €"]).replace(",", ".")) || 0;
+      c.logo = c.logo || (/^(img\/|https:\/\/)/.test(foto) ? foto : "");
+      c.maps_url = c.maps_url || (/^https:\/\//.test(link) ? link : "");
     });
+  const lista = Object.values(porNome).map(c => ({
+    nome: c.nome, tipo: c.tipo, tamanho: tamanhoApoiante(c.valor), logo: c.logo, maps_url: c.maps_url, publicar: true,
+  }));
   cache.put("apoiantes", JSON.stringify(lista), 60);
   return lista;
 }

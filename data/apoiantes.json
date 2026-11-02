@@ -180,16 +180,32 @@
   "evento": "",
   "logo": "img/apoiantes/lavasec.jpg",
   "tipo": "lavandaria",
-  "maps_url": "https://www.google.com/maps/search/?api=1&query=Lavasec%20Lavandaria%2C%20F%C3%A3o&query_place_id=ChIJfZRX0lRLJA0RxauIL-95Oho",
+  "maps_url": "https://www.facebook.com/lavasec.pt/",
   "publicar": true,
   "tamanho": "largo"
  },
  {
   "nome": "Talho de Fão",
   "evento": "",
-  "logo": "",
+  "logo": "img/apoiantes/talho-de-fao.jpg",
   "tipo": "talho",
-  "maps_url": "https://www.google.com/maps/search/?api=1&query=Talho%20de%20F%C3%A3o&query_place_id=ChIJOcSGUABLJA0Rq9906Ia239Y",
+  "maps_url": "https://www.facebook.com/talhode.fao/",
+  "publicar": true,
+  "tamanho": "pequeno"
+ },
+ {
+  "nome": "Farmácia Higiénica",
+  "logo": "img/apoiantes/farmacia-higienica.jpg",
+  "tipo": "farmacia",
+  "maps_url": "https://www.google.com/maps/search/?api=1&query=Farm%C3%A1cia%20Higi%C3%A9nica%2C%20F%C3%A3o&query_place_id=ChIJxantVedLJA0RNC3OjjCMQ5k",
+  "publicar": true,
+  "tamanho": "pequeno"
+ },
+ {
+  "nome": "Centro Ótico de Fão",
+  "logo": "img/apoiantes/centro-otico-de-fao.jpg",
+  "tipo": "otica",
+  "maps_url": "https://www.facebook.com/OpticaliaFao",
   "publicar": true,
   "tamanho": "pequeno"
  }

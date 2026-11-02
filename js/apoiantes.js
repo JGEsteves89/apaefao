@@ -8,7 +8,7 @@
 const ICONES = {
   florista: "🌸", restaurante: "🍽️", cafe: "☕", pastelaria: "🍰", dentista: "🦷", beleza: "💆",
   supermercado: "🛒", loja: "🧴", roupa: "👕", particular: "💛",
-  desporto: "🏋️", barbearia: "💈", cabeleireiro: "💇", diversao: "🐒", tecnologia: "📱", lavandaria: "🧺", talho: "🥩",
+  desporto: "🏋️", barbearia: "💈", cabeleireiro: "💇", diversao: "🐒", tecnologia: "📱", lavandaria: "🧺", talho: "🥩", farmacia: "💊", otica: "👓",
 };
 
 function cartaoApoiante(a, i) {
@@ -18,7 +18,7 @@ function cartaoApoiante(a, i) {
     ? `<div class="apoiante-img"><img src="${escapar(a.logo)}" alt="${escapar(a.nome)}" loading="lazy"></div>`
     : `<div class="apoiante-img icone" style="--h:${Math.round(i * 137.5) % 360}" aria-hidden="true">${ICONES[a.tipo] || "💛"}</div>`;
   const link = a.maps_url
-    ? `<a href="${escapar(a.maps_url)}" target="_blank" rel="noopener">${a.maps_url.includes("instagram.com") ? "📷 Ver no Instagram" : "📍 Ver no mapa"}</a>`
+    ? `<a href="${escapar(a.maps_url)}" target="_blank" rel="noopener">${a.maps_url.includes("instagram.com") ? "📷 Ver no Instagram" : a.maps_url.includes("facebook.com") ? "👍 Ver no Facebook" : "📍 Ver no mapa"}</a>`
     : "";
   el.innerHTML = imagem + `<h3>${escapar(a.nome)}</h3>` + link;
   return el;
