@@ -45,7 +45,7 @@
   "tipo": "particular",
   "maps_url": "",
   "publicar": true,
-  "tamanho": "largo"
+  "tamanho": "grande"
  },
  {
   "nome": "Supermercado e Talho Ramalhão",
@@ -74,7 +74,6 @@
  {
   "nome": "Doce e Granulado",
   "logo": "img/apoiantes/doce-e-granulado.jpg",
-  "logoInteiro": true,
   "tipo": "pastelaria",
   "maps_url": "https://www.instagram.com/doce_e_granulado/",
   "publicar": true,
@@ -126,8 +125,7 @@
   "tipo": "beleza",
   "maps_url": "https://www.google.com/maps/search/?api=1&query=Ana%20Lopes%20Sa%C3%BAde%20e%20Bem%20Estar%2C%20Perelhal&query_place_id=ChIJp3hUjEJNJA0RsoS05SdNdbY",
   "publicar": true,
-  "tamanho": "largo",
-  "logoTopo": true
+  "tamanho": "largo"
  },
  {
   "nome": "Fanum Estética",

@@ -32,67 +32,104 @@ const EMAIL_AVISOS = "ijimiguel@gmail.com";
 const CAMPOS_FORMULARIO = {
   socio: { folha: "socios", campos: ["aluno", "turma", "encarregado", "telefone", "email", "recibo", "nif", "reciboEmail", "imagem", "rgpd"] },
   sugestao: { folha: "sugestoes", campos: ["tema", "mensagem", "nome", "email", "resposta"] },
-  // Quero ajudar (ajudar.html): ofertas para rifas, feira, dinheiro… O contacto e o valor ficam só na folha.
-  donativo: { folha: "donativos", campos: ["quem", "tipo", "oferta", "validade", "voucher", "para", "valor", "nif", "empresaOuParticular", "nome", "onde", "contacto", "angariadoPor", "mostrar"] },
+  // Quero ajudar (ajudar.html): cada oferta é uma linha na folha "apoiantes" (ver novoApoiante).
+  donativo: { folha: "apoiantes", campos: ["quem", "tipo", "oferta", "validade", "voucher", "para", "valor", "nif", "empresaOuParticular", "nome", "onde", "contacto", "angariadoPor", "mostrar"] },
 };
 
 function guardarFormulario(dados) {
   if (dados.evento === "socio" && dados.rgpd !== true) return json({ ok: false, erro: "sem rgpd" });
   const f = CAMPOS_FORMULARIO[dados.evento];
-  const folha = SpreadsheetApp.getActiveSpreadsheet();
-  const aba = folha.getSheetByName(f.folha) || folha.insertSheet(f.folha);
-  if (aba.getLastRow() === 0) aba.appendRow(["timestamp"].concat(f.campos));
   const valores = f.campos.map(c => limpar(dados[c], c === "mensagem" ? 1500 : c === "oferta" ? 500 : 120));
-  aba.appendRow([new Date()].concat(valores));
+  if (dados.evento === "donativo") novoApoiante(dados);
+  else {
+    const folha = SpreadsheetApp.getActiveSpreadsheet();
+    const aba = folha.getSheetByName(f.folha) || folha.insertSheet(f.folha);
+    if (aba.getLastRow() === 0) aba.appendRow(["timestamp"].concat(f.campos));
+    aba.appendRow([new Date()].concat(valores));
+  }
   const assunto = dados.evento === "socio" ? "Nova ficha de sócio: " + valores[0] + " (" + valores[1] + ")"
     : dados.evento === "donativo" ? "Nova oferta: " + valores[9] + " — " + valores[1]
     : "Nova sugestão: " + valores[0];
   let texto = f.campos.map((c, i) => c + ": " + valores[i]).join("\n");
-  if (dados.evento === "donativo" && dados.mostrar === true) {
-    novoApoiante(dados);
-    texto += "\n\nPara aparecer no site: folha \"apoiantes\" → marcar \"publicar\".";
-  }
+  if (dados.evento === "donativo" && dados.mostrar === true) texto += "\n\nPara aparecer no site: folha \"apoiantes\" → marcar \"publicar\".";
   MailApp.sendEmail(EMAIL_AVISOS, "[APAEF site] " + assunto, texto);
   return json({ ok: true });
 }
 
-// ---------- Apoiantes (página apoiantes.html e faixa da página inicial) ----------
-// Folha "apoiantes": uma linha por apoiante. O site só mostra as linhas com "publicar" marcado,
-// e só as colunas públicas (nome, tipo, tamanho, foto, link). Oferta, valor e quem conseguiu ficam só na folha.
-// "tamanho" vazio → vem do valor: grande ≥ 50 €, alto 35–49 €, largo 25–34 €, pequeno < 25 €.
-// "foto": caminho no site (img/apoiantes/x.jpg) ou link https. "foto inteira" = logótipo; "foto em cima" = não cortar o topo.
-const COLUNAS_APOIANTES = ["publicar", "nome", "tipo", "tamanho", "foto", "foto inteira", "foto em cima", "link",
-  "oferta", "valor €", "quem conseguiu", "origem", "data"];
+// ---------- Apoiantes e ofertas: uma só lista (folha "apoiantes") ----------
+// Uma linha por apoiante ou oferta. Os apoiantes antigos e cada envio do "Quero ajudar" ficam na mesma folha.
+// O site só mostra as linhas com "publicar" marcado (e nunca quem disse que não quer aparecer),
+// e só nome, tipo de negócio (ícone), foto e link. O resto (oferta, valor, contacto, NIF…) fica só na folha.
+// O tamanho do cartão vem do "valor estimado €": grande ≥ 50 €, alto 35–49 €, largo 25–34 €, pequeno < 25 €.
+// "foto": caminho no site (img/apoiantes/x.jpg) ou link https. Sem foto → ícone do tipo de negócio.
+const COLUNAS_APOIANTES = ["publicar", "nome", "tipo de negócio", "foto", "link", "oferta", "tipo de oferta",
+  "valor estimado €", "para", "validade", "quem faz o voucher", "empresa ou particular", "onde",
+  "contacto", "nif", "quem preencheu", "quem conseguiu", "aceita aparecer", "data"];
 
 function abaApoiantes() {
   const folha = SpreadsheetApp.getActiveSpreadsheet();
   let aba = folha.getSheetByName("apoiantes");
-  if (!aba) {
-    aba = folha.insertSheet("apoiantes");
-    aba.appendRow(COLUNAS_APOIANTES);
-    aba.setFrozenRows(1);
-  }
+  if (!aba) aba = folha.insertSheet("apoiantes");
+  if (aba.getLastRow() === 0) { aba.appendRow(COLUNAS_APOIANTES); aba.setFrozenRows(1); }
   return aba;
 }
 
-// Quem preencheu o "Quero ajudar" e aceitou aparecer: entra na folha por publicar (fica à espera do visto).
-function novoApoiante(d) {
-  const aba = abaApoiantes();
-  const linha = { publicar: false, nome: limpar(d.nome, 80), tipo: d.empresaOuParticular === "Particular" ? "particular" : "",
-    oferta: limpar(d.oferta, 500), "valor €": limpar(d.valor, 20), "quem conseguiu": limpar(d.angariadoPor, 80),
-    origem: "formulário", data: new Date() };
-  const cab = aba.getRange(1, 1, 1, aba.getLastColumn()).getValues()[0].map(c => String(c).trim().toLowerCase());
-  aba.appendRow(cab.map(c => c in linha ? linha[c] : (["foto inteira", "foto em cima"].includes(c) ? false : "")));
+function cabecalho(aba) {
+  return aba.getRange(1, 1, 1, aba.getLastColumn()).getValues()[0].map(c => String(c).trim().toLowerCase());
+}
+
+// Escreve uma linha pelos nomes das colunas (a ordem das colunas na folha pode mudar).
+function juntarLinha(aba, linha) {
+  const cab = cabecalho(aba);
+  aba.appendRow(cab.map(c => c in linha ? linha[c] : ""));
   const col = cab.indexOf("publicar") + 1;
   if (col) aba.getRange(aba.getLastRow(), col).insertCheckboxes();
+}
+
+// Uma oferta do "Quero ajudar" → uma linha nova, sem visto em "publicar".
+function linhaDoFormulario(d, data) {
+  return {
+    publicar: false, nome: limpar(d.nome, 80), "tipo de negócio": d.empresaOuParticular === "Particular" ? "particular" : "",
+    oferta: limpar(d.oferta, 500), "tipo de oferta": limpar(d.tipo, 60), "valor estimado €": limpar(d.valor, 20),
+    para: limpar(d.para, 60), validade: limpar(d.validade, 120), "quem faz o voucher": limpar(d.voucher, 60),
+    "empresa ou particular": limpar(d.empresaOuParticular, 20), onde: limpar(d.onde, 120), contacto: limpar(d.contacto, 120),
+    nif: limpar(d.nif, 20), "quem preencheu": limpar(d.quem, 40), "quem conseguiu": limpar(d.angariadoPor, 80),
+    "aceita aparecer": d.mostrar === true || /^(true|sim)$/i.test(String(d.mostrar)) ? "sim" : "não", data: data || new Date(),
+  };
+}
+
+function novoApoiante(d) {
+  juntarLinha(abaApoiantes(), linhaDoFormulario(d));
   CacheService.getScriptCache().remove("apoiantes");
+}
+
+// Correr UMA vez no editor do Apps Script (escolher "juntarDonativos" → Executar):
+// passa as linhas da folha antiga "donativos" para a lista "apoiantes", põe as caixas em "publicar" e apaga "donativos".
+function juntarDonativos() {
+  const folha = SpreadsheetApp.getActiveSpreadsheet();
+  const aba = abaApoiantes();
+  const antiga = folha.getSheetByName("donativos");
+  let n = 0;
+  if (antiga && antiga.getLastRow() > 1) {
+    const linhas = antiga.getDataRange().getValues();
+    const cab = linhas.shift().map(c => String(c).trim());
+    linhas.forEach(l => {
+      const d = Object.fromEntries(cab.map((c, i) => [c, l[i]]));
+      if (!String(d.nome || d.oferta || "").trim()) return;
+      juntarLinha(aba, linhaDoFormulario(d, d.timestamp));
+      n++;
+    });
+  }
+  const col = cabecalho(aba).indexOf("publicar") + 1;
+  if (col && aba.getLastRow() > 1) aba.getRange(2, col, aba.getLastRow() - 1, 1).insertCheckboxes();
+  if (antiga && n === Math.max(0, antiga.getLastRow() - 1)) folha.deleteSheet(antiga);
+  CacheService.getScriptCache().remove("apoiantes");
+  Logger.log(n + " ofertas passadas para a folha apoiantes.");
 }
 
 function sim(v) { return v === true || /^(sim|s|x|true|verdadeiro)$/i.test(String(v).trim()); }
 
-function tamanhoApoiante(tamanho, valor) {
-  const t = String(tamanho).trim().toLowerCase();
-  if (["grande", "alto", "largo", "pequeno"].includes(t)) return t;
+function tamanhoApoiante(valor) {
   const v = parseFloat(String(valor).replace(",", "."));
   return v >= 50 ? "grande" : v >= 35 ? "alto" : v >= 25 ? "largo" : "pequeno";
 }
@@ -101,17 +138,15 @@ function apoiantes() {
   const cache = CacheService.getScriptCache();
   const guardado = cache.get("apoiantes");
   if (guardado) return JSON.parse(guardado);
-  const aba = abaApoiantes();
-  const linhas = aba.getDataRange().getValues();
+  const linhas = abaApoiantes().getDataRange().getValues();
   const cab = linhas.shift().map(c => String(c).trim().toLowerCase());
   const lista = linhas.map(l => Object.fromEntries(cab.map((c, i) => [c, l[i]])))
-    .filter(a => sim(a.publicar) && String(a.nome).trim())
+    .filter(a => sim(a.publicar) && String(a.nome).trim() && !/^(não|nao|n|false)$/i.test(String(a["aceita aparecer"]).trim()))
     .map(a => {
       const foto = String(a.foto || "").trim(), link = String(a.link || "").trim();
       return {
-        nome: limpar(a.nome, 80), tipo: limpar(a.tipo, 30).toLowerCase(), tamanho: tamanhoApoiante(a.tamanho, a["valor €"]),
-        logo: /^(img\/|https:\/\/)/.test(foto) ? foto : "", logoInteiro: sim(a["foto inteira"]), logoTopo: sim(a["foto em cima"]),
-        maps_url: /^https:\/\//.test(link) ? link : "", publicar: true,
+        nome: limpar(a.nome, 80), tipo: limpar(a["tipo de negócio"], 30).toLowerCase(), tamanho: tamanhoApoiante(a["valor estimado €"]),
+        logo: /^(img\/|https:\/\/)/.test(foto) ? foto : "", maps_url: /^https:\/\//.test(link) ? link : "", publicar: true,
       };
     });
   cache.put("apoiantes", JSON.stringify(lista), 60);

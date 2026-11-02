@@ -439,8 +439,6 @@ a.tile:active { transform: translate(1px, 1px); box-shadow: 2px 2px 0 var(--linh
 .apoiante { display: flex; flex-direction: column; gap: 6px; background: var(--cartao); border: 2px solid var(--tinta); border-radius: var(--raio); padding: 10px; box-shadow: 4px 4px 0 var(--linha); }
 .apoiante-img { aspect-ratio: 4 / 3; border-radius: 12px; overflow: hidden; background: #fff; border: 1px solid var(--linha); }
 .apoiante-img img { width: 100%; height: 100%; object-fit: cover; }
-.apoiante-img img.inteiro { object-fit: contain; }
-.apoiante-img img.topo { object-position: center 30%; }
 .apoiante-img.icone { display: grid; place-items: center; font-size: 52px; background: hsl(var(--h) 60% 88%); }
 .apoiante h3 { font-size: 17px; margin: 0; }
 .apoiante a { margin-top: auto; display: inline-flex; align-items: center; min-height: 44px; font-size: 14px; font-weight: 800; color: var(--suave); }

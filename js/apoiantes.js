@@ -2,8 +2,6 @@
 // Dados na Google Sheet (folha "apoiantes", lida pelo Apps Script). Só aparecem os que têm "publicar" marcado.
 // Se a Sheet não responder, usa a cópia em data/apoiantes.json.
 // "logo" = imagem enviada pelo apoiante. Sem logo, aparece um ícone do tipo de negócio.
-// "logoInteiro": true mostra a imagem inteira (para logótipos). Sem isto, a imagem enche o quadrado.
-// "logoTopo": true mostra mais a parte de cima da imagem (ex.: letreiro).
 // "tamanho" do cartão na página dos apoiantes (quem ofereceu mais, maior):
 //   "grande" (2×2), "alto" (1×2), "largo" (2×1) ou "pequeno".
 
@@ -17,7 +15,7 @@ function cartaoApoiante(a, i) {
   const el = document.createElement("div");
   el.className = "apoiante";
   const imagem = a.logo
-    ? `<div class="apoiante-img"><img src="${escapar(a.logo)}" alt="${escapar(a.nome)}" loading="lazy"${a.logoInteiro ? ' class="inteiro"' : a.logoTopo ? ' class="topo"' : ""}></div>`
+    ? `<div class="apoiante-img"><img src="${escapar(a.logo)}" alt="${escapar(a.nome)}" loading="lazy"></div>`
     : `<div class="apoiante-img icone" style="--h:${Math.round(i * 137.5) % 360}" aria-hidden="true">${ICONES[a.tipo] || "💛"}</div>`;
   const link = a.maps_url
     ? `<a href="${escapar(a.maps_url)}" target="_blank" rel="noopener">${a.maps_url.includes("instagram.com") ? "📷 Ver no Instagram" : "📍 Ver no mapa"}</a>`
