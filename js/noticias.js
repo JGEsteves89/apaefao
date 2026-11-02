@@ -13,6 +13,7 @@
         <h2>${escapar(n.titulo)}</h2>
         <p>${escapar(n.texto)}</p>
         ${n.imagem ? `<img src="${escapar(n.imagem)}" alt="${escapar(n.alt || "")}" loading="lazy">` : ""}
+        ${n.link ? `<p><a class="botao" href="${escapar(n.link)}" target="_blank" rel="noopener">${escapar(n.link_texto || "Ver mais")}</a></p>` : ""}
       </article>
     </li>`).join("");
 
