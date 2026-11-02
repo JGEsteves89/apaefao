@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Quero ajudar — APAEF Fão</title>
+  <meta name="description" content="Um prémio para as rifas, bolos para a feira, roupa, dinheiro… Tudo conta. Ajuda a APAEF em 1 minuto.">
+  <link rel="canonical" href="https://apaefao.pt/ajudar.html">
+  <meta name="theme-color" content="#ebce58">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="APAEF Fão">
+  <meta property="og:locale" content="pt_PT">
+  <meta property="og:url" content="https://apaefao.pt/ajudar.html">
+  <meta property="og:title" content="Quero ajudar a APAEF 💛">
+  <meta property="og:description" content="Um prémio para as rifas, bolos para a feira, roupa, dinheiro… Tudo conta. Ajuda a APAEF em 1 minuto.">
+  <meta property="og:image" content="https://apaefao.pt/img/preview.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="457">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="favicon.ico" sizes="any">
+  <link rel="icon" href="favicon-96.png" type="image/png" sizes="96x96">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="manifest" href="site.webmanifest">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topo">
+    <div class="wrap">
+      <a class="marca" href="./"><img src="img/logo.png" alt="Logótipo da APAEF" width="52" height="52"><span>APAEF</span></a>
+      <button class="menu-botao" type="button" aria-expanded="false" aria-controls="menu"><span class="abrir">☰ Menu</span><span class="fechar">✕ Fechar</span></button>
+      <nav class="menu" id="menu" aria-label="Menu principal">
+        <a href="agenda.html"><span aria-hidden="true">📅</span>Agenda</a>
+        <a href="documentos.html"><span aria-hidden="true">📄</span>Documentos</a>
+        <a href="socios.html"><span aria-hidden="true">🤝</span>Sócios</a>
+        <a href="quem-somos.html"><span aria-hidden="true">🌻</span>Quem somos</a>
+        <a href="noticias.html"><span aria-hidden="true">📰</span>Notícias</a>
+        <a href="ajudar.html"><span aria-hidden="true">💬</span>Sugestões</a>
+        <a href="links.html"><span aria-hidden="true">🔗</span>Links</a>
+        <a href="apoiantes.html"><span aria-hidden="true">💛</span>Apoiantes</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap pagina ajudar">
+    <h1 class="titulo-pagina">Quero ajudar 💛</h1>
+    <p class="intro">Um prémio para as rifas, bolos para a feira, roupa… Tudo conta. Demora 1 minuto.</p>
+
+    <ol class="progresso" aria-label="Passos">
+      <li class="feito"><span class="pet" aria-hidden="true"></span><span class="pt">Quem</span></li>
+      <li><span class="pet" aria-hidden="true"></span><span class="pt">O quê</span></li>
+      <li><span class="pet" aria-hidden="true"></span><span class="pt">Detalhes</span></li>
+      <li><span class="pet" aria-hidden="true"></span><span class="pt">Contacto</span></li>
+    </ol>
+
+    <form id="form-ajuda" class="ajuda-form" novalidate>
+      <!-- 1. Quem -->
+      <section class="passo" data-passo="1" aria-labelledby="p1">
+        <h2 id="p1">Quem está a oferecer?</h2>
+        <div class="grandes">
+          <button type="button" class="opcao-grande" data-campo="quem" data-valor="eu">
+            <span class="og-ico" aria-hidden="true">🙋</span><b>Sou eu que ofereço</b><small>Eu, a minha família ou a minha empresa</small>
+          </button>
+          <button type="button" class="opcao-grande" data-campo="quem" data-valor="angariei">
+            <span class="og-ico" aria-hidden="true">🤝</span><b>Consegui uma oferta</b><small>Sou da APAEF e falei com uma loja ou pessoa</small>
+          </button>
+        </div>
+      </section>
+
+      <!-- 2. O quê -->
+      <section class="passo" data-passo="2" aria-labelledby="p2" hidden>
+        <h2 id="p2">O que <span data-txt="queres">queres</span> oferecer?</h2>
+        <div class="tipos">
+          <button type="button" class="tipo" data-campo="tipo" data-valor="rifas"><span aria-hidden="true">🎟️</span>Prémio para rifas ou cabaz</button>
+          <button type="button" class="tipo" data-campo="tipo" data-valor="feira"><span aria-hidden="true">🍪</span>Comida para a feira</button>
+          <button type="button" class="tipo" data-campo="tipo" data-valor="objetos"><span aria-hidden="true">👕</span>Roupa ou objetos para a feira</button>
+          <button type="button" class="tipo" data-campo="tipo" data-valor="dinheiro"><span aria-hidden="true">💶</span>Dinheiro</button>
+          <button type="button" class="tipo" data-campo="tipo" data-valor="outro"><span aria-hidden="true">✨</span>Outra coisa</button>
+        </div>
+        <button type="button" class="voltar">← Voltar</button>
+      </section>
+
+      <!-- 3. Detalhes -->
+      <section class="passo formulario" data-passo="3" aria-labelledby="p3" hidden>
+        <h2 id="p3">Conta-nos o que é</h2>
+        <label id="l-oferta">O que é?
+          <textarea name="oferta" rows="3" maxlength="500" required></textarea>
+        </label>
+        <div class="so-dinheiro" hidden>
+          <p class="pequeno">Podes transferir para o IBAN da APAEF. Passamos recibo de donativo.</p>
+          <div class="copiar-linha">
+            <code id="iban-ajuda">PT50 0033 0000 4566 4874 4950 5</code>
+            <button class="b-copiar" type="button" data-copiar="iban-ajuda"><span class="txt">Copiar</span><span class="ok">✓ Copiado</span></button>
+          </div>
+          <div class="campos">
+            <label>Valor <small>(opcional)</small><input name="valor" inputmode="decimal" maxlength="12" placeholder="ex.: 20 €"></label>
+            <label>NIF para o recibo <small>(opcional)</small><input name="nif" inputmode="numeric" maxlength="9" pattern="[0-9]{9}"></label>
+          </div>
+        </div>
+        <label class="so-rifas" hidden>Validade <small>(opcional)</small>
+          <input name="validade" maxlength="60" placeholder="ex.: até março de 2027">
+        </label>
+        <fieldset class="escolha">
+          <legend>Para quando?</legend>
+          <label><input type="radio" name="para" value="Rifas de S. Martinho"> Rifas de S. Martinho</label>
+          <label><input type="radio" name="para" value="Feirinha (27/11)"> Feirinha (27/11)</label>
+          <label><input type="radio" name="para" value="Natal"> Natal</label>
+          <label><input type="radio" name="para" value="Quando fizer falta" checked> Quando fizer falta</label>
+        </fieldset>
+        <p class="erro-form" role="alert"></p>
+        <div class="navega">
+          <button type="button" class="voltar">← Voltar</button>
+          <button type="button" class="botao seguinte">Continuar →</button>
+        </div>
+      </section>
+
+      <!-- 4. Contacto -->
+      <section class="passo formulario" data-passo="4" aria-labelledby="p4" hidden>
+        <h2 id="p4">Quem oferece?</h2>
+        <p class="resumo" aria-live="polite"></p>
+        <fieldset class="escolha">
+          <legend class="sr">Empresa ou particular</legend>
+          <label><input type="radio" name="quemE" value="Empresa" checked> 🏪 Empresa ou loja</label>
+          <label><input type="radio" name="quemE" value="Particular"> 🏠 Particular</label>
+        </fieldset>
+        <label><span id="l-nome">Nome da empresa</span>
+          <input name="nome" maxlength="80" required autocomplete="organization">
+        </label>
+        <div class="campos">
+          <label class="so-empresa">Onde é? <small>(opcional)</small>
+            <input name="onde" maxlength="120" placeholder="ex.: Av. Visc. de São Januário, Fão">
+          </label>
+          <label><span id="l-contacto">Telefone ou email</span>
+            <input name="contacto" maxlength="120" autocomplete="tel">
+          </label>
+        </div>
+        <label class="so-angariei" hidden>O teu nome <small>(quem conseguiu a oferta)</small>
+          <input name="angariadoPor" maxlength="80" autocomplete="name">
+        </label>
+        <label class="check"><input type="checkbox" name="mostrar"> <span id="l-mostrar">Podem mostrar o nosso nome na página dos apoiantes 💛</span></label>
+        <p class="pequeno">O contacto fica só com a Direção da APAEF. Nunca aparece no site.</p>
+        <p class="erro-form" role="alert"></p>
+        <div class="navega">
+          <button type="button" class="voltar">← Voltar</button>
+          <button class="botao botao-grande" type="submit">Enviar a minha ajuda 🎁</button>
+        </div>
+      </section>
+    </form>
+
+    <!-- Animação: o presente entra no girassol -->
+    <div class="presente" hidden aria-hidden="true"><span class="laco"></span></div>
+
+    <section id="obrigado" class="obrigado" hidden tabindex="-1" aria-live="polite">
+      <div class="girassol" aria-hidden="true">
+        <span style="--a:0deg;--i:0"></span><span style="--a:30deg;--i:1"></span><span style="--a:60deg;--i:2"></span><span style="--a:90deg;--i:3"></span>
+        <span style="--a:120deg;--i:4"></span><span style="--a:150deg;--i:5"></span><span style="--a:180deg;--i:6"></span><span style="--a:210deg;--i:7"></span>
+        <span style="--a:240deg;--i:8"></span><span style="--a:270deg;--i:9"></span><span style="--a:300deg;--i:10"></span><span style="--a:330deg;--i:11"></span>
+        <b class="miolo-g">💛</b>
+      </div>
+      <h2 class="ob-titulo">Obrigado! 💛</h2>
+      <p class="ob-impacto"></p>
+      <p class="ob-proximo"></p>
+      <div class="ob-preview" hidden>
+        <p class="pequeno">Assim vais aparecer na página dos apoiantes (depois de confirmarmos):</p>
+        <div class="ob-cartao"></div>
+      </div>
+      <div class="botoes">
+        <a class="botao botao-wa" id="partilhar" target="_blank" rel="noopener">Convidar mais alguém</a>
+        <button class="b-peq" type="button" id="mais-uma">Oferecer mais uma coisa</button>
+        <a class="b-peq" href="apoiantes.html" style="display:inline-flex;align-items:center;text-decoration:none">Ver os apoiantes</a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <a class="botao botao-fb" href="https://www.facebook.com/profile.php?id=61555363610929" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.5 22v-8h2.7l.4-3.2h-3.1V8.8c0-.9.3-1.5 1.6-1.5h1.7V4.4c-.3 0-1.3-.1-2.5-.1-2.5 0-4.1 1.5-4.1 4.2v2.3H7.4V14h2.8v8h3.3z"/></svg>
+        Seguir no Facebook
+      </a>
+      <a class="botao botao-ig" href="https://www.instagram.com/apaefao/" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 7.3A4.7 4.7 0 1 0 12 16.7 4.7 4.7 0 0 0 12 7.3zm0 7.8a3.1 3.1 0 1 1 0-6.2 3.1 3.1 0 0 1 0 6.2zm4.9-8a1.1 1.1 0 1 1-2.2 0 1.1 1.1 0 0 1 2.2 0zM12 3.6c2.7 0 3 0 4.1.1 2.8.1 4.1 1.4 4.2 4.2.1 1.1.1 1.4.1 4.1s0 3-.1 4.1c-.1 2.8-1.4 4.1-4.2 4.2-1.1.1-1.4.1-4.1.1s-3 0-4.1-.1c-2.8-.1-4.1-1.4-4.2-4.2C3.6 15 3.6 14.7 3.6 12s0-3 .1-4.1C3.8 5.1 5.1 3.8 7.9 3.7 9 3.6 9.3 3.6 12 3.6zM12 2C9.3 2 8.9 2 7.8 2.1 4.2 2.2 2.2 4.2 2.1 7.8 2 8.9 2 9.3 2 12s0 3.1.1 4.2c.1 3.6 2.1 5.6 5.7 5.7 1.1.1 1.5.1 4.2.1s3.1 0 4.2-.1c3.6-.1 5.6-2.1 5.7-5.7.1-1.1.1-1.5.1-4.2s0-3.1-.1-4.2c-.1-3.6-2.1-5.6-5.7-5.7C15.1 2 14.7 2 12 2z"/></svg>
+        Seguir no Instagram
+      </a>
+      <div>APAEF · Escola Básica de Fão, Rua da Caixa de Água, 4740-364 Fão · <a href="mailto:apaefao@gmail.com">apaefao@gmail.com</a></div>
+    </div>
+  </footer>
+
+  <script src="js/config.js"></script>
+  <script src="js/comum.js"></script>
+  <script src="js/apoiantes.js"></script>
+  <script src="js/ajudar.js"></script>
+  <!-- Contador de visitas (GoatCounter: sem cookies) -->
+  <script data-goatcounter="https://apaefao.goatcounter.com/count"
+          async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>
