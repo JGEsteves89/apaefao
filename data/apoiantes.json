@@ -188,5 +188,14 @@
   "maps_url": "https://www.google.com/maps/search/?api=1&query=Monkey%20Park%20Esposende&query_place_id=ChIJY6flw0VLJA0R5wReA43iQXI",
   "publicar": true,
   "tamanho": "pequeno"
+ },
+ {
+  "nome": "B7 Computer",
+  "evento": "",
+  "logo": "",
+  "tipo": "tecnologia",
+  "maps_url": "https://www.google.com/maps/search/?api=1&query=B7%20Computer%2C%20Esposende&query_place_id=ChIJu-oyKatLJA0RjRzYlE7ULl8",
+  "publicar": true,
+  "tamanho": "pequeno"
  }
 ]

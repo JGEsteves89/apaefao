@@ -99,9 +99,15 @@
             <label>NIF para o recibo <small>(opcional)</small><input name="nif" inputmode="numeric" maxlength="9" pattern="[0-9]{9}"></label>
           </div>
         </div>
-        <label class="so-rifas" hidden>Validade <small>(opcional)</small>
-          <input name="validade" maxlength="60" placeholder="ex.: até março de 2027">
+        <label class="so-rifas" hidden>Validade <small>(importante: vai escrita no voucher)</small>
+          <input name="validade" maxlength="60" placeholder="ex.: até março de 2027 · só ao jantar · dia 13/12, 9h45">
         </label>
+        <fieldset class="escolha so-rifas" hidden>
+          <legend>Quem faz o voucher para quem ganhar?</legend>
+          <label><input type="radio" name="voucher" value="Voucher da empresa"> 🏷️ A empresa tem o seu</label>
+          <label><input type="radio" name="voucher" value="APAEF faz o voucher"> 💛 A APAEF faz um</label>
+          <label><input type="radio" name="voucher" value="Não sei" checked> 🤷 Não sei</label>
+        </fieldset>
         <fieldset class="escolha">
           <legend>Para quando?</legend>
           <label><input type="radio" name="para" value="Rifas de S. Martinho"> Rifas de S. Martinho</label>

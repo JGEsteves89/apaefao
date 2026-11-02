@@ -76,7 +76,7 @@
     $("[name=oferta]").placeholder = t.exemplo;
     $("[name=oferta]").required = !din;
     form.querySelector(".so-dinheiro").hidden = !din;
-    form.querySelector(".so-rifas").hidden = v !== "rifas";
+    form.querySelectorAll(".so-rifas").forEach(el => { el.hidden = v !== "rifas"; });
     const r = form.querySelector(`[name=para][value="${t.para}"]`);
     if (r) r.checked = true;
   }
@@ -145,7 +145,7 @@
     const dados = {
       quem: estado.quem === "angariei" ? "Angariado por membro" : "O próprio",
       tipo: TIPOS[estado.tipo].nome,
-      oferta: f.get("oferta"), validade: f.get("validade"), para: f.get("para"),
+      oferta: f.get("oferta"), validade: f.get("validade"), voucher: estado.tipo === "rifas" ? f.get("voucher") : "", para: f.get("para"),
       valor: f.get("valor"), nif: f.get("nif"),
       empresaOuParticular: f.get("quemE"), nome: f.get("nome"), onde: f.get("quemE") === "Empresa" ? f.get("onde") : "",
       contacto: f.get("contacto"), angariadoPor: estado.quem === "angariei" ? f.get("angariadoPor") : "",

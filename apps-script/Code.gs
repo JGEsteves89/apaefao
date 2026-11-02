@@ -33,7 +33,7 @@ const CAMPOS_FORMULARIO = {
   socio: { folha: "socios", campos: ["aluno", "turma", "encarregado", "telefone", "email", "recibo", "nif", "reciboEmail", "imagem", "rgpd"] },
   sugestao: { folha: "sugestoes", campos: ["tema", "mensagem", "nome", "email", "resposta"] },
   // Quero ajudar (ajudar.html): ofertas para rifas, feira, dinheiro… O contacto e o valor ficam só na folha.
-  donativo: { folha: "donativos", campos: ["quem", "tipo", "oferta", "validade", "para", "valor", "nif", "empresaOuParticular", "nome", "onde", "contacto", "angariadoPor", "mostrar"] },
+  donativo: { folha: "donativos", campos: ["quem", "tipo", "oferta", "validade", "voucher", "para", "valor", "nif", "empresaOuParticular", "nome", "onde", "contacto", "angariadoPor", "mostrar"] },
 };
 
 function guardarFormulario(dados) {
@@ -45,7 +45,7 @@ function guardarFormulario(dados) {
   const valores = f.campos.map(c => limpar(dados[c], c === "mensagem" ? 1500 : c === "oferta" ? 500 : 120));
   aba.appendRow([new Date()].concat(valores));
   const assunto = dados.evento === "socio" ? "Nova ficha de sócio: " + valores[0] + " (" + valores[1] + ")"
-    : dados.evento === "donativo" ? "Nova oferta: " + valores[8] + " — " + valores[1]
+    : dados.evento === "donativo" ? "Nova oferta: " + valores[9] + " — " + valores[1]
     : "Nova sugestão: " + valores[0];
   MailApp.sendEmail(EMAIL_AVISOS, "[APAEF site] " + assunto, f.campos.map((c, i) => c + ": " + valores[i]).join("\n"));
   return json({ ok: true });
