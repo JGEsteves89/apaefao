@@ -92,6 +92,13 @@
     "categoria": "APAEF"
   },
   {
+    "titulo": "Instagram da APAEF",
+    "descricao": "Fotos e vídeos das atividades.",
+    "url": "https://www.instagram.com/apaefao/",
+    "icone": "📷",
+    "categoria": "APAEF"
+  },
+  {
     "titulo": "Email da APAEF",
     "descricao": "apaefao@gmail.com",
     "url": "mailto:apaefao@gmail.com",

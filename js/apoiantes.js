@@ -8,6 +8,7 @@
 const ICONES = {
   florista: "🌸", restaurante: "🍽️", cafe: "☕", pastelaria: "🍰", dentista: "🦷", beleza: "💆",
   supermercado: "🛒", loja: "🧴", roupa: "👕", particular: "💛",
+  desporto: "🏋️", barbearia: "💈", cabeleireiro: "💇", diversao: "🐒",
 };
 
 function cartaoApoiante(a, i) {
