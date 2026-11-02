@@ -54,11 +54,11 @@
   "tamanho": "largo"
  },
  {
-  "nome": "Supermercado Ramalhão",
+  "nome": "Supermercado e Talho Ramalhão",
   "evento": "Magusto",
   "logo": "img/apoiantes/supermercado-ramalhao.jpg",
   "tipo": "supermercado",
-  "maps_url": "https://www.google.com/maps/search/?api=1&query=Supermercado%20Ramalh%C3%A3o%2C%20F%C3%A3o&query_place_id=ChIJO1xgYd5LJA0RHo5goycyXEU",
+  "maps_url": "https://www.google.com/maps/search/?api=1&query=Supermercado%20e%20Talho%20Ramalh%C3%A3o%2C%20F%C3%A3o&query_place_id=ChIJO1xgYd5LJA0RHo5goycyXEU",
   "publicar": true,
   "tamanho": "pequeno"
  },
@@ -100,9 +100,9 @@
   "tamanho": "pequeno"
  },
  {
-  "nome": "Alec",
+  "nome": "ALEC",
   "evento": "",
-  "logo": "",
+  "logo": "img/apoiantes/alec.jpg",
   "tipo": "roupa",
   "maps_url": "https://www.google.com/maps/search/?api=1&query=ALEC%20Garments%2C%20V%C3%A1rzea&query_place_id=ChIJj77JCF60JQ0R30sIREtMsUc",
   "publicar": true,
@@ -111,7 +111,7 @@
  {
   "nome": "Restaurante Cláudia Maria",
   "evento": "",
-  "logo": "",
+  "logo": "img/apoiantes/restaurante-claudia-maria.jpg",
   "tipo": "restaurante",
   "maps_url": "https://www.google.com/maps/search/?api=1&query=Cl%C3%A1udia%20Maria%2C%20F%C3%A3o&query_place_id=ChIJp2OOUvNLJA0RY5KEbYCwqV4",
   "publicar": true,
@@ -120,7 +120,7 @@
  {
   "nome": "Skills Training Centre",
   "evento": "",
-  "logo": "",
+  "logo": "img/apoiantes/skills-training-centre.jpg",
   "tipo": "desporto",
   "maps_url": "https://www.google.com/maps/search/?api=1&query=Skills%20Training%20Centre%2C%20Esposende&query_place_id=ChIJHw1NspFLJA0RqzjYCIOXivc",
   "publicar": true,
@@ -138,7 +138,7 @@
  {
   "nome": "Ana Lopes – Saúde e Bem-Estar",
   "evento": "",
-  "logo": "",
+  "logo": "img/apoiantes/ana-lopes.jpg",
   "tipo": "beleza",
   "maps_url": "https://www.google.com/maps/search/?api=1&query=Ana%20Lopes%20Sa%C3%BAde%20e%20Bem%20Estar%2C%20Perelhal&query_place_id=ChIJp3hUjEJNJA0RsoS05SdNdbY",
   "publicar": true,
@@ -147,7 +147,7 @@
  {
   "nome": "Fanum Estética",
   "evento": "",
-  "logo": "",
+  "logo": "img/apoiantes/fanum-estetica.jpg",
   "tipo": "beleza",
   "maps_url": "https://www.google.com/maps/search/?api=1&query=Fanum%20Gabinete%20Est%C3%A9tica%2C%20F%C3%A3o&query_place_id=ChIJmXKl49xLJA0R1v70oXZ4pX0",
   "publicar": true,
@@ -165,7 +165,7 @@
  {
   "nome": "Tio Barbas – Barbearia",
   "evento": "",
-  "logo": "",
+  "logo": "img/apoiantes/tio-barbas.jpg",
   "tipo": "barbearia",
   "maps_url": "https://www.google.com/maps/search/?api=1&query=Tio%20Barbas%20Barbearia%2C%20F%C3%A3o&query_place_id=ChIJUxiF8z9LJA0RH2U0ddvN7pc",
   "publicar": true,
@@ -174,7 +174,7 @@
  {
   "nome": "Aníbal Cabeleireiros",
   "evento": "",
-  "logo": "",
+  "logo": "img/apoiantes/anibal-cabeleireiros.jpg",
   "tipo": "cabeleireiro",
   "maps_url": "https://www.google.com/maps/search/?api=1&query=Anibal%20Cabeleireiros%2C%20F%C3%A3o&query_place_id=ChIJ8VjSQudLJA0R-4E_5gSYLsY",
   "publicar": true,
