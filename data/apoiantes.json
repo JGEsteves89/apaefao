@@ -5,7 +5,7 @@
   "tipo": "loja",
   "maps_url": "https://www.google.com/maps/search/?api=1&query=CMT%20%E2%80%93%20Casa%20Penetra%2C%20F%C3%A3o&query_place_id=ChIJhyrpzltLJA0R527XGaX_bDQ",
   "publicar": true,
-  "tamanho": "largo"
+  "tamanho": "grande"
  },
  {
   "nome": "Florista Bela Arte",
@@ -25,7 +25,7 @@
  },
  {
   "nome": "OfirDent",
-  "logo": "",
+  "logo": "img/apoiantes/ofirdent.jpg",
   "tipo": "dentista",
   "maps_url": "https://www.google.com/maps/search/?api=1&query=OfirDent%2C%20F%C3%A3o&query_place_id=ChIJi2J7VOdLJA0RbtNWZtExtVs",
   "publicar": true,
@@ -137,7 +137,7 @@
  },
  {
   "nome": "Xalo Doce",
-  "logo": "",
+  "logo": "img/apoiantes/xalo-doce.jpg",
   "tipo": "pastelaria",
   "maps_url": "https://www.google.com/maps/search/?api=1&query=Xalo%20Doce%2C%20Esposende",
   "publicar": true,
@@ -161,7 +161,7 @@
  },
  {
   "nome": "Monkey Park Esposende",
-  "logo": "",
+  "logo": "img/apoiantes/monkey-park.jpg",
   "tipo": "diversao",
   "maps_url": "https://www.google.com/maps/search/?api=1&query=Monkey%20Park%20Esposende&query_place_id=ChIJY6flw0VLJA0R5wReA43iQXI",
   "publicar": true,
@@ -172,6 +172,24 @@
   "logo": "",
   "tipo": "tecnologia",
   "maps_url": "https://www.google.com/maps/search/?api=1&query=B7%20Computer%2C%20Esposende&query_place_id=ChIJu-oyKatLJA0RjRzYlE7ULl8",
+  "publicar": true,
+  "tamanho": "pequeno"
+ },
+ {
+  "nome": "Lavasec – Lavandaria",
+  "evento": "",
+  "logo": "img/apoiantes/lavasec.jpg",
+  "tipo": "lavandaria",
+  "maps_url": "https://www.google.com/maps/search/?api=1&query=Lavasec%20Lavandaria%2C%20F%C3%A3o&query_place_id=ChIJfZRX0lRLJA0RxauIL-95Oho",
+  "publicar": true,
+  "tamanho": "largo"
+ },
+ {
+  "nome": "Talho de Fão",
+  "evento": "",
+  "logo": "",
+  "tipo": "talho",
+  "maps_url": "https://www.google.com/maps/search/?api=1&query=Talho%20de%20F%C3%A3o&query_place_id=ChIJOcSGUABLJA0Rq9906Ia239Y",
   "publicar": true,
   "tamanho": "pequeno"
  }
