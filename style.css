@@ -433,6 +433,7 @@ a.tile:active { transform: translate(1px, 1px); box-shadow: 2px 2px 0 var(--linh
 .noticia time { font-weight: 800; font-size: 13px; text-transform: uppercase; letter-spacing: .5px; color: var(--suave); }
 .noticia h2 { font-size: 22px; margin: 2px 0 6px; }
 .noticia img { margin-top: 10px; border-radius: 12px; }
+.noticia .botao { margin: 14px 0 4px; }
 
 /* ===== Apoiantes ===== */
 .apoiante { display: flex; flex-direction: column; gap: 6px; background: var(--cartao); border: 2px solid var(--tinta); border-radius: var(--raio); padding: 10px; box-shadow: 4px 4px 0 var(--linha); }
@@ -508,6 +509,7 @@ a.tile:active { transform: translate(1px, 1px); box-shadow: 2px 2px 0 var(--linh
 .passo h2 { font-size: clamp(24px, 6vw, 30px); margin: 0 0 14px; }
 .passo h2:focus { outline: none; }
 .ajuda-form .formulario, .passo.formulario { box-shadow: 4px 4px 0 var(--linha); }
+.pagina .passo.formulario { padding: 20px; }   /* "section" da página tirava o espaço de dentro */
 
 /* Passo 1: dois cartões grandes */
 .grandes { display: grid; gap: 12px; }

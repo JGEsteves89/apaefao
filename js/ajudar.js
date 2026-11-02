@@ -37,8 +37,10 @@
   const ler = k => { try { return localStorage.getItem(k) || ""; } catch (e) { return ""; } };
 
   // ---------- Mudar de passo ----------
-  function irPara(n, recuar) {
+  // Cada passo fica no histórico do browser: o botão "voltar" do browser volta ao passo anterior.
+  function irPara(n, recuar, doHistorico) {
     const de = passos[atual - 1], para = passos[n - 1];
+    if (!doHistorico && n !== atual) history.pushState({ passo: n }, "");
     atual = n;
     pontos.forEach((li, i) => { li.classList.toggle("feito", i < n); li.classList.toggle("atual", i === n - 1); });
     if (de !== para) de.hidden = true;
@@ -52,7 +54,15 @@
     alvo.focus({ preventScroll: true });
     if (para.getBoundingClientRect().top < 0) document.querySelector(".progresso").scrollIntoView({ behavior: MOVIMENTO ? "smooth" : "auto" });
   }
-  form.querySelectorAll(".voltar").forEach(b => b.addEventListener("click", () => irPara(atual - 1, true)));
+  form.querySelectorAll(".voltar").forEach(b => b.addEventListener("click", () => {
+    if (history.state && !history.state.inicio) history.back();
+    else { irPara(atual - 1, true, true); history.replaceState({ passo: atual, inicio: true }, ""); }
+  }));
+  addEventListener("popstate", e => {
+    const n = (e.state && e.state.passo) || 1;
+    if (!obrigado.hidden) novaOferta();   // já enviou: volta com o formulário limpo
+    irPara(n, n < atual, true);
+  });
 
   // ---------- Passo 1: quem ----------
   function escolherQuem(v) {
@@ -213,7 +223,7 @@
   }
 
   // Oferecer mais uma coisa: mantém quem é e o nome de quem angariou.
-  document.getElementById("mais-uma").addEventListener("click", () => {
+  function novaOferta() {
     const quem = estado.quem, ang = $("[name=angariadoPor]").value;
     form.reset();
     $("[name=angariadoPor]").value = ang;
@@ -221,8 +231,8 @@
     obrigado.hidden = true;
     form.hidden = false;
     document.querySelector(".progresso").hidden = false;
-    irPara(2, true);
-  });
+  }
+  document.getElementById("mais-uma").addEventListener("click", () => { novaOferta(); irPara(2, true); });
 
   document.querySelectorAll("[data-copiar]").forEach(b => b.addEventListener("click", () =>
     copiar(document.getElementById(b.dataset.copiar).textContent, b)));
@@ -232,10 +242,11 @@
   if (TIPOS[q.get("tipo")]) { escolherTipo(q.get("tipo")); tipoDoLink = true; }
   if (q.get("quem") === "angariei" || q.get("quem") === "eu") {
     escolherQuem(q.get("quem"));
-    irPara(tipoDoLink ? 3 : 2);
+    irPara(tipoDoLink ? 3 : 2, false, true);
     tipoDoLink = false;
   } else {
     atualizarQuemE();
     pontos[0].classList.add("atual");
   }
+  history.replaceState({ passo: atual, inicio: true }, "");
 })();
