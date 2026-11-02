@@ -196,7 +196,7 @@
       const caixa = obrigado.querySelector(".ob-cartao");
       caixa.innerHTML = "";
       caixa.appendChild(cartaoApoiante({ nome: d.nome.trim(), tipo: d.empresaOuParticular === "Particular" ? "particular" : "" }, new Date().getSeconds()));
-      const lista = await carregarJSON("data/apoiantes.json");
+      const lista = await carregarApoiantes();
       if (lista) prev.querySelector("p").textContent =
         `Vais juntar-te a ${lista.filter(a => a.publicar).length} empresas e amigos na página dos apoiantes (depois de confirmarmos):`;
     }

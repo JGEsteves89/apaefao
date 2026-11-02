@@ -47,13 +47,81 @@ function guardarFormulario(dados) {
   const assunto = dados.evento === "socio" ? "Nova ficha de sócio: " + valores[0] + " (" + valores[1] + ")"
     : dados.evento === "donativo" ? "Nova oferta: " + valores[9] + " — " + valores[1]
     : "Nova sugestão: " + valores[0];
-  MailApp.sendEmail(EMAIL_AVISOS, "[APAEF site] " + assunto, f.campos.map((c, i) => c + ": " + valores[i]).join("\n"));
+  let texto = f.campos.map((c, i) => c + ": " + valores[i]).join("\n");
+  if (dados.evento === "donativo" && dados.mostrar === true) {
+    novoApoiante(dados);
+    texto += "\n\nPara aparecer no site: folha \"apoiantes\" → marcar \"publicar\".";
+  }
+  MailApp.sendEmail(EMAIL_AVISOS, "[APAEF site] " + assunto, texto);
   return json({ ok: true });
+}
+
+// ---------- Apoiantes (página apoiantes.html e faixa da página inicial) ----------
+// Folha "apoiantes": uma linha por apoiante. O site só mostra as linhas com "publicar" marcado,
+// e só as colunas públicas (nome, tipo, tamanho, foto, link). Oferta, valor e quem conseguiu ficam só na folha.
+// "tamanho" vazio → vem do valor: grande ≥ 50 €, alto 35–49 €, largo 25–34 €, pequeno < 25 €.
+// "foto": caminho no site (img/apoiantes/x.jpg) ou link https. "foto inteira" = logótipo; "foto em cima" = não cortar o topo.
+const COLUNAS_APOIANTES = ["publicar", "nome", "tipo", "tamanho", "foto", "foto inteira", "foto em cima", "link",
+  "oferta", "valor €", "quem conseguiu", "origem", "data"];
+
+function abaApoiantes() {
+  const folha = SpreadsheetApp.getActiveSpreadsheet();
+  let aba = folha.getSheetByName("apoiantes");
+  if (!aba) {
+    aba = folha.insertSheet("apoiantes");
+    aba.appendRow(COLUNAS_APOIANTES);
+    aba.setFrozenRows(1);
+  }
+  return aba;
+}
+
+// Quem preencheu o "Quero ajudar" e aceitou aparecer: entra na folha por publicar (fica à espera do visto).
+function novoApoiante(d) {
+  const aba = abaApoiantes();
+  const linha = { publicar: false, nome: limpar(d.nome, 80), tipo: d.empresaOuParticular === "Particular" ? "particular" : "",
+    oferta: limpar(d.oferta, 500), "valor €": limpar(d.valor, 20), "quem conseguiu": limpar(d.angariadoPor, 80),
+    origem: "formulário", data: new Date() };
+  const cab = aba.getRange(1, 1, 1, aba.getLastColumn()).getValues()[0].map(c => String(c).trim().toLowerCase());
+  aba.appendRow(cab.map(c => c in linha ? linha[c] : (["foto inteira", "foto em cima"].includes(c) ? false : "")));
+  const col = cab.indexOf("publicar") + 1;
+  if (col) aba.getRange(aba.getLastRow(), col).insertCheckboxes();
+  CacheService.getScriptCache().remove("apoiantes");
+}
+
+function sim(v) { return v === true || /^(sim|s|x|true|verdadeiro)$/i.test(String(v).trim()); }
+
+function tamanhoApoiante(tamanho, valor) {
+  const t = String(tamanho).trim().toLowerCase();
+  if (["grande", "alto", "largo", "pequeno"].includes(t)) return t;
+  const v = parseFloat(String(valor).replace(",", "."));
+  return v >= 50 ? "grande" : v >= 35 ? "alto" : v >= 25 ? "largo" : "pequeno";
+}
+
+function apoiantes() {
+  const cache = CacheService.getScriptCache();
+  const guardado = cache.get("apoiantes");
+  if (guardado) return JSON.parse(guardado);
+  const aba = abaApoiantes();
+  const linhas = aba.getDataRange().getValues();
+  const cab = linhas.shift().map(c => String(c).trim().toLowerCase());
+  const lista = linhas.map(l => Object.fromEntries(cab.map((c, i) => [c, l[i]])))
+    .filter(a => sim(a.publicar) && String(a.nome).trim())
+    .map(a => {
+      const foto = String(a.foto || "").trim(), link = String(a.link || "").trim();
+      return {
+        nome: limpar(a.nome, 80), tipo: limpar(a.tipo, 30).toLowerCase(), tamanho: tamanhoApoiante(a.tamanho, a["valor €"]),
+        logo: /^(img\/|https:\/\/)/.test(foto) ? foto : "", logoInteiro: sim(a["foto inteira"]), logoTopo: sim(a["foto em cima"]),
+        maps_url: /^https:\/\//.test(link) ? link : "", publicar: true,
+      };
+    });
+  cache.put("apoiantes", JSON.stringify(lista), 60);
+  return lista;
 }
 
 function doGet(e) {
   if (e && e.parameter && e.parameter.acao === "resultados") return json(resultados());
   if (e && e.parameter && e.parameter.acao === "responsaveis") return json(responsaveis());
+  if (e && e.parameter && e.parameter.acao === "apoiantes") return json(apoiantes());
   return json({ ok: true });
 }
 

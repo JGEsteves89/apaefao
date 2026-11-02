@@ -1,7 +1,9 @@
 // Apoiantes: faixa contínua na página inicial e grelha em apoiantes.html.
-// Dados em data/apoiantes.json. Só aparecem os que têm "publicar": true.
+// Dados na Google Sheet (folha "apoiantes", lida pelo Apps Script). Só aparecem os que têm "publicar" marcado.
+// Se a Sheet não responder, usa a cópia em data/apoiantes.json.
 // "logo" = imagem enviada pelo apoiante. Sem logo, aparece um ícone do tipo de negócio.
 // "logoInteiro": true mostra a imagem inteira (para logótipos). Sem isto, a imagem enche o quadrado.
+// "logoTopo": true mostra mais a parte de cima da imagem (ex.: letreiro).
 // "tamanho" do cartão na página dos apoiantes (quem ofereceu mais, maior):
 //   "grande" (2×2), "alto" (1×2), "largo" (2×1) ou "pequeno".
 
@@ -15,7 +17,7 @@ function cartaoApoiante(a, i) {
   const el = document.createElement("div");
   el.className = "apoiante";
   const imagem = a.logo
-    ? `<div class="apoiante-img"><img src="${escapar(a.logo)}" alt="${escapar(a.nome)}" loading="lazy"${a.logoInteiro ? ' class="inteiro"' : ""}></div>`
+    ? `<div class="apoiante-img"><img src="${escapar(a.logo)}" alt="${escapar(a.nome)}" loading="lazy"${a.logoInteiro ? ' class="inteiro"' : a.logoTopo ? ' class="topo"' : ""}></div>`
     : `<div class="apoiante-img icone" style="--h:${Math.round(i * 137.5) % 360}" aria-hidden="true">${ICONES[a.tipo] || "💛"}</div>`;
   const link = a.maps_url
     ? `<a href="${escapar(a.maps_url)}" target="_blank" rel="noopener">${a.maps_url.includes("instagram.com") ? "📷 Ver no Instagram" : "📍 Ver no mapa"}</a>`
@@ -24,9 +26,21 @@ function cartaoApoiante(a, i) {
   return el;
 }
 
+// Lista da Sheet (espera até 6 s); se falhar, a cópia guardada no site.
+async function carregarApoiantes(el) {
+  if (ENDPOINT) {
+    try {
+      const r = await fetch(ENDPOINT + "?acao=apoiantes", { signal: AbortSignal.timeout(6000) });
+      const lista = await r.json();
+      if (Array.isArray(lista) && lista.length) return lista;
+    } catch (e) {}
+  }
+  return carregarJSON("data/apoiantes.json", el);
+}
+
 // Página inicial: faixa lenta sem fim. Para com o rato em cima, ou com um toque.
 async function faixaApoiantes(el) {
-  const lista = await carregarJSON("data/apoiantes.json", el);
+  const lista = await carregarApoiantes(el);
   if (!lista) return;
   const publicos = lista.filter(a => a.publicar);
   const faixa = document.createElement("div");
@@ -51,7 +65,7 @@ async function faixaApoiantes(el) {
 const CASAS = { grande: 4, alto: 2, largo: 2, pequeno: 1 };   // quantas casas da grelha ocupa cada tamanho
 
 async function grelhaApoiantes(el, contador) {
-  const lista = await carregarJSON("data/apoiantes.json", el);
+  const lista = await carregarApoiantes(el);
   if (!lista) return;
   const publicos = lista.map((a, i) => [a, i]).filter(([a]) => a.publicar);
   const tamanho = a => CASAS[a.tamanho] ? a.tamanho : "pequeno";
