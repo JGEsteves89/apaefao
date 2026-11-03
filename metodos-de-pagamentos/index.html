@@ -70,7 +70,8 @@ body {
   .cartoes tr.melhor { border: 2px solid var(--tinta); }
   .cartoes tr.melhor td { background: transparent; }
   .cartoes tr.melhor { background: var(--sol-claro); }
-  .cartoes td { border: 0; padding: 0; display: flex; justify-content: space-between; align-items: baseline; gap: 12px; text-align: right; white-space: normal; }
+  .cartoes td.n { white-space: nowrap; }
+  .cartoes td { border: 0; padding: 0; min-width: 0; display: flex; justify-content: space-between; align-items: baseline; gap: 12px; text-align: right; white-space: normal; }
   .cartoes td:first-child { display: block; text-align: left; font-weight: 800; font-size: 17px; }
   .cartoes td[data-label]::before { content: attr(data-label); color: var(--suave); font-size: 14px; font-weight: 600; text-align: left; }
 }@media (max-height: 520px) {
@@ -116,6 +117,22 @@ td small { display: block; color: var(--suave); font-size: 13px; font-weight: 40
 .check li::before { content: ""; width: 16px; height: 16px; margin-top: 4px; border: 2px solid var(--tinta); border-radius: 4px; }
 .check small { display: block; color: var(--suave); font-size: 13px; }
 .capa-flor { width: 84px; height: 84px; }
+.so-movel { display: none; }
+.empresas { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 10px; }
+.empresa { border: 1.5px solid var(--linha); border-radius: 12px; padding: 12px 14px; display: grid; gap: 8px; }
+.empresa.escolhida { border: 2px solid var(--tinta); background: var(--sol-claro); }
+.empresa h3 { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.selo-esc { font: 800 11px var(--corpo); text-transform: uppercase; letter-spacing: .05em; background: var(--tinta); color: var(--folha); border-radius: 999px; padding: 2px 8px; }
+.empresa dl { margin: 0; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px 12px; font-size: 15px; }
+.empresa dt { color: var(--suave); font-weight: 600; font-size: 14px; }
+.empresa dd { margin: 0; text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; font-weight: 700; }
+@media (max-width: 900px), (max-height: 520px) {
+  .so-movel { display: inline; }
+  p.so-movel { display: block; }
+  .empresas.so-movel { display: grid; }
+  .so-largo { display: none; }
+}
+
 .como { display: grid; grid-template-columns: 1fr 300px; gap: 24px; align-items: start; }
 .como > * { min-width: 0; }
 .fluxo.vertical { grid-template-columns: 1fr 1fr; }
@@ -217,10 +234,10 @@ nav.barra {
     <table>
       <thead><tr><th>Se toda a gente pagar por…</th><th class="n">Custo por quota</th><th class="n">181 quotas (2 172 €)</th><th class="n">A APAEF recebe</th></tr></thead>
       <tbody>
-        <tr class="melhor"><td>MB WAY<small>0,07 € + 0,7% + IVA</small></td><td class="n" data-label="Custo por quota">0,19 €</td><td class="n" data-label="181 quotas">34,29 €</td><td class="n" data-label="A APAEF recebe">2 137,71 €</td></tr>
-        <tr><td>Referência Multibanco<small>0,20 € + 1,5% + IVA</small></td><td class="n" data-label="Custo por quota">0,47 €</td><td class="n" data-label="181 quotas">84,60 €</td><td class="n" data-label="A APAEF recebe">2 087,40 €</td></tr>
-        <tr><td>Cartão Visa / Mastercard<small>0,20 € + 1,5% + IVA</small></td><td class="n" data-label="Custo por quota">0,47 €</td><td class="n" data-label="181 quotas">84,60 €</td><td class="n" data-label="A APAEF recebe">2 087,40 €</td></tr>
-        <tr><td>Transferência bancária<small>não passa pela ifthenpay</small></td><td class="n" data-label="Custo por quota">0 €</td><td class="n" data-label="181 quotas">0 €</td><td class="n" data-label="A APAEF recebe">2 172,00 €</td></tr>
+        <tr class="melhor"><td><span class="so-movel">Se todos pagarem por </span>MB WAY<small>0,07 € + 0,7% + IVA</small></td><td class="n" data-label="Cada quota custa">0,19 €</td><td class="n" data-label="181 quotas custam">34,29 €</td><td class="n" data-label="A APAEF recebe">2 137,71 €</td></tr>
+        <tr><td><span class="so-movel">Se todos pagarem por </span>Referência Multibanco<small>0,20 € + 1,5% + IVA</small></td><td class="n" data-label="Cada quota custa">0,47 €</td><td class="n" data-label="181 quotas custam">84,60 €</td><td class="n" data-label="A APAEF recebe">2 087,40 €</td></tr>
+        <tr><td><span class="so-movel">Se todos pagarem por </span>Cartão Visa / Mastercard<small>0,20 € + 1,5% + IVA</small></td><td class="n" data-label="Cada quota custa">0,47 €</td><td class="n" data-label="181 quotas custam">84,60 €</td><td class="n" data-label="A APAEF recebe">2 087,40 €</td></tr>
+        <tr><td><span class="so-movel">Se todos pagarem por </span>Transferência bancária<small>não passa pela ifthenpay</small></td><td class="n" data-label="Cada quota custa">0 €</td><td class="n" data-label="181 quotas custam">0 €</td><td class="n" data-label="A APAEF recebe">2 172,00 €</td></tr>
       </tbody>
     </table>
   </div>
@@ -234,7 +251,8 @@ nav.barra {
 <section class="slide" id="s4" hidden>
   <span class="olho">Porquê a ifthenpay</span>
   <h2>O serviço mais barato, feito em Portugal</h2>
-  <div class="tabela cartoes">
+  <p class="so-movel">Comparámos 3 empresas portuguesas que fazem pagamentos online. Os mesmos pontos em cada uma. Preços sem IVA.</p>
+  <div class="tabela so-largo">
     <table>
       <thead><tr><th></th><th>ifthenpay</th><th>Eupago</th><th>Easypay</th></tr></thead>
       <tbody>
@@ -245,6 +263,14 @@ nav.barra {
         <tr><td>Queixas dos clientes</td><td data-label="ifthenpay">Portal da Queixa: 92,9 em 100</td><td data-label="Eupago">—</td><td data-label="Easypay">—</td></tr>
       </tbody>
     </table>
+  </div>
+  <div class="empresas so-movel">
+    <div class="empresa escolhida"><h3>ifthenpay <span class="selo-esc">a nossa escolha</span></h3>
+      <dl><dt>Adesão e mensalidade</dt><dd>0 €</dd><dt>MB WAY</dt><dd>0,07 € + 0,7%</dd><dt>Multibanco e cartão</dt><dd>0,20 € + 1,5%</dd><dt>Aceita associações</dt><dd>Sim</dd><dt>Queixas dos clientes</dt><dd>92,9 / 100</dd></dl></div>
+    <div class="empresa"><h3>Eupago</h3>
+      <dl><dt>Adesão e mensalidade</dt><dd>0 €</dd><dt>MB WAY</dt><dd>0,07 € + 0,7%</dd><dt>Multibanco e cartão</dt><dd>0,20 € + 1,5%</dd><dt>Aceita associações</dt><dd>(?)</dd><dt>Queixas dos clientes</dt><dd>—</dd></dl></div>
+    <div class="empresa"><h3>Easypay</h3>
+      <dl><dt>Adesão e mensalidade</dt><dd>0 € ou 50 €</dd><dt>MB WAY</dt><dd>não publicado</dd><dt>Multibanco e cartão</dt><dd>não publicado</dd><dt>Aceita associações</dt><dd>Sim</dd><dt>Queixas dos clientes</dt><dd>—</dd></dl></div>
   </div>
   <p class="pequeno">Aos preços soma-se IVA a 23%. O contrato renova todos os anos e pode ser cancelado com 30 dias de aviso.</p>
 </section>
