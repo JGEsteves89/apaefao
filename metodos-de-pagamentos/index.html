@@ -108,6 +108,32 @@ td small { display: block; color: var(--suave); font-size: 13px; font-weight: 40
 .check li::before { content: ""; width: 16px; height: 16px; margin-top: 4px; border: 2px solid var(--tinta); border-radius: 4px; }
 .check small { display: block; color: var(--suave); font-size: 13px; }
 .capa-flor { width: 84px; height: 84px; }
+.como { display: grid; grid-template-columns: 1fr 300px; gap: 24px; align-items: start; }
+.como > * { min-width: 0; }
+.fluxo.vertical { grid-template-columns: 1fr 1fr; }
+.telefone { margin: 0; display: grid; gap: 6px; justify-items: center; }
+.ecra { width: 100%; max-width: 280px; border: 3px solid var(--tinta); border-radius: 30px; padding: 16px 14px 18px; background: var(--papel); display: grid; gap: 10px; box-shadow: 4px 4px 0 var(--sol-escuro); font-size: 13px; }
+.t-topo { display: flex; align-items: center; gap: 6px; font-family: var(--display); font-weight: 700; font-size: 15px; border-bottom: 1.5px dashed var(--linha); padding-bottom: 8px; }
+.t-logo { width: 18px; height: 18px; border-radius: 50%; background: var(--sol); border: 2px solid var(--tinta); }
+.t-resumo { display: flex; justify-content: space-between; align-items: center; background: var(--sol-claro); border: 1.5px dashed var(--sol-escuro); border-radius: 10px; padding: 6px 10px; font-weight: 800; }
+.t-resumo small { display: block; font-weight: 600; color: var(--suave); font-size: 11px; }
+.t-resumo b { font-family: var(--display); font-size: 20px; }
+.t-pergunta { font-family: var(--display); font-weight: 600; font-size: 17px; }
+.t-opcoes { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.t-op { min-height: 70px; background: var(--folha); border: 2px solid var(--tinta); border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-align: center; padding: 6px; }
+.t-op small { font-size: 11px; font-weight: 700; line-height: 1.15; }
+.t-op.ativa { background: var(--sol); color: #1f1a14; }
+.t-mbway { font-family: var(--display); font-weight: 700; font-size: 15px; color: #c0101e; }
+.t-mb { font-family: var(--display); font-weight: 700; font-size: 14px; background: #1f1a14; color: #fff; border-radius: 6px; padding: 1px 7px; }
+.t-cartao { display: inline-flex; align-items: center; gap: 5px; font-weight: 800; font-size: 12px; }
+.t-cartao i { width: 18px; height: 13px; border-radius: 3px; border: 1.5px solid currentColor; display: inline-block; background: linear-gradient(currentColor 0 0) 0 3px / 100% 2px no-repeat; }
+.t-iban { font-family: var(--mono, monospace); font-weight: 800; font-size: 12px; border: 1.5px solid currentColor; border-radius: 5px; padding: 0 5px; }
+.t-campo { background: var(--folha); border: 1.5px solid var(--linha); border-radius: 10px; padding: 6px 10px; display: grid; }
+.t-campo small { color: var(--suave); font-size: 11px; font-weight: 700; }
+.t-botao { background: var(--sol); color: #1f1a14; border: 2px solid var(--tinta); border-radius: 999px; text-align: center; font-weight: 800; padding: 8px; box-shadow: 2px 2px 0 var(--tinta); }
+@media (max-width: 760px) { .como { grid-template-columns: 1fr; } .fluxo.vertical { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 440px) { .fluxo.vertical { grid-template-columns: 1fr; } }
+
 nav.barra {
   display: flex; align-items: center; justify-content: space-between; gap: 12px;
   padding-block: 8px max(12px, env(safe-area-inset-bottom, 0px));
@@ -148,11 +174,29 @@ nav.barra {
 <section class="slide" id="s2" hidden>
   <span class="olho">Como funciona</span>
   <h2>Do lado dos pais e do lado da APAEF</h2>
-  <div class="fluxo">
-    <div><h3>O pai preenche</h3><p>A ficha de sócio no site, como já faz hoje.</p></div>
-    <div><h3>Escolhe como pagar</h3><p><b>MB WAY</b> (aceita na app do telemóvel), <b>referência Multibanco</b> (paga no multibanco ou no homebanking), <b>cartão</b>, ou <b>transferência</b>.</p></div>
-    <div><h3>Fica marcado</h3><p>Quando paga, o site mostra "Pago!" e a lista de sócios da APAEF marca o aluno como pago. Sozinho.</p></div>
-    <div><h3>O dinheiro chega</h3><p>À conta da APAEF, 1 a 2 dias úteis depois, já sem a comissão. No extrato aparece uma transferência por dia.</p></div>
+  <div class="como">
+    <div class="fluxo vertical">
+      <div><h3>O pai preenche</h3><p>A ficha de sócio no site, como já faz hoje.</p></div>
+      <div><h3>Escolhe como pagar</h3><p>Entre 4 opções, como no ecrã ao lado.</p></div>
+      <div><h3>Fica marcado</h3><p>O site mostra "Pago!" e a lista de sócios da APAEF marca o aluno como pago. Sozinho.</p></div>
+      <div><h3>O dinheiro chega</h3><p>À conta da APAEF, 1 a 2 dias úteis depois, já sem a comissão.</p></div>
+    </div>
+    <figure class="telefone" aria-label="Exemplo do ecrã de pagamento no site da APAEF">
+      <div class="ecra">
+        <div class="t-topo"><span class="t-logo" aria-hidden="true"></span>APAEF</div>
+        <div class="t-resumo"><span>Quota 2026/27<small>Alba · Pré D</small></span><b>12 €</b></div>
+        <p class="t-pergunta">Como queres pagar?</p>
+        <div class="t-opcoes">
+          <div class="t-op ativa"><span class="t-mbway">MB WAY</span><small>No telemóvel</small></div>
+          <div class="t-op"><span class="t-mb">MB</span><small>Referência Multibanco</small></div>
+          <div class="t-op"><span class="t-cartao"><i></i>Visa · MC</span><small>Cartão</small></div>
+          <div class="t-op"><span class="t-iban">IBAN</span><small>Transferência</small></div>
+        </div>
+        <div class="t-campo"><small>N.º de telemóvel</small><span>912 345 678</span></div>
+        <div class="t-botao">Pagar 12 € com MB WAY</div>
+      </div>
+      <figcaption class="pequeno">Exemplo, com dados fictícios.</figcaption>
+    </figure>
   </div>
   <p class="nota">O envelope com dinheiro continua a ser aceite. A transferência também, mas essa continua a ser confirmada à mão.</p>
 </section>
