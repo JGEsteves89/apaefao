@@ -65,7 +65,7 @@ body {
   .tabela.cartoes { overflow: visible; }
   .cartoes table, .cartoes tbody, .cartoes tr, .cartoes td { display: block; width: 100%; }
   .cartoes thead { display: none; }
-  .cartoes tbody { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 10px; }
+  .cartoes tbody { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(240px, 100%), 1fr)); gap: 10px; }
   .cartoes tr { margin-bottom: 0 !important; border: 1.5px solid var(--linha); border-radius: 12px; padding: 10px 12px; margin-bottom: 10px; display: grid; gap: 6px; }
   .cartoes tr.melhor { border: 2px solid var(--tinta); }
   .cartoes tr.melhor td { background: transparent; }
@@ -117,8 +117,21 @@ td small { display: block; color: var(--suave); font-size: 13px; font-weight: 40
 .check li::before { content: ""; width: 16px; height: 16px; margin-top: 4px; border: 2px solid var(--tinta); border-radius: 4px; }
 .check small { display: block; color: var(--suave); font-size: 13px; }
 .capa-flor { width: 84px; height: 84px; }
+.custos { display: grid; gap: 0; font-variant-numeric: tabular-nums; }
+.c-cab, .c-linha { display: grid; grid-template-columns: minmax(0, 1fr) 6.5em 7.5em; gap: 12px; align-items: center; padding: 12px 10px; border-bottom: 1px solid var(--linha); }
+.c-cab { font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; color: var(--suave); padding-block: 4px 8px; }
+.c-cab span:not(:first-child), .c-linha span:not(.c-nome) { text-align: right; }
+.c-linha { font-size: 18px; }
+.c-linha span:not(.c-nome) { font-weight: 700; }
+.c-nome { display: grid; gap: 6px; font-weight: 700; min-width: 0; }
+.c-barra { display: block; height: 8px; border-radius: 4px; background: var(--linha); position: relative; overflow: hidden; }
+.c-barra::after { content: ""; position: absolute; inset: 0 auto 0 0; width: var(--w); background: var(--suave); border-radius: 4px; }
+.c-linha.melhor { background: var(--sol-claro); border-radius: 10px; border-bottom-color: transparent; }
+.c-linha.melhor .c-barra::after { background: var(--sol-escuro); }
+@media (max-width: 420px) { .c-cab, .c-linha { grid-template-columns: minmax(0, 1fr) 4.6em 4.6em; gap: 8px; } .c-linha { font-size: 16px; } .c-cab { font-size: 11px; } }
+
 .so-movel { display: none; }
-.empresas { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 10px; }
+.empresas { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(240px, 100%), 1fr)); gap: 10px; }
 .empresa { border: 1.5px solid var(--linha); border-radius: 12px; padding: 12px 14px; display: grid; gap: 8px; }
 .empresa.escolhida { border: 2px solid var(--tinta); background: var(--sol-claro); }
 .empresa h3 { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
@@ -229,22 +242,16 @@ nav.barra {
 <!-- 3 -->
 <section class="slide" id="s3" hidden>
   <span class="olho">Quanto custa · exemplo das quotas</span>
-  <h2>Quota de 12 €, com IVA incluído</h2>
-  <div class="tabela cartoes">
-    <table>
-      <thead><tr><th>Se toda a gente pagar por…</th><th class="n">Custo por quota</th><th class="n">181 quotas (2 172 €)</th><th class="n">A APAEF recebe</th></tr></thead>
-      <tbody>
-        <tr class="melhor"><td><span class="so-movel">Se todos pagarem por </span>MB WAY<small>0,07 € + 0,7% + IVA</small></td><td class="n" data-label="Cada quota custa">0,19 €</td><td class="n" data-label="181 quotas custam">34,29 €</td><td class="n" data-label="A APAEF recebe">2 137,71 €</td></tr>
-        <tr><td><span class="so-movel">Se todos pagarem por </span>Referência Multibanco<small>0,20 € + 1,5% + IVA</small></td><td class="n" data-label="Cada quota custa">0,47 €</td><td class="n" data-label="181 quotas custam">84,60 €</td><td class="n" data-label="A APAEF recebe">2 087,40 €</td></tr>
-        <tr><td><span class="so-movel">Se todos pagarem por </span>Cartão Visa / Mastercard<small>0,20 € + 1,5% + IVA</small></td><td class="n" data-label="Cada quota custa">0,47 €</td><td class="n" data-label="181 quotas custam">84,60 €</td><td class="n" data-label="A APAEF recebe">2 087,40 €</td></tr>
-        <tr><td><span class="so-movel">Se todos pagarem por </span>Transferência bancária<small>não passa pela ifthenpay</small></td><td class="n" data-label="Cada quota custa">0 €</td><td class="n" data-label="181 quotas custam">0 €</td><td class="n" data-label="A APAEF recebe">2 172,00 €</td></tr>
-      </tbody>
-    </table>
+  <h2>Quanto paga a APAEF por cada quota de 12 €?</h2>
+  <div class="custos" role="table" aria-label="Custo por método de pagamento, com IVA">
+    <div class="c-cab" role="row"><span role="columnheader">Se o pai pagar por</span><span role="columnheader">Cada quota</span><span role="columnheader">As 181 quotas</span></div>
+    <div class="c-linha melhor" role="row"><span role="cell" class="c-nome">MB WAY<i class="c-barra" style="--w:40%"></i></span><span role="cell">0,19 €</span><span role="cell">34 €</span></div>
+    <div class="c-linha" role="row"><span role="cell" class="c-nome">Multibanco<i class="c-barra" style="--w:100%"></i></span><span role="cell">0,47 €</span><span role="cell">85 €</span></div>
+    <div class="c-linha" role="row"><span role="cell" class="c-nome">Cartão<i class="c-barra" style="--w:100%"></i></span><span role="cell">0,47 €</span><span role="cell">85 €</span></div>
+    <div class="c-linha" role="row"><span role="cell" class="c-nome">Transferência<i class="c-barra" style="--w:0%"></i></span><span role="cell">0 €</span><span role="cell">0 €</span></div>
   </div>
-  <div class="duas">
-    <div class="caixa forte"><h3>Não há custos fixos</h3><p>0 € de adesão e 0 € por mês. Só se paga quando alguém paga. Se ninguém usar, custa 0 €.</p></div>
-    <div class="caixa"><h3>Para comparar</h3><p>MB WAY custa 1,6% da quota; Multibanco e cartão, 3,9%. Os 181 alunos são os da EB de Fão em fevereiro de 2026.</p></div>
-  </div>
+  <p class="nota"><b>Não há custos fixos.</b> 0 € de adesão e 0 € por mês: só se paga quando alguém paga.</p>
+  <p class="pequeno">Valores com IVA. Comissões: MB WAY 0,07 € + 0,7%; Multibanco e cartão 0,20 € + 1,5%; mais IVA a 23%. 181 = alunos da EB de Fão (fevereiro de 2026).</p>
 </section>
 
 <!-- 4 -->
