@@ -60,17 +60,25 @@ body {
   .palco { padding-block: 10px 6px; }
   .slide { padding: 18px 16px; border-radius: 14px; box-shadow: 4px 4px 0 var(--sol-escuro); max-height: none; }
   .btn { padding: 8px 14px; font-size: 14px; }
+}
+@media (max-width: 900px), (max-height: 520px) {
   .tabela.cartoes { overflow: visible; }
   .cartoes table, .cartoes tbody, .cartoes tr, .cartoes td { display: block; width: 100%; }
   .cartoes thead { display: none; }
-  .cartoes tr { border: 1.5px solid var(--linha); border-radius: 12px; padding: 10px 12px; margin-bottom: 10px; display: grid; gap: 6px; }
+  .cartoes tbody { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 10px; }
+  .cartoes tr { margin-bottom: 0 !important; border: 1.5px solid var(--linha); border-radius: 12px; padding: 10px 12px; margin-bottom: 10px; display: grid; gap: 6px; }
   .cartoes tr.melhor { border: 2px solid var(--tinta); }
   .cartoes tr.melhor td { background: transparent; }
   .cartoes tr.melhor { background: var(--sol-claro); }
   .cartoes td { border: 0; padding: 0; display: flex; justify-content: space-between; align-items: baseline; gap: 12px; text-align: right; white-space: normal; }
   .cartoes td:first-child { display: block; text-align: left; font-weight: 800; font-size: 17px; }
   .cartoes td[data-label]::before { content: attr(data-label); color: var(--suave); font-size: 14px; font-weight: 600; text-align: left; }
+}@media (max-height: 520px) {
+  html, body { height: auto; }
+  .palco { display: block; }
+  .slide { height: auto; max-height: none; overflow: visible; }
 }
+
 h1, h2, h3 { font-family: var(--display); font-weight: 600; line-height: 1.1; margin: 0; text-wrap: balance; }
 h1 { font-size: clamp(32px, 5.5vw, 54px); }
 h2 { font-size: clamp(26px, 4vw, 36px); }
