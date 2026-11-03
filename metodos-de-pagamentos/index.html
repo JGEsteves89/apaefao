@@ -118,7 +118,7 @@ td small { display: block; color: var(--suave); font-size: 13px; font-weight: 40
 .check small { display: block; color: var(--suave); font-size: 13px; }
 .capa-flor { width: 84px; height: 84px; }
 .custos { display: grid; gap: 0; font-variant-numeric: tabular-nums; }
-.c-cab, .c-linha { display: grid; grid-template-columns: minmax(0, 1fr) 6.5em 7.5em; gap: 12px; align-items: center; padding: 12px 10px; border-bottom: 1px solid var(--linha); }
+.c-cab, .c-linha { display: grid; grid-template-columns: minmax(0, 1fr) 7.5em 8.5em; gap: 12px; align-items: center; padding: 12px 10px; border-bottom: 1px solid var(--linha); }
 .c-cab { font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; color: var(--suave); padding-block: 4px 8px; }
 .c-cab span:not(:first-child), .c-linha span:not(.c-nome) { text-align: right; }
 .c-linha { font-size: 18px; }
@@ -128,7 +128,7 @@ td small { display: block; color: var(--suave); font-size: 13px; font-weight: 40
 .c-barra::after { content: ""; position: absolute; inset: 0 auto 0 0; width: var(--w); background: var(--suave); border-radius: 4px; }
 .c-linha.melhor { background: var(--sol-claro); border-radius: 10px; border-bottom-color: transparent; }
 .c-linha.melhor .c-barra::after { background: var(--sol-escuro); }
-@media (max-width: 420px) { .c-cab, .c-linha { grid-template-columns: minmax(0, 1fr) 4.6em 4.6em; gap: 8px; } .c-linha { font-size: 16px; } .c-cab { font-size: 11px; } }
+@media (max-width: 420px) { .c-cab, .c-linha { grid-template-columns: minmax(0, 1fr) 4.8em 5.4em; gap: 8px; } .c-linha { font-size: 16px; } .c-cab { font-size: 11px; } }
 
 .so-movel { display: none; }
 .empresas { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(240px, 100%), 1fr)); gap: 10px; }
@@ -242,16 +242,16 @@ nav.barra {
 <!-- 3 -->
 <section class="slide" id="s3" hidden>
   <span class="olho">Quanto custa · exemplo das quotas</span>
-  <h2>Quanto paga a APAEF por cada quota de 12 €?</h2>
+  <h2>Quanto paga a APAEF de comissão numa quota de 12 €?</h2>
   <div class="custos" role="table" aria-label="Custo por método de pagamento, com IVA">
-    <div class="c-cab" role="row"><span role="columnheader">Se o pai pagar por</span><span role="columnheader">Cada quota</span><span role="columnheader">As 181 quotas</span></div>
-    <div class="c-linha melhor" role="row"><span role="cell" class="c-nome">MB WAY<i class="c-barra" style="--w:40%"></i></span><span role="cell">0,19 €</span><span role="cell">34 €</span></div>
-    <div class="c-linha" role="row"><span role="cell" class="c-nome">Multibanco<i class="c-barra" style="--w:100%"></i></span><span role="cell">0,47 €</span><span role="cell">85 €</span></div>
-    <div class="c-linha" role="row"><span role="cell" class="c-nome">Cartão<i class="c-barra" style="--w:100%"></i></span><span role="cell">0,47 €</span><span role="cell">85 €</span></div>
+    <div class="c-cab" role="row"><span role="columnheader">Se o pai pagar por</span><span role="columnheader">Por quota</span><span role="columnheader">Para 206 alunos</span></div>
+    <div class="c-linha melhor" role="row"><span role="cell" class="c-nome">MB WAY<i class="c-barra" style="--w:40%"></i></span><span role="cell">0,19 €</span><span role="cell">39 €</span></div>
+    <div class="c-linha" role="row"><span role="cell" class="c-nome">Multibanco<i class="c-barra" style="--w:100%"></i></span><span role="cell">0,47 €</span><span role="cell">96 €</span></div>
+    <div class="c-linha" role="row"><span role="cell" class="c-nome">Cartão<i class="c-barra" style="--w:100%"></i></span><span role="cell">0,47 €</span><span role="cell">96 €</span></div>
     <div class="c-linha" role="row"><span role="cell" class="c-nome">Transferência<i class="c-barra" style="--w:0%"></i></span><span role="cell">0 €</span><span role="cell">0 €</span></div>
   </div>
   <p class="nota"><b>Não há custos fixos.</b> 0 € de adesão e 0 € por mês: só se paga quando alguém paga.</p>
-  <p class="pequeno">Valores com IVA. Comissões: MB WAY 0,07 € + 0,7%; Multibanco e cartão 0,20 € + 1,5%; mais IVA a 23%. 181 = alunos da EB de Fão (fevereiro de 2026).</p>
+  <p class="pequeno">Valores com IVA. Comissões: MB WAY 0,07 € + 0,7%; Multibanco e cartão 0,20 € + 1,5%; mais IVA a 23%. 206 = alunos inscritos este ano letivo.</p>
 </section>
 
 <!-- 4 -->
@@ -334,7 +334,7 @@ nav.barra {
     <li>Adesão: <a href="https://ifthenpay.com/join/?lang=en" target="_blank" rel="noopener">ifthenpay.com/join</a></li>
     <li>Queixas: <a href="https://portaldaqueixa.com/brands/ifthenpay" target="_blank" rel="noopener">Portal da Queixa</a></li>
     <li>Comparação: <a href="https://www.eupago.com/pricing" target="_blank" rel="noopener">Eupago</a>, <a href="https://www.easypay.pt/en/prices" target="_blank" rel="noopener">Easypay</a></li>
-    <li>N.º de alunos da EB de Fão: Projeto Educativo do Agrupamento 2026–2029</li>
+    <li>N.º de alunos inscritos em 2026/27: APAEF (206)</li>
   </ul>
 </section>
 
