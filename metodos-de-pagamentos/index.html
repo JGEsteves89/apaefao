@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Métodos de pagamento — APAEF Fão</title>
+<meta name="robots" content="noindex">
+<meta name="description" content="Proposta à Direção da APAEF: pagamentos por MB WAY, Multibanco e cartão no site.">
+<link rel="icon" href="../favicon.ico" sizes="any">
+<style>[hidden]{display:none!important} img{max-width:100%}</style>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* Layout: um diapositivo de cada vez, como folhas de papel com o girassol da APAEF; navegação em baixo. */
+:root {
+  --papel: #f4ecdb;
+  --folha: #fffaf0;
+  --tinta: #1f1a14;
+  --suave: #5f5548;
+  --sol: #ebce58;
+  --sol-escuro: #b8952a;
+  --sol-claro: #fbf0c4;
+  --linha: #e2d5b8;
+  --display: "Fredoka", "Nunito", system-ui, sans-serif;
+  --corpo: "Nunito", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --papel: #1c1913; --folha: #26221a; --tinta: #f3ead6; --suave: #c4b8a2;
+    --sol: #e9c94f; --sol-escuro: #e0bd3f; --sol-claro: #3a3220; --linha: #3d3628; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --papel: #1c1913; --folha: #26221a; --tinta: #f3ead6; --suave: #c4b8a2;
+  --sol: #e9c94f; --sol-escuro: #e0bd3f; --sol-claro: #3a3220; --linha: #3d3628; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0; background: var(--papel); color: var(--tinta);
+  font: 400 17px/1.55 var(--corpo);
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: flex; flex-direction: column;
+}
+.palco { flex: 1; min-height: 0; display: grid; place-items: center; padding-block: 16px 8px; }
+.slide {
+  width: 100%; max-width: 980px; height: 100%; max-height: 660px;
+  background: var(--folha); border: 2px solid var(--tinta); border-radius: 18px;
+  box-shadow: 6px 6px 0 var(--sol-escuro);
+  padding: clamp(20px, 4vw, 40px); overflow: auto;
+  display: flex; flex-direction: column; gap: 16px;
+}
+.slide[hidden] { display: none; }
+.slide > * { flex-shrink: 0; }
+@media (max-width: 640px) {
+  body { font-size: 16px; }
+  .palco { padding-block: 10px 6px; }
+  .slide { padding: 18px 16px; border-radius: 14px; box-shadow: 4px 4px 0 var(--sol-escuro); max-height: none; }
+  .btn { padding: 8px 14px; font-size: 14px; }
+  .tabela.cartoes { overflow: visible; }
+  .cartoes table, .cartoes tbody, .cartoes tr, .cartoes td { display: block; width: 100%; }
+  .cartoes thead { display: none; }
+  .cartoes tr { border: 1.5px solid var(--linha); border-radius: 12px; padding: 10px 12px; margin-bottom: 10px; display: grid; gap: 6px; }
+  .cartoes tr.melhor { border: 2px solid var(--tinta); }
+  .cartoes tr.melhor td { background: transparent; }
+  .cartoes tr.melhor { background: var(--sol-claro); }
+  .cartoes td { border: 0; padding: 0; display: flex; justify-content: space-between; align-items: baseline; gap: 12px; text-align: right; white-space: normal; }
+  .cartoes td:first-child { display: block; text-align: left; font-weight: 800; font-size: 17px; }
+  .cartoes td[data-label]::before { content: attr(data-label); color: var(--suave); font-size: 14px; font-weight: 600; text-align: left; }
+}
+h1, h2, h3 { font-family: var(--display); font-weight: 600; line-height: 1.1; margin: 0; text-wrap: balance; }
+h1 { font-size: clamp(32px, 5.5vw, 54px); }
+h2 { font-size: clamp(26px, 4vw, 36px); }
+h3 { font-size: 19px; }
+p { margin: 0; max-width: 65ch; }
+.olho { font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; color: var(--suave); }
+.destaque { background: var(--sol); color: #1f1a14; padding: 0 8px; border-radius: 8px; display: inline-block; transform: rotate(-1.5deg); }
+.pequeno { font-size: 14px; color: var(--suave); }
+.nota { background: var(--sol-claro); border-left: 5px solid var(--sol); border-radius: 8px; padding: 10px 14px; font-size: 15px; max-width: none; }
+ul, ol { margin: 0; padding-left: 22px; display: grid; gap: 6px; }
+.duas { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.duas > * { min-width: 0; }
+@media (max-width: 720px) { .duas { grid-template-columns: 1fr; } }
+.caixa { border: 1.5px solid var(--linha); border-radius: 12px; padding: 14px 16px; display: grid; gap: 8px; align-content: start; }
+.caixa.forte { border: 2px solid var(--tinta); background: var(--sol-claro); }
+.tabela { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 16px; font-variant-numeric: tabular-nums; }
+th, td { text-align: left; padding: 9px 10px; border-bottom: 1px solid var(--linha); vertical-align: top; }
+th { font-size: 13px; text-transform: uppercase; letter-spacing: .05em; color: var(--suave); font-weight: 800; }
+td.n, th.n { text-align: right; white-space: nowrap; }
+tr.melhor td { background: var(--sol-claro); font-weight: 700; }
+td small { display: block; color: var(--suave); font-size: 13px; font-weight: 400; }
+.passos { list-style: none; padding: 0; display: grid; gap: 12px; counter-reset: p; }
+.passos li { display: grid; grid-template-columns: 38px 1fr; gap: 12px; align-items: start; counter-increment: p; }
+.passos li::before { content: counter(p); width: 34px; height: 34px; border-radius: 50%; border: 2px solid var(--tinta); background: var(--sol); color: #1f1a14; display: grid; place-items: center; font-family: var(--display); font-weight: 700; }
+.passos b { display: block; }
+.fluxo { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; counter-reset: f; }
+.fluxo > div { border: 1.5px solid var(--linha); border-radius: 12px; padding: 14px; display: grid; gap: 6px; align-content: start; min-width: 0; counter-increment: f; }
+.fluxo > div::before { content: counter(f); font-family: var(--display); font-weight: 700; font-size: 26px; color: var(--sol-escuro); line-height: 1; }
+.fluxo p { font-size: 15px; }
+@media (max-width: 760px) { .fluxo { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 440px) { .fluxo { grid-template-columns: 1fr; } }
+.check { list-style: none; padding: 0; display: grid; gap: 7px; }
+.check li { display: grid; grid-template-columns: 22px 1fr; gap: 8px; }
+.check li::before { content: ""; width: 16px; height: 16px; margin-top: 4px; border: 2px solid var(--tinta); border-radius: 4px; }
+.check small { display: block; color: var(--suave); font-size: 13px; }
+.capa-flor { width: 84px; height: 84px; }
+nav.barra {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding-block: 8px max(12px, env(safe-area-inset-bottom, 0px));
+  max-width: 980px; width: 100%; margin: 0 auto;
+}
+.btn { font: 800 15px var(--corpo); color: #1f1a14; background: var(--sol); border: 2px solid var(--tinta); border-radius: 999px; padding: 8px 18px; cursor: pointer; box-shadow: 2px 2px 0 var(--tinta); }
+.btn:disabled { opacity: .4; cursor: default; }
+.btn:focus-visible { outline: 3px solid var(--sol-escuro); outline-offset: 2px; }
+.contador { font: 700 14px var(--corpo); color: var(--suave); font-variant-numeric: tabular-nums; }
+.progresso { height: 4px; background: var(--linha); border-radius: 4px; flex: 1; overflow: hidden; }
+.progresso span { display: block; height: 100%; background: var(--sol-escuro); transition: width .25s; }
+.fontes a { color: var(--tinta); word-break: break-word; }
+@media (prefers-reduced-motion: reduce) { .progresso span { transition: none; } }
+</style>
+</head>
+<body>
+
+<main class="palco" id="palco">
+
+<!-- 1 -->
+<section class="slide" id="s1">
+  <svg class="capa-flor" viewBox="0 0 100 100" aria-hidden="true">
+    <g fill="var(--sol)" stroke="var(--tinta)" stroke-width="2.5">
+      <ellipse cx="50" cy="20" rx="11" ry="18"/><ellipse cx="50" cy="80" rx="11" ry="18"/>
+      <ellipse cx="20" cy="50" rx="18" ry="11"/><ellipse cx="80" cy="50" rx="18" ry="11"/>
+      <ellipse cx="29" cy="29" rx="11" ry="17" transform="rotate(-45 29 29)"/><ellipse cx="71" cy="71" rx="11" ry="17" transform="rotate(-45 71 71)"/>
+      <ellipse cx="71" cy="29" rx="11" ry="17" transform="rotate(45 71 29)"/><ellipse cx="29" cy="71" rx="11" ry="17" transform="rotate(45 29 71)"/>
+    </g>
+    <circle cx="50" cy="50" r="16" fill="#6b4423" stroke="var(--tinta)" stroke-width="2.5"/>
+  </svg>
+  <span class="olho">Proposta à Direção da APAEF · novembro de 2026</span>
+  <h1>Os pais pagam <span class="destaque">no site</span>, e a APAEF sabe logo quem pagou</h1>
+  <p>Hoje recebemos quotas em envelopes e transferências com nomes que não batem certo, e a tesouraria tem de cruzar tudo à mão. Com um serviço de pagamentos ligado ao site, cada pagamento chega já com o nome do aluno e fica marcado como "pago" sozinho.</p>
+  <p class="pequeno">Preparado por José Esteves. Preços e documentos retirados do site e do contrato da ifthenpay.</p>
+</section>
+
+<!-- 2 -->
+<section class="slide" id="s2" hidden>
+  <span class="olho">Como funciona</span>
+  <h2>Do lado dos pais e do lado da APAEF</h2>
+  <div class="fluxo">
+    <div><h3>O pai preenche</h3><p>A ficha de sócio no site, como já faz hoje.</p></div>
+    <div><h3>Escolhe como pagar</h3><p><b>MB WAY</b> (aceita na app do telemóvel), <b>referência Multibanco</b> (paga no multibanco ou no homebanking), <b>cartão</b>, ou <b>transferência</b>.</p></div>
+    <div><h3>Fica marcado</h3><p>Quando paga, o site mostra "Pago!" e a lista de sócios da APAEF marca o aluno como pago. Sozinho.</p></div>
+    <div><h3>O dinheiro chega</h3><p>À conta da APAEF, 1 a 2 dias úteis depois, já sem a comissão. No extrato aparece uma transferência por dia.</p></div>
+  </div>
+  <p class="nota">O envelope com dinheiro continua a ser aceite. A transferência também, mas essa continua a ser confirmada à mão.</p>
+</section>
+
+<!-- 3 -->
+<section class="slide" id="s3" hidden>
+  <span class="olho">Quanto custa · exemplo das quotas</span>
+  <h2>Quota de 12 €, com IVA incluído</h2>
+  <div class="tabela cartoes">
+    <table>
+      <thead><tr><th>Se toda a gente pagar por…</th><th class="n">Custo por quota</th><th class="n">181 quotas (2 172 €)</th><th class="n">A APAEF recebe</th></tr></thead>
+      <tbody>
+        <tr class="melhor"><td>MB WAY<small>0,07 € + 0,7% + IVA</small></td><td class="n" data-label="Custo por quota">0,19 €</td><td class="n" data-label="181 quotas">34,29 €</td><td class="n" data-label="A APAEF recebe">2 137,71 €</td></tr>
+        <tr><td>Referência Multibanco<small>0,20 € + 1,5% + IVA</small></td><td class="n" data-label="Custo por quota">0,47 €</td><td class="n" data-label="181 quotas">84,60 €</td><td class="n" data-label="A APAEF recebe">2 087,40 €</td></tr>
+        <tr><td>Cartão Visa / Mastercard<small>0,20 € + 1,5% + IVA</small></td><td class="n" data-label="Custo por quota">0,47 €</td><td class="n" data-label="181 quotas">84,60 €</td><td class="n" data-label="A APAEF recebe">2 087,40 €</td></tr>
+        <tr><td>Transferência bancária<small>não passa pela ifthenpay</small></td><td class="n" data-label="Custo por quota">0 €</td><td class="n" data-label="181 quotas">0 €</td><td class="n" data-label="A APAEF recebe">2 172,00 €</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="duas">
+    <div class="caixa forte"><h3>Não há custos fixos</h3><p>0 € de adesão e 0 € por mês. Só se paga quando alguém paga. Se ninguém usar, custa 0 €.</p></div>
+    <div class="caixa"><h3>Para comparar</h3><p>MB WAY custa 1,6% da quota; Multibanco e cartão, 3,9%. Os 181 alunos são os da EB de Fão em fevereiro de 2026.</p></div>
+  </div>
+</section>
+
+<!-- 4 -->
+<section class="slide" id="s4" hidden>
+  <span class="olho">Porquê a ifthenpay</span>
+  <h2>O serviço mais barato, feito em Portugal</h2>
+  <div class="tabela cartoes">
+    <table>
+      <thead><tr><th></th><th>ifthenpay</th><th>Eupago</th><th>Easypay</th></tr></thead>
+      <tbody>
+        <tr><td>Adesão e mensalidade</td><td data-label="ifthenpay">0 €</td><td data-label="Eupago">0 €</td><td data-label="Easypay">0 € (pode cobrar 50 € de abertura)</td></tr>
+        <tr><td>MB WAY</td><td data-label="ifthenpay">0,07 € + 0,7%</td><td data-label="Eupago">0,07 € + 0,7%</td><td data-label="Easypay">preço não publicado</td></tr>
+        <tr><td>Multibanco e cartão</td><td data-label="ifthenpay">0,20 € + 1,5%</td><td data-label="Eupago">0,20 € + 1,5%</td><td data-label="Easypay">preço não publicado</td></tr>
+        <tr><td>Aceita associações</td><td data-label="ifthenpay">Sim, está no contrato</td><td data-label="Eupago">(?)</td><td data-label="Easypay">Sim</td></tr>
+        <tr><td>Queixas dos clientes</td><td data-label="ifthenpay">Portal da Queixa: 92,9 em 100</td><td data-label="Eupago">—</td><td data-label="Easypay">—</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="pequeno">Aos preços soma-se IVA a 23%. O contrato renova todos os anos e pode ser cancelado com 30 dias de aviso.</p>
+</section>
+
+<!-- 5 -->
+<section class="slide" id="s5" hidden>
+  <span class="olho">O que é preciso para aderir</span>
+  <h2>Documentos e o que acontece a seguir</h2>
+  <div class="duas">
+    <div class="caixa">
+      <h3>Documentos da APAEF</h3>
+      <ul class="check">
+        <li><span>Estatutos</span></li>
+        <li><span>Ata da eleição dos órgãos sociais<small>AG de 12/10/2026</small></span></li>
+        <li><span>Código do RCBE<small>registo dos "donos efetivos" da associação; confirmar se já existe</small></span></li>
+        <li><span>Certidão de situação perante o IVA<small>tira-se no Portal das Finanças</small></span></li>
+        <li><span>Cartão de cidadão de quem assina<small>e dos "donos efetivos" indicados no RCBE</small></span></li>
+        <li><span>Comprovativo do IBAN em nome da APAEF</span></li>
+        <li><span>Contrato assinado por 2 pessoas da Direção<small>uma delas a presidente ou a tesoureira</small></span></li>
+      </ul>
+    </div>
+    <div class="caixa forte">
+      <h3>Depois de enviar</h3>
+      <ol class="passos">
+        <li><div><b>A ifthenpay verifica os documentos</b><span class="pequeno">Só ativa quando tem tudo.</span></div></li>
+        <li><div><b>A APAEF recebe o acesso</b><span class="pequeno">Um painel com todos os pagamentos.</span></div></li>
+        <li><div><b>Eu ligo o site</b><span class="pequeno">E testo com pagamentos de 1 €.</span></div></li>
+        <li><div><b>Abrimos aos pais</b></div></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- 6 -->
+<section class="slide" id="s6" hidden>
+  <span class="olho">Próximos passos</span>
+  <h2>O que precisamos da Direção</h2>
+  <ol class="passos">
+    <li><div><b>Decidir avançar</b><span class="pequeno">Sem custos fixos: se não resultar, cancela-se com 30 dias de aviso.</span></div></li>
+    <li><div><b>Dizer quem assina e trata da adesão</b><span class="pequeno">Presidente e tesoureira.</span></div></li>
+    <li><div><b>Juntar os documentos</b><span class="pequeno">Eu ajudo a preparar o que for possível.</span></div></li>
+    <li><div><b>Escolher a primeira atividade</b><span class="pequeno">Jantar de Natal (12/12) ou quotas.</span></div></li>
+  </ol>
+  <p>Da minha parte: ligar ao site, testar e acompanhar a tesouraria nas primeiras semanas.</p>
+</section>
+
+<!-- 7 -->
+<section class="slide fontes" id="s7" hidden>
+  <span class="olho">Fontes</span>
+  <h2>De onde vêm os números</h2>
+  <ul class="pequeno">
+    <li>Preços ifthenpay: <a href="https://ifthenpay.com/?lang=en#pricing" target="_blank" rel="noopener">ifthenpay.com (preços)</a> e <a href="https://helpdesk.ifthenpay.com/pt-PT/support/solutions/articles/79000086484-quais-os-custos-do-servico-" target="_blank" rel="noopener">helpdesk: custos do serviço</a></li>
+    <li>Documentos, transferências para o banco e cancelamento: <a href="https://ifthenpay.com/assets/files/CONTRACT-IFTHENPAY-EN.pdf" target="_blank" rel="noopener">contrato ifthenpay (PDF)</a></li>
+    <li>Adesão: <a href="https://ifthenpay.com/join/?lang=en" target="_blank" rel="noopener">ifthenpay.com/join</a></li>
+    <li>Queixas: <a href="https://portaldaqueixa.com/brands/ifthenpay" target="_blank" rel="noopener">Portal da Queixa</a></li>
+    <li>Comparação: <a href="https://www.eupago.com/pricing" target="_blank" rel="noopener">Eupago</a>, <a href="https://www.easypay.pt/en/prices" target="_blank" rel="noopener">Easypay</a></li>
+    <li>N.º de alunos da EB de Fão: Projeto Educativo do Agrupamento 2026–2029</li>
+  </ul>
+</section>
+
+</main>
+
+<nav class="barra" aria-label="Diapositivos">
+  <button class="btn" id="ant" type="button">← Anterior</button>
+  <div class="progresso" aria-hidden="true"><span id="barra"></span></div>
+  <span class="contador" id="contador">1 / 7</span>
+  <button class="btn" id="seg" type="button">Seguinte →</button>
+</nav>
+
+<script>
+(function () {
+  const slides = [...document.querySelectorAll(".slide")];
+  const ant = document.getElementById("ant"), seg = document.getElementById("seg");
+  const contador = document.getElementById("contador"), barra = document.getElementById("barra");
+  let i = 0;
+  function mostrar(n, mexerHash) {
+    i = Math.max(0, Math.min(slides.length - 1, n));
+    slides.forEach((s, k) => { s.hidden = k !== i; });
+    slides[i].scrollTop = 0;
+    contador.textContent = (i + 1) + " / " + slides.length;
+    barra.style.width = ((i + 1) / slides.length * 100) + "%";
+    ant.disabled = i === 0; seg.disabled = i === slides.length - 1;
+    if (mexerHash) history.replaceState(null, "", "#" + slides[i].id);
+  }
+  function doHash() {
+    const k = slides.findIndex(s => "#" + s.id === location.hash);
+    mostrar(k >= 0 ? k : 0, false);
+  }
+  ant.addEventListener("click", () => mostrar(i - 1, true));
+  seg.addEventListener("click", () => mostrar(i + 1, true));
+  document.addEventListener("keydown", e => {
+    if (e.key === "ArrowRight" || e.key === "PageDown") mostrar(i + 1, true);
+    if (e.key === "ArrowLeft" || e.key === "PageUp") mostrar(i - 1, true);
+  });
+  let x0 = null;
+  const palco = document.getElementById("palco");
+  palco.addEventListener("touchstart", e => { x0 = e.touches[0].clientX; }, { passive: true });
+  palco.addEventListener("touchend", e => {
+    if (x0 === null) return;
+    const dx = e.changedTouches[0].clientX - x0; x0 = null;
+    if (Math.abs(dx) > 60) mostrar(i + (dx < 0 ? 1 : -1), true);
+  });
+  addEventListener("hashchange", doHash);
+  doHash();
+})();
+</script>
+
+</body>
+</html>
