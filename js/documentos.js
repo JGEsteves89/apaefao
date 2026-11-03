@@ -7,6 +7,7 @@ const TIPOS = {
   contas: "Contas",
   ata: "Atas",
   estatutos: "Estatutos",
+  agrupamento: "Documentos do Agrupamento",
   outro: "Outros",
 };
 

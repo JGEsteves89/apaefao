@@ -33,5 +33,20 @@
     "data": "2003-02-05",
     "resumo": "As regras da associação: quem pode ser sócio (os pais), os órgãos (Assembleia Geral, Direção e Conselho Fiscal), eleições de 2 em 2 anos e as quotas. Publicados no Diário da República (III série, n.º 30, 5/2/2003). No PDF, os estatutos da APAEF são o texto do meio (artigos 1.º a 34.º).",
     "ficheiro": "docs/estatutos-apaef.pdf"
+  },
+  {
+    "id": "ri-aeaco-2026-2029",
+    "titulo": "Regulamento Interno do Agrupamento 2026–2029",
+    "tipo": "agrupamento",
+    "data": "2026-10-20",
+    "resumo": "As regras de todas as escolas do Agrupamento: refeições, visitas de estudo, uso dos espaços, direitos e deveres dos pais e o papel das associações de pais. No site do Agrupamento.",
+    "ficheiro": "https://www.acoliveira.pt/wp-content/uploads/2026/11/RI_AEACO_2026-2029.pdf"
+  },
+  {
+    "id": "pe-aeaco-2026-2029",
+    "titulo": "Projeto Educativo do Agrupamento 2026–2029",
+    "tipo": "agrupamento",
+    "resumo": "A estratégia do Agrupamento para estes anos: números das escolas, pontos fortes e fracos, e metas, incluindo o envolvimento das associações de pais. No site do Agrupamento.",
+    "ficheiro": "https://www.acoliveira.pt/wp-content/uploads/2026/09/PE_25_29.pdf"
   }
 ]
