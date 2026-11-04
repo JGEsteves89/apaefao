@@ -5,7 +5,7 @@
   const lista = await carregarJSON("data/noticias.json", el);
   if (!lista) return;
 
-  el.innerHTML = lista.slice().sort((a, b) => a.data < b.data ? 1 : -1).map(n => `
+  el.innerHTML = lista.filter(n => n.data <= hojeISO()).sort((a, b) => a.data < b.data ? 1 : -1).map(n => `
     <li class="noticia anima">
       <span class="ponto" aria-hidden="true"></span>
       <article class="cartao">

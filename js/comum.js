@@ -79,6 +79,11 @@ async function enviar(evento, dados) {
   }
 }
 
+// Data de hoje (AAAA-MM-DD, hora de Portugal). Notícias com data futura só aparecem nesse dia.
+function hojeISO() {
+  return new Date().toLocaleDateString("sv-SE", { timeZone: "Europe/Lisbon" });
+}
+
 // Copia um texto e mostra um ✓ no botão.
 async function copiar(texto, botao) {
   try {

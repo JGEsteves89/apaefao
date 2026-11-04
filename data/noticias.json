@@ -1,19 +1,35 @@
 [
-  {
-    "titulo": "Visitámos a cantina",
-    "data": "2026-10-23",
-    "texto": "Membros da APAEF reuniram com os professores e visitaram a cantina da escola. Provámos a comida e gostámos: está aprovada! Vamos continuar a acompanhar as refeições, com a escola e com a Câmara.",
-    "imagem": "",
-    "alt": ""
-  },
-  {
-    "id": "halloween-2026",
-    "titulo": "Doçura ou Travessura: foi um sucesso! 🎃",
-    "data": "2026-10-31",
-    "texto": "Na noite de 31 de outubro, cerca de 150 pais e crianças encheram as ruas de Fão de fantasmas, bruxinhas e muitas gargalhadas. Os grupos saíram da Alameda do Senhor Bom Jesus, cada um com um responsável, e no fim voltámos todos a juntar-nos. Com os mealheiros, as famílias ajudaram também a APAEF. Obrigado a todas as famílias, aos responsáveis dos grupos e a quem nos abriu a porta! Para o ano há mais.",
-    "imagem": "img/halloween.jpg",
-    "alt": "Abóboras de Halloween",
-    "link": "https://www.facebook.com/share/r/1A3W3BS5Ty/",
-    "link_texto": "Ver o vídeo da noite"
-  }
+ {
+  "titulo": "Visitámos a cantina",
+  "data": "2026-10-23",
+  "texto": "Membros da APAEF reuniram com os professores e visitaram a cantina da escola. Provámos a comida e gostámos: está aprovada! Vamos continuar a acompanhar as refeições, com a escola e com a Câmara.",
+  "imagem": "",
+  "alt": ""
+ },
+ {
+  "id": "halloween-2026",
+  "titulo": "Doçura ou Travessura: foi um sucesso! 🎃",
+  "data": "2026-10-31",
+  "texto": "Na noite de 31 de outubro, cerca de 150 pais e crianças encheram as ruas de Fão de fantasmas, bruxinhas e muitas gargalhadas. Os grupos saíram da Alameda do Senhor Bom Jesus, cada um com um responsável, e no fim voltámos todos a juntar-nos. Com os mealheiros, as famílias ajudaram também a APAEF. Obrigado a todas as famílias, aos responsáveis dos grupos e a quem nos abriu a porta! Para o ano há mais.",
+  "imagem": "img/halloween.jpg",
+  "alt": "Abóboras de Halloween",
+  "link": "https://www.facebook.com/share/r/1A3W3BS5Ty/",
+  "link_texto": "Ver o vídeo da noite"
+ },
+ {
+  "id": "refeicoes-greve-2026",
+  "titulo": "Obrigado à Câmara e à Nortake",
+  "data": "2026-11-04",
+  "texto": "Na segunda-feira, com o pré-aviso de greve, só estavam marcados 47 almoços para cerca de 150 crianças. Primeiro disseram que quem não tinha almoço marcado tinha de ir para casa. Mas a Câmara Municipal e a Nortake, a empresa das refeições, encontraram uma solução: organizaram três turnos e nenhuma criança que ficou na escola ficou sem almoço. Como Associação de Pais, ouvimos as preocupações das famílias e procuramos soluções. Mas também queremos reconhecer quando as coisas correm bem. Obrigado! Lembrete: marquem sempre as refeições a tempo.",
+  "imagem": "",
+  "alt": ""
+ },
+ {
+  "id": "cinema-2026",
+  "titulo": "Dia Mundial do Cinema: um voucher para cada criança 🎬",
+  "data": "2026-11-05",
+  "texto": "Para assinalar o Dia Mundial do Cinema, a APAEF oferece a cada criança um voucher de cinema. O voucher vai para casa numa folha com as condições e dá para escolher o filme e ir até fevereiro. Bons filmes! Se quiserem, mandem-nos uma foto (sem caras) quando forem ao cinema.",
+  "imagem": "",
+  "alt": ""
+ }
 ]

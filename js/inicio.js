@@ -25,7 +25,7 @@
   const el = document.getElementById("ultimas-noticias");
   const noticias = await carregarJSON("data/noticias.json", el);
   if (!noticias) return;
-  el.innerHTML = noticias.slice().sort((a, b) => a.data < b.data ? 1 : -1).slice(0, 2).map(n => `
+  el.innerHTML = noticias.filter(n => n.data <= hojeISO()).sort((a, b) => a.data < b.data ? 1 : -1).slice(0, 2).map(n => `
     <article class="cartao noticia-mini">
       <time datetime="${escapar(n.data)}">${escapar(new Date(n.data + "T00:00:00").toLocaleDateString("pt-PT", { day: "numeric", month: "long" }))}</time>
       <h3>${escapar(n.titulo)}</h3>
