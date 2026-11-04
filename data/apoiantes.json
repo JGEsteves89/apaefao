@@ -224,5 +224,13 @@
   "maps_url": "",
   "publicar": true,
   "tamanho": "largo"
+ },
+ {
+  "nome": "Adriana Martins",
+  "logo": "img/apoiantes/adriana-martins.jpg",
+  "tipo": "particular",
+  "maps_url": "",
+  "publicar": true,
+  "tamanho": "grande"
  }
 ]
