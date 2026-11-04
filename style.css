@@ -595,3 +595,9 @@ a.tile:active { transform: translate(1px, 1px); box-shadow: 2px 2px 0 var(--linh
 .chamada-ajuda:hover { background: var(--sol-claro); }
 .chamada-ajuda:hover .ca-ico { animation: salto .35s ease; }
 .botoes-centro { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+
+/* Ficha de sócio: mais do que um filho */
+#alunos { display: grid; gap: 16px; }
+.aluno-linha + .aluno-linha { border-top: 1.5px dashed var(--linha); padding-top: 14px; }
+.botao-mais { justify-self: start; background: var(--cartao); font-size: 15px; padding: 8px 14px; }
+.tirar-aluno { justify-self: start; background: none; border: 0; padding: 0; color: var(--suave); font-weight: 700; text-decoration: underline; cursor: pointer; font: inherit; }

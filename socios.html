@@ -94,25 +94,30 @@
     <section id="ficha">
       <h2>Ficha de inscrição 2026/27</h2>
       <form id="form-socio" class="formulario" novalidate>
+        <div id="alunos">
+          <div class="campos aluno-linha">
+            <label>Aluno
+              <input class="f-aluno" required maxlength="80" autocomplete="off">
+            </label>
+            <label>Turma
+              <select class="f-turma" required>
+                <option value="">Escolhe…</option>
+                <option>Pré-escolar Sala A</option>
+                <option>Pré-escolar Sala B</option>
+                <option>Pré-escolar Sala C</option>
+                <option>Pré-escolar Sala D</option>
+                <option>1.º ano</option>
+                <option>2.º ano</option>
+                <option>3.º A</option>
+                <option>3.º B</option>
+                <option>4.º A</option>
+                <option>4.º B</option>
+              </select>
+            </label>
+          </div>
+        </div>
+        <button type="button" class="botao botao-mais" id="mais-aluno">+ Outro filho na escola</button>
         <div class="campos">
-          <label>Aluno
-            <input name="aluno" required maxlength="80" autocomplete="off">
-          </label>
-          <label>Turma
-            <select name="turma" required>
-              <option value="">Escolhe…</option>
-              <option>Pré-escolar Sala A</option>
-              <option>Pré-escolar Sala B</option>
-              <option>Pré-escolar Sala C</option>
-              <option>Pré-escolar Sala D</option>
-              <option>1.º ano</option>
-              <option>2.º ano</option>
-              <option>3.º A</option>
-              <option>3.º B</option>
-              <option>4.º A</option>
-              <option>4.º B</option>
-            </select>
-          </label>
           <label>Encarregado de educação
             <input name="encarregado" required maxlength="80" autocomplete="name">
           </label>
@@ -171,11 +176,12 @@
             <code id="referencia">QUOTA Nome do aluno Turma</code>
             <button class="b-copiar" type="button" data-copiar="referencia"><span class="txt">Copiar</span><span class="ok">✓ Copiado</span></button>
           </div>
+          <p>Valor: <b id="valor-quota">12 €</b></p>
           <p>Depois, envia o comprovativo para <a id="mail-comprovativo" href="mailto:apaefao@gmail.com?subject=Comprovativo%20quota">apaefao@gmail.com</a>.</p>
         </div>
         <div class="cartao">
           <h3>✉️ Em dinheiro</h3>
-          <p>Entrega 12 € ao professor ou à educadora, num envelope com o nome da criança.</p>
+          <p>Entrega 12 € por criança ao professor ou à educadora, num envelope com o nome da criança.</p>
           <p class="pequeno">Se não preencheste a ficha online, junta a ficha em papel ao envelope.</p>
         </div>
       </div>

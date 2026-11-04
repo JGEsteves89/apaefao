@@ -65,7 +65,7 @@ function guardarFormulario(dados) {
 // "foto": caminho no site (img/apoiantes/x.jpg) ou link https. Sem foto → ícone do tipo de negócio.
 const COLUNAS_APOIANTES = ["publicar", "nome", "tipo de negócio", "foto", "link", "oferta", "tipo de oferta",
   "valor estimado €", "para", "validade", "quem faz o voucher", "empresa ou particular", "onde",
-  "contacto", "nif", "quem preencheu", "quem conseguiu", "aceita aparecer", "data"];
+  "contacto", "nif", "quem preencheu", "quem conseguiu", "aceita aparecer", "data", "prémio usado"];
 
 function abaApoiantes() {
   const folha = SpreadsheetApp.getActiveSpreadsheet();
