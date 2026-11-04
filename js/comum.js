@@ -109,3 +109,34 @@ function confetti() {
     ], { duration: 450 + Math.random() * 150, easing: "cubic-bezier(.2,.6,.4,1)" }).onfinish = () => c.remove();
   }
 }
+
+// Rodapé: "Atualizado há …" (data da última alteração do site no GitHub).
+(function () {
+  const rodape = document.querySelector("footer .wrap");
+  if (!rodape) return;
+  const linha = document.createElement("div");
+  linha.className = "atualizado";
+  rodape.append(linha);
+
+  function haQuanto(data) {
+    const min = Math.max(0, Math.round((Date.now() - data) / 60000));
+    if (min < 1) return "agora mesmo";
+    if (min < 60) return "há " + min + (min === 1 ? " minuto" : " minutos");
+    const h = Math.round(min / 60);
+    if (h < 24) return "há " + h + (h === 1 ? " hora" : " horas");
+    const d = Math.round(h / 24);
+    if (d < 31) return "há " + d + (d === 1 ? " dia" : " dias");
+    const m = Math.round(d / 30);
+    return "há " + m + (m === 1 ? " mês" : " meses");
+  }
+  function mostrar(data) {
+    if (isNaN(data)) return;
+    linha.textContent = "Atualizado " + haQuanto(data);
+    linha.title = data.toLocaleString("pt-PT");
+  }
+
+  fetch("https://api.github.com/repos/JGEsteves89/apaefao/commits?per_page=1")
+    .then(r => r.ok ? r.json() : Promise.reject())
+    .then(c => mostrar(new Date(c[0].commit.committer.date)))
+    .catch(() => mostrar(new Date(document.lastModified)));
+})();

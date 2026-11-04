@@ -606,3 +606,7 @@ a.tile:active { transform: translate(1px, 1px); box-shadow: 2px 2px 0 var(--linh
 .apoiante-img.logo { position: relative; }
 .apoiante-img.logo img { position: relative; object-fit: contain; padding: 8%; }
 .apoiante-img.logo img.fundo { position: absolute; inset: 0; object-fit: cover; padding: 0; filter: blur(16px) brightness(.85); transform: scale(1.25); }
+
+/* Rodapé: quando o site foi atualizado */
+footer .atualizado { font-size: 13px; opacity: .7; }
+footer .atualizado:empty { display: none; }
