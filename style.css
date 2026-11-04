@@ -601,3 +601,8 @@ a.tile:active { transform: translate(1px, 1px); box-shadow: 2px 2px 0 var(--linh
 .aluno-linha + .aluno-linha { border-top: 1.5px dashed var(--linha); padding-top: 14px; }
 .botao-mais { justify-self: start; background: var(--cartao); font-size: 15px; padding: 8px 14px; }
 .tirar-aluno { justify-self: start; background: none; border: 0; padding: 0; color: var(--suave); font-weight: 700; text-decoration: underline; cursor: pointer; font: inherit; }
+
+/* Apoiantes: logótipos largos inteiros, com fundo desfocado */
+.apoiante-img.logo { position: relative; }
+.apoiante-img.logo img { position: relative; object-fit: contain; padding: 8%; }
+.apoiante-img.logo img.fundo { position: absolute; inset: 0; object-fit: cover; padding: 0; filter: blur(16px) brightness(.85); transform: scale(1.25); }

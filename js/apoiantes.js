@@ -11,14 +11,33 @@ const ICONES = {
   desporto: "🏋️", barbearia: "💈", cabeleireiro: "💇", diversao: "🐒", musica: "🎵", tecnologia: "📱", lavandaria: "🧺", talho: "🥩", farmacia: "💊", otica: "👓",
 };
 
+// O texto do link diz para onde vai: mapa, Instagram, Facebook ou website.
+function textoLink(url) {
+  if (/google\.[a-z.]+\/maps|maps\.google\.|maps\.app\.goo\.gl|goo\.gl\/maps/i.test(url)) return "📍 Ver no mapa";
+  if (/instagram\.com/i.test(url)) return "📷 Ver no Instagram";
+  if (/facebook\.com|fb\.com/i.test(url)) return "👍 Ver no Facebook";
+  return "🌐 Ver no website";
+}
+
+// Logótipos muito largos (com texto) não se cortam: aparecem inteiros, com a própria imagem desfocada por trás.
+function logoLargo(img) {
+  if (img.naturalWidth / img.naturalHeight < 2) return;
+  const caixa = img.parentElement;
+  if (caixa.classList.contains("logo")) return;
+  const fundo = document.createElement("img");
+  fundo.src = img.src; fundo.alt = ""; fundo.className = "fundo"; fundo.setAttribute("aria-hidden", "true");
+  caixa.classList.add("logo");
+  caixa.prepend(fundo);
+}
+
 function cartaoApoiante(a, i) {
   const el = document.createElement("div");
   el.className = "apoiante";
   const imagem = a.logo
-    ? `<div class="apoiante-img"><img src="${escapar(a.logo)}" alt="${escapar(a.nome)}" loading="lazy"></div>`
+    ? `<div class="apoiante-img"><img src="${escapar(a.logo)}" alt="${escapar(a.nome)}" loading="lazy" onload="logoLargo(this)"></div>`
     : `<div class="apoiante-img icone" style="--h:${Math.round(i * 137.5) % 360}" aria-hidden="true">${ICONES[a.tipo] || "💛"}</div>`;
   const link = a.maps_url
-    ? `<a href="${escapar(a.maps_url)}" target="_blank" rel="noopener">${a.maps_url.includes("instagram.com") ? "📷 Ver no Instagram" : a.maps_url.includes("facebook.com") ? "👍 Ver no Facebook" : "📍 Ver no mapa"}</a>`
+    ? `<a href="${escapar(a.maps_url)}" target="_blank" rel="noopener">${textoLink(a.maps_url)}</a>`
     : "";
   el.innerHTML = imagem + `<h3>${escapar(a.nome)}</h3>` + link;
   return el;
