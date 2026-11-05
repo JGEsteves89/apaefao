@@ -7,7 +7,17 @@
 <meta name="robots" content="noindex">
 <meta name="description" content="Proposta à Direção da APAEF: pagamentos por MB WAY, Multibanco e cartão no site.">
 <link rel="icon" href="../favicon.ico" sizes="any">
-<style>[hidden]{display:none!important} img{max-width:100%}</style>
+<style>[hidden]{display:none!important} img{max-width:100%}
+/* Tabela "Dados a preencher": textos longos, alinhados à esquerda */
+.dados table { font-size: 14px; }
+.dados td { padding: 7px 10px; }
+.dados td:nth-child(2) { width: 46%; }
+.dados td:first-child { font-weight: 800; white-space: nowrap; }
+@media (max-width: 900px), (max-height: 520px) {
+  .cartoes.dados td { display: block; text-align: left; }
+  .cartoes.dados td[data-label]::before { display: block; }
+}
+</style>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -312,14 +322,16 @@ nav.barra {
     <div class="caixa">
       <h3>Documentos da APAEF</h3>
       <ul class="check">
-        <li><span>Estatutos</span></li>
-        <li><span>Ata da eleição dos órgãos sociais<small>AG de 12/10/2026</small></span></li>
-        <li><span>Código do RCBE<small>registo dos "donos efetivos" da associação; confirmar se já existe</small></span></li>
-        <li><span>Certidão de situação perante o IVA<small>tira-se no Portal das Finanças</small></span></li>
-        <li><span>Cartão de cidadão de quem assina<small>e dos "donos efetivos" indicados no RCBE</small></span></li>
-        <li><span>Comprovativo do IBAN em nome da APAEF</span></li>
-        <li><span>Contrato assinado por 2 pessoas da Direção<small>uma delas a presidente ou a tesoureira</small></span></li>
+        <li><span>Estatutos atualizados<small>já temos (estão no site)</small></span></li>
+        <li><span>Ata da tomada de posse da Direção<small>AG de 12/10/2026; tem de mostrar quem pode assinar</small></span></li>
+        <li><span>Código do RCBE<small>registo de quem controla a associação (a Direção); confirmar se existe e se tem a Direção nova</small></span></li>
+        <li><span>Certidão de enquadramento em IVA<small>Portal das Finanças, com a senha da APAEF; vale 6 meses</small></span></li>
+        <li><span>Cartão de Cidadão de quem assina e de quem está no RCBE<small>cópia frente e verso</small></span></li>
+        <li><span>Comprovativo de morada dessas pessoas<small>serve a certidão de domicílio fiscal (Portal das Finanças)</small></span></li>
+        <li><span>Comprovativo do IBAN em nome da APAEF<small>PDF do homebanking ou pedido ao balcão</small></span></li>
+        <li><span>Contrato assinado por 2 pessoas da Direção<small>uma delas a presidente ou a tesoureira; rubricar todas as páginas</small></span></li>
       </ul>
+      <p class="pequeno">Os documentos devem ter 30 dias ou menos.</p>
     </div>
     <div class="caixa forte">
       <h3>Depois de enviar</h3>
@@ -330,6 +342,30 @@ nav.barra {
         <li><div><b>Abrimos aos pais</b></div></li>
       </ol>
     </div>
+  </div>
+</section>
+
+<!-- 5b -->
+<section class="slide" id="s5b" hidden>
+  <span class="olho">Formulário de adesão</span>
+  <h2>Dados a preencher</h2>
+  <div class="tabela cartoes dados">
+    <table>
+      <thead><tr><th>Secção</th><th>O quê</th><th>Para a APAEF</th></tr></thead>
+      <tbody>
+        <tr><td>A. Entidade</td><td data-label="O quê">NIF, nome, CAE, atividade principal</td><td data-label="Para a APAEF">NIF 506375080. O CAE vem na certidão das Finanças.</td></tr>
+        <tr><td>A. Contactos</td><td data-label="O quê">Morada, código postal, telefone, website</td><td data-label="Para a APAEF">Escola Básica de Fão, Rua da Caixa de Água, 4740-364 Fão · apaefao.pt</td></tr>
+        <tr><td>A. Emails</td><td data-label="O quê">Comunicações oficiais, aviso de pagamentos, extratos e faturas</td><td data-label="Para a APAEF">apaefao@gmail.com (pode ser o mesmo nos três)</td></tr>
+        <tr><td>B. Cada pessoa</td><td data-label="O quê">Nome, data de nascimento, n.º e validade do CC, NIF, nacionalidade, naturalidade, cargo, profissão, entidade patronal, morada, se vive em Portugal, se é "pessoa politicamente exposta"</td><td data-label="Para a APAEF">Presidente, tesoureira e quem estiver no RCBE</td></tr>
+        <tr><td>C. Banco</td><td data-label="O quê">Banco e IBAN. A conta tem de estar em nome da APAEF.</td><td data-label="Para a APAEF">Millennium (confirmar)</td></tr>
+        <tr><td>E. Terminal</td><td data-label="O quê">Quantos terminais e que modelo</td><td data-label="Para a APAEF">Deixar vazio por agora</td></tr>
+        <tr><td>F. Atividade</td><td data-label="O quê">O que vendemos e prazo de entrega</td><td data-label="Para a APAEF">"Quotas de sócio (12 € por aluno, por ano) e donativos"; entrega imediata</td></tr>
+        <tr><td>F. Volumes</td><td data-label="O quê">Valor e n.º de pagamentos por mês, valor médio e máximo</td><td data-label="Para a APAEF">Até ~1 500 €/mês, ~120 pagamentos, média 12–24 €, máximo ~50 €</td></tr>
+        <tr><td>F. Clientes</td><td data-label="O quê">% particulares/empresas e origem</td><td data-label="Para a APAEF">100 % particulares, 100 % portugueses</td></tr>
+        <tr><td>G. Como conheceu</td><td data-label="O quê">Como conheceu o serviço</td><td data-label="Para a APAEF">Internet</td></tr>
+        <tr class="melhor"><td>Métodos</td><td data-label="O quê">O que ativar</td><td data-label="Para a APAEF">Multibanco + MB WAY. Nada de cartão nem terminal.</td></tr>
+      </tbody>
+    </table>
   </div>
 </section>
 
