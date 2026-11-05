@@ -81,9 +81,30 @@ async function faixaApoiantes(el) {
 // Página dos apoiantes: blocos de vários tamanhos que encaixam (estilo Mondrian) e contador.
 const CASAS = { grande: 4, alto: 2, largo: 2, pequeno: 1 };   // quantas casas da grelha ocupa cada tamanho
 
+// Enquanto a lista chega: cartões "fantasma" a brilhar e o contador a rodar números.
+function mostrarCarregar(el, contador) {
+  el.setAttribute("aria-busy", "true");
+  const aviso = document.createElement("p");
+  aviso.className = "a-carregar"; aviso.setAttribute("role", "status"); aviso.textContent = "⏳ A carregar os apoiantes…";
+  el.before(aviso);
+  el.innerHTML = ["grande", "pequeno", "pequeno", "largo", "alto", "pequeno", "pequeno", "largo"]
+      .map(t => `<div class="apoiante esqueleto ${t}" aria-hidden="true"></div>`).join("");
+  const roda = MOVIMENTO
+    ? setInterval(() => { contador.textContent = 10 + Math.floor(Math.random() * 90); }, 70)
+    : (contador.textContent = "…", 0);
+  return () => {
+    clearInterval(roda);
+    el.removeAttribute("aria-busy");
+    aviso.remove();
+    el.querySelectorAll(".esqueleto").forEach(x => x.remove());
+  };
+}
+
 async function grelhaApoiantes(el, contador) {
+  const parar = mostrarCarregar(el, contador);
   const lista = await carregarApoiantes(el);
-  if (!lista) return;
+  parar();
+  if (!lista) { contador.textContent = "0"; return; }
   const publicos = lista.map((a, i) => [a, i]).filter(([a]) => a.publicar);
   const tamanho = a => CASAS[a.tamanho] ? a.tamanho : "pequeno";
 
@@ -114,10 +135,10 @@ async function grelhaApoiantes(el, contador) {
 
   const alvo = publicos.length;
   if (!MOVIMENTO) { contador.textContent = alvo; return; }
-  const inicio = performance.now();
+  const inicio = performance.now(), de = Number(contador.textContent) || 0;
   (function passo(t) {
     const p = Math.min(1, (t - inicio) / 600);
-    contador.textContent = Math.round(alvo * p);
+    contador.textContent = Math.round(de + (alvo - de) * p);
     if (p < 1) requestAnimationFrame(passo);
   })(inicio);
 }
