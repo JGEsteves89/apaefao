@@ -5,7 +5,7 @@
   "etiqueta": "novo!",
   "confirmar": false,
   "titulo": "Dia do Cinema",
-  "texto": "Com a Esposende 2000, a APAEF oferece a cada criança da escola um bilhete de cinema. Um dia de filme para todos!",
+  "texto": "Para assinalar o Dia Mundial do Cinema, a APAEF, com a Esposende 2000, oferece a cada criança um voucher de cinema. Vai para casa numa folha com as condições e dá para usar até fevereiro.",
   "imagem": "",
   "alt": "",
   "emoji": "🎬"
@@ -20,6 +20,17 @@
   "imagem": "img/magusto.jpg",
   "alt": "Cartaz do Magusto da APAEF",
   "emoji": ""
+ },
+ {
+  "fim": "2026-11-14",
+  "quando": "Sábado, 14 nov · 15h · Mercado de Esposende",
+  "etiqueta": "novo!",
+  "confirmar": false,
+  "titulo": "Magusto do Mercado de Esposende",
+  "texto": "A APAEF foi convidada pela ACICE para o Magusto do Mercado. Vamos ter uma banca com bolos, doces e cafés. Venham passar a tarde connosco: cada compra ajuda a nossa escola!",
+  "imagem": "",
+  "alt": "",
+  "emoji": "🌰"
  },
  {
   "fim": "2026-11-30",
