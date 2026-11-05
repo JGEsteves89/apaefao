@@ -610,3 +610,6 @@ a.tile:active { transform: translate(1px, 1px); box-shadow: 2px 2px 0 var(--linh
 /* Rodapé: quando o site foi atualizado */
 footer .atualizado { font-size: 13px; opacity: .7; }
 footer .atualizado:empty { display: none; }
+
+/* Cartazes altos nas notícias não ocupam o ecrã todo */
+.noticia img { max-height: 520px; width: auto; max-width: 100%; }
