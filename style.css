@@ -241,8 +241,9 @@ footer .creditos { font-size: 12px; }
 .menu a:hover { color: var(--tinta); }
 .menu a[aria-current] { background: var(--sol); color: var(--tinta); }
 .menu-botao { display: none; }
+header.topo .wrap { max-width: 1140px; }
 /* Ecrã estreito: botão "☰ Menu" e painel com botões grandes */
-@media (max-width: 959px) {
+@media (max-width: 1099px) {
   header.topo .wrap { flex-wrap: wrap; }
   .menu-botao { display: inline-flex; align-items: center; min-height: 48px; padding: 0 18px; border-radius: 999px; border: 2px solid var(--tinta);
     background: var(--cartao); font: inherit; font-weight: 800; font-size: 16px; color: var(--tinta); cursor: pointer; box-shadow: 2px 2px 0 var(--tinta); }
