@@ -621,3 +621,7 @@ footer .atualizado:empty { display: none; }
   animation: brilho 1.3s linear infinite; }
 @keyframes brilho { from { background-position: 150% 0; } to { background-position: -100% 0; } }
 @media (prefers-reduced-motion: reduce) { .apoiante.esqueleto { animation: none; } }
+
+/* Notícias: manter os parágrafos do texto; na página inicial só um resumo */
+.noticia p { white-space: pre-line; }
+.noticia-mini p { display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
