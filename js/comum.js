@@ -13,7 +13,8 @@ const espera = ms => new Promise(r => setTimeout(r, ms));
   const menu = document.querySelector(".menu");
   const botao = document.querySelector(".menu-botao");
   if (!menu) return;
-  const pagina = location.pathname.split("/").pop() || "index.html";
+  let pagina = location.pathname.split("/").pop() || "index.html";
+  if (pagina === "ajudar.html") pagina = "apoiantes.html";   // "Quero ajudar" faz parte dos Apoiantes
   menu.querySelectorAll("a").forEach(a => {
     if (a.pathname.split("/").pop() === pagina && !a.hash) a.setAttribute("aria-current", "page");
   });
