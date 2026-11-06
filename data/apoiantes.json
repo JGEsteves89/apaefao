@@ -199,7 +199,7 @@
   "tipo": "farmacia",
   "maps_url": "https://www.google.com/maps/search/?api=1&query=Farm%C3%A1cia%20Higi%C3%A9nica%2C%20F%C3%A3o&query_place_id=ChIJxantVedLJA0RNC3OjjCMQ5k",
   "publicar": true,
-  "tamanho": "pequeno"
+  "tamanho": "grande"
  },
  {
   "nome": "Centro Ótico de Fão",
@@ -232,5 +232,13 @@
   "maps_url": "",
   "publicar": true,
   "tamanho": "grande"
+ },
+ {
+  "nome": "A Gráfica da Vila",
+  "logo": "img/apoiantes/grafica-da-vila.jpg",
+  "tipo": "grafica",
+  "maps_url": "https://www.google.com/maps/search/?api=1&query=A%20Gr%C3%A1fica%20da%20Vila%2C%20Esposende&query_place_id=ChIJBVvj1DZLJA0RNhQ9buEz0uw",
+  "publicar": true,
+  "tamanho": "largo"
  }
 ]
