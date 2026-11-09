@@ -240,5 +240,13 @@
   "maps_url": "https://www.google.com/maps/search/?api=1&query=A%20Gr%C3%A1fica%20da%20Vila%2C%20Esposende&query_place_id=ChIJBVvj1DZLJA0RNhQ9buEz0uw",
   "publicar": true,
   "tamanho": "largo"
+ },
+ {
+  "nome": "Casa dos Travesseiros",
+  "logo": "img/apoiantes/casa-dos-travesseiros.jpg",
+  "tipo": "pastelaria",
+  "maps_url": "https://casadostravesseiros.pt/",
+  "publicar": true,
+  "tamanho": "pequeno"
  }
 ]
