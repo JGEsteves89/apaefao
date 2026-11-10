@@ -15,10 +15,19 @@
   ],
   "estado": "a angariar",
   "data_limite": "2026-12-04",
-  "imagem": "img/natal.jpg",
   "ordem": 1,
   "prioridade": 2,
-  "motivo": "É o próximo (festa a 12/12)"
+  "motivo": "É o próximo (festa a 12/12)",
+  "imagens": [
+   {
+    "src": "img/metas/presentes-1.jpg",
+    "legenda": "Ilustração"
+   },
+   {
+    "src": "img/metas/presentes-2.jpg",
+    "legenda": "Ilustração"
+   }
+  ]
  },
  {
   "id": "castanhas-2026",
@@ -95,9 +104,18 @@
    "Montagem: oferta da Greenplay"
   ],
   "estado": "a angariar",
-  "imagem": "img/metas/baloico-pre.jpg",
   "ordem": 5,
-  "prioridade": 3
+  "prioridade": 3,
+  "imagens": [
+   {
+    "src": "img/metas/baloico-pre-simulacao.jpg",
+    "legenda": "Simulação"
+   },
+   {
+    "src": "img/metas/baloico-pre.jpg",
+    "legenda": "O baloiço (Greenplay)"
+   }
+  ]
  },
  {
   "id": "estrutura-1ciclo",
@@ -113,9 +131,18 @@
    "Estrutura Greenplay ≈ 4 744 €"
   ],
   "estado": "a seguir",
-  "imagem": "img/metas/estrutura-1ciclo.jpg",
   "ordem": 6,
-  "prioridade": 5
+  "prioridade": 5,
+  "imagens": [
+   {
+    "src": "img/metas/estrutura-simulacao.jpg",
+    "legenda": "Simulação"
+   },
+   {
+    "src": "img/metas/estrutura-1ciclo.jpg",
+    "legenda": "A estrutura (Greenplay)"
+   }
+  ]
  },
  {
   "id": "arvores-2027",
@@ -168,6 +195,16 @@
   "estado": "a angariar",
   "ordem": 9,
   "prioridade": 1,
-  "motivo": "Já prometido"
+  "motivo": "Já prometido",
+  "imagens": [
+   {
+    "src": "img/metas/passeio-1.jpg",
+    "legenda": "Ilustração"
+   },
+   {
+    "src": "img/metas/passeio-2.jpg",
+    "legenda": "Ilustração"
+   }
+  ]
  }
 ]
