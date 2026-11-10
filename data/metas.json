@@ -16,8 +16,9 @@
   "estado": "a angariar",
   "data_limite": "2026-12-04",
   "imagem": "img/natal.jpg",
-  "proxima": "areia-2026",
-  "ordem": 1
+  "ordem": 1,
+  "prioridade": 2,
+  "motivo": "É o próximo (festa a 12/12)"
  },
  {
   "id": "castanhas-2026",
@@ -36,7 +37,8 @@
   "estado": "garantido",
   "nota": "Pago pela APAEF.",
   "imagem": "img/magusto-castanhas.jpg",
-  "ordem": 2
+  "ordem": 2,
+  "prioridade": 0
  },
  {
   "id": "cinema-2026",
@@ -57,7 +59,8 @@
   "imagem": "img/cinema-vouchers.jpg",
   "imagem_depois": "img/cinema-vouchers.jpg",
   "fatura": "",
-  "ordem": 3
+  "ordem": 3,
+  "prioridade": 0
  },
  {
   "id": "areia-2026",
@@ -72,9 +75,9 @@
   "custos_detalhe": [
    "≈ 5 m³ de areia lavada + transporte ≈ 350 € (vamos pedir à Junta)"
   ],
-  "estado": "a angariar",
+  "estado": "a seguir",
   "ordem": 4,
-  "proxima": "baloico-pre"
+  "prioridade": 4
  },
  {
   "id": "baloico-pre",
@@ -94,7 +97,7 @@
   "estado": "a angariar",
   "imagem": "img/metas/baloico-pre.jpg",
   "ordem": 5,
-  "proxima": "estrutura-1ciclo"
+  "prioridade": 3
  },
  {
   "id": "estrutura-1ciclo",
@@ -111,7 +114,8 @@
   ],
   "estado": "a seguir",
   "imagem": "img/metas/estrutura-1ciclo.jpg",
-  "ordem": 6
+  "ordem": 6,
+  "prioridade": 5
  },
  {
   "id": "arvores-2027",
@@ -127,7 +131,8 @@
    "10 árvores de 2–3 m × ≈ 60 € (com tutor e terra)"
   ],
   "estado": "a seguir",
-  "ordem": 7
+  "ordem": 7,
+  "prioridade": 6
  },
  {
   "id": "insuflaveis-2027",
@@ -143,14 +148,15 @@
    "2 insufláveis, 1 dia, com montagem ≈ 350 €"
   ],
   "estado": "a seguir",
-  "ordem": 8
+  "ordem": 8,
+  "prioridade": 7
  },
  {
   "id": "passeio-4ano",
   "publicar": true,
   "emoji": "🚌",
   "titulo": "Passeio de fim de ciclo do 4.º ano",
-  "frase": "Um dia especial para quem se despede da escola.",
+  "frase": "A APAEF comprometeu-se a oferecer este passeio aos finalistas do 4.º ano, que se despedem da escola.",
   "grupo": "Atividades",
   "custo": 800,
   "angariado": 0,
@@ -159,7 +165,9 @@
    "Autocarro 1 dia ≈ 400 €",
    "Entradas ≈ 10 € × 40 alunos"
   ],
-  "estado": "a seguir",
-  "ordem": 9
+  "estado": "a angariar",
+  "ordem": 9,
+  "prioridade": 1,
+  "motivo": "Já prometido"
  }
 ]

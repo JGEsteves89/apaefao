@@ -77,6 +77,7 @@ function cartao(m, lista) {
   }
   el.innerHTML = `${imagem(m)}${selo(m)}
     <div class="m-corpo">
+      ${m.estado !== "feito" && m.estado !== "garantido" && m.prioridade ? `<p class="m-prio">⭐ Prioridade ${m.prioridade}${m.motivo ? " · " + escapar(m.motivo) : ""}</p>` : ""}
       <h3>${escapar(m.emoji)} ${escapar(m.titulo)}</h3>
       <p class="m-frase">${escapar(m.frase)}</p>
       ${m.estado === "a seguir" ? "" : barra(m)}
@@ -158,8 +159,12 @@ function abrirDialogo(m) {
   const lista = await carregarMetas();
   if (!lista) return;
   const publicas = lista.filter(m => m.publicar).sort((a, b) => (a.ordem || 99) - (b.ordem || 99));
-  const ativas = publicas.filter(m => m.estado === "a angariar").sort((a, b) => pct(b) - pct(a));
-  const seguir = publicas.filter(m => m.estado === "a seguir");
+  const porPrio = (a, b) => (a.prioridade || 99) - (b.prioridade || 99);
+  const ativas = publicas.filter(m => m.estado === "a angariar").sort(porPrio);
+  const seguir = publicas.filter(m => m.estado === "a seguir").sort(porPrio);
+  // Se sobrar dinheiro, vai para a meta seguinte por prioridade (salvo "proxima" na Sheet).
+  const fila = ativas.concat(seguir);
+  fila.forEach((m, i) => { if (!m.proxima && fila[i + 1]) m.proxima = fila[i + 1].id; });
   const feitas = publicas.filter(m => m.estado === "garantido" || m.estado === "feito");
 
   const por = (id, l) => { const el = document.getElementById(id); l.forEach(m => el.appendChild(cartao(m, publicas))); };
