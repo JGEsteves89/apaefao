@@ -682,14 +682,24 @@ footer .atualizado:empty { display: none; }
 .m-fatura { font-weight: 700; font-size: 14px; }
 .estado-a-seguir { box-shadow: 2px 2px 0 var(--linha); border-color: var(--linha); }
 .estado-a-seguir .m-img { filter: grayscale(.6); opacity: .8; }
-.metas-caminho { list-style: none; padding: 0; margin: 12px 0 0; display: flex; gap: 0; overflow-x: auto; }
-.metas-caminho li { flex: 1; min-width: 110px; position: relative; text-align: center; font-weight: 700; font-size: 14px; padding-top: 52px; color: var(--suave); }
-.metas-caminho li span { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 44px; height: 44px; display: grid; place-items: center; font-size: 22px; background: #e8e2d4; border: 2px solid var(--linha); border-radius: 50%; z-index: 1; filter: grayscale(1); }
-.metas-caminho li::before { content: ""; position: absolute; top: 21px; left: -50%; width: 100%; border-top: 3px dashed var(--linha); }
+.metas-caminho { list-style: none; padding: 4px 0 0; margin: 12px 0 0; display: flex; overflow-x: auto; }
+.metas-caminho li { flex: 1; min-width: 130px; position: relative; text-align: center; }
+.metas-caminho a { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 0 6px; text-decoration: none; color: var(--suave); }
+.metas-caminho .passo { width: 48px; height: 48px; display: grid; place-items: center; font-size: 24px; background: #e8e2d4; border: 2px solid var(--linha); border-radius: 50%; position: relative; z-index: 1; filter: grayscale(1); margin-bottom: 6px; transition: transform .2s; }
+.metas-caminho a:hover .passo { transform: scale(1.08); }
+.metas-caminho small { font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; }
+.metas-caminho b { font-size: 14px; line-height: 1.2; }
+.metas-caminho em { font-style: normal; font-size: 13px; font-weight: 700; }
+.metas-caminho li::before { content: ""; position: absolute; top: 23px; left: -50%; width: 100%; border-top: 3px dashed var(--linha); }
 .metas-caminho li:first-child::before { display: none; }
-.metas-caminho li.aceso { color: var(--tinta); }
-.metas-caminho li.aceso span { background: #bfe6c4; border-color: var(--tinta); filter: none; }
-.metas-caminho li.agora span { background: var(--sol); border-color: var(--tinta); filter: none; }
+.metas-caminho li.aceso::before, .metas-caminho li.agora::before { border-top: 3px solid var(--tinta); }
+.metas-caminho li.aceso a, .metas-caminho li.agora a { color: var(--tinta); }
+.metas-caminho li.aceso .passo { background: #bfe6c4; border-color: var(--tinta); filter: none; }
+.metas-caminho li.agora .passo { background: var(--sol); border-color: var(--tinta); filter: none; animation: m-pulso 2s ease-in-out infinite; }
+.metas-caminho li.agora em { color: var(--sol-escuro); }
+@keyframes m-pulso { 0%, 100% { box-shadow: 0 0 0 0 rgba(235,206,88,.7); } 50% { box-shadow: 0 0 0 10px rgba(235,206,88,0); } }
+@media (prefers-reduced-motion: reduce) { .metas-caminho li.agora .passo { animation: none; } }
+.m-cartao:target { outline: 4px solid var(--sol); outline-offset: 4px; }
 .metas-regras { margin: 32px 0 8px; background: var(--cartao); border: 2px dashed var(--tinta); border-radius: var(--raio); padding: 12px 16px; }
 .metas-regras summary { cursor: pointer; font-weight: 800; }
 .metas-dialogo { max-width: 460px; width: calc(100% - 32px); border: 2.5px solid var(--tinta); border-radius: var(--raio); background: var(--cartao); padding: 20px; box-shadow: 6px 6px 0 var(--tinta); }

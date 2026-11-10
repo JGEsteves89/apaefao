@@ -83,6 +83,7 @@ function custos(m) {
 function cartao(m, lista) {
   const el = document.createElement("article");
   el.className = "m-cartao anima estado-" + m.estado.replace(" ", "-");
+  el.id = "meta-" + m.id;
   el.dataset.grupo = m.grupo || "";
   const prox = m.proxima && lista.find(x => x.id === m.proxima);
   let fundo = "";
@@ -148,12 +149,17 @@ function festejar(lista) {
   try { localStorage.setItem("metas-festejadas", JSON.stringify(vistos.concat(novas.map(m => m.id)))); } catch (e) {}
 }
 
+// Plano do recreio: os passos por ordem, com o estado de cada um. Tocar num passo leva ao cartão.
 function caminho(lista) {
   const el = document.getElementById("m-caminho");
-  const recreio = lista.filter(m => m.grupo === "Recreio");
-  el.innerHTML = recreio.map(m => {
+  const recreio = lista.filter(m => m.grupo === "Recreio").sort((a, b) => (a.prioridade || 99) - (b.prioridade || 99));
+  el.innerHTML = recreio.map((m, i) => {
     const feito = m.estado === "garantido" || m.estado === "feito";
-    return `<li class="${feito ? "aceso" : m.estado === "a angariar" ? "agora" : ""}"><span aria-hidden="true">${escapar(m.emoji)}</span>${escapar(m.titulo.replace(/ para .*$/, ""))}</li>`;
+    const agora = m.estado === "a angariar";
+    const estado = feito ? "✅ Pago" : agora ? `A angariar · ${pct(m)}%` : "🔒 Depois";
+    return `<li class="${feito ? "aceso" : agora ? "agora" : ""}"><a href="#meta-${escapar(m.id)}">
+      <span class="passo" aria-hidden="true">${escapar(m.emoji)}</span>
+      <small>Passo ${i + 1}</small><b>${escapar(m.titulo.replace(/ para .*$/, ""))}</b><em>${estado}</em></a></li>`;
   }).join("");
   if (!recreio.length) el.closest("section").hidden = true;
 }
