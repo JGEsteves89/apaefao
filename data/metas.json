@@ -201,7 +201,7 @@
   "id": "passeio-4ano",
   "publicar": true,
   "emoji": "🚌",
-  "titulo": "Passeio de fim de ciclo do 4.º ano",
+  "titulo": "Passeio dos finalistas",
   "frase": "Um dia especial para os finalistas do 4.º ano, que se despedem da escola.",
   "grupo": "Atividades",
   "custo": 800,
@@ -216,11 +216,11 @@
   "prioridade": 1,
   "imagens": [
    {
-    "src": "img/metas/passeio-1.jpg",
+    "src": "img/metas/passeio-2.jpg",
     "legenda": "Ilustração"
    },
    {
-    "src": "img/metas/passeio-2.jpg",
+    "src": "img/metas/passeio-1.jpg",
     "legenda": "Ilustração"
    }
   ]

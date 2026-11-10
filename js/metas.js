@@ -90,8 +90,9 @@ function linha(m) {
   const src = m.estado === "feito" && m.imagem_depois ? m.imagem_depois : (l[0] && (l[0].src || l[0]));
   const mini = src ? `<img src="${escapar(src)}" alt="" loading="lazy">` : `<span aria-hidden="true">${escapar(m.emoji || "🎯")}</span>`;
   let estado;
-  if (m.estado === "feito") estado = `🎉 Feito a ${dataCurta(m.feito_em)}` + (m.fatura ? ` · <a href="${escapar(m.fatura)}" target="_blank" rel="noopener">🧾 fatura</a>` : "");
-  else if (m.estado === "garantido") estado = "✅ Garantido" + (m.nota ? " · " + escapar(m.nota) : "");
+  const valor = EUROS ? ` · <b>${euros(m.angariado || m.custo)}</b>` : "";
+  if (m.estado === "feito") estado = `🎉 Feito a ${dataCurta(m.feito_em)}${valor}` + (m.nota ? " · " + escapar(m.nota) : "") + (m.fatura ? ` · <a href="${escapar(m.fatura)}" target="_blank" rel="noopener">🧾 fatura</a>` : "");
+  else if (m.estado === "garantido") estado = `✅ Garantido${valor}` + (m.nota ? " · " + escapar(m.nota) : "");
   else estado = "🔒 Abre a seguir" + (EUROS ? ` · ${euros(m.custo)}` : "");
   el.innerHTML = `<div class="m-mini">${mini}</div><div><h3>${escapar(m.emoji)} ${escapar(m.titulo)}</h3><p class="m-linha-estado">${estado}</p></div>`;
   return el;
