@@ -91,7 +91,15 @@
       <span><input type="number" id="m-outro-valor" min="1" step="1" inputmode="numeric" placeholder="15"> €</span>
     </label>
     <p class="m-impacto" id="m-impacto" aria-live="polite"></p>
-    <p class="m-d-passo"><b>2. Como queres pagar?</b></p>
+    <p class="m-d-passo"><b>2. Quem és?</b> <small>(opcional, para te podermos agradecer)</small></p>
+    <label class="m-campo">O teu nome ou da empresa
+      <input type="text" id="m-nome" autocomplete="name" maxlength="80" placeholder="Ex.: Ana Silva ou Padaria Fão">
+    </label>
+    <label class="m-campo">Telemóvel ou email
+      <input type="text" id="m-contacto" autocomplete="email" maxlength="80" placeholder="Só a APAEF vê">
+    </label>
+    <label class="m-check"><input type="checkbox" id="m-publico"> Podem agradecer-me publicamente (site e redes)</label>
+    <p class="m-d-passo"><b>3. Como queres pagar?</b></p>
     <div class="m-metodos" role="tablist" aria-label="Como pagar">
       <button type="button" role="tab" data-metodo="mbway" hidden>📱 MB WAY</button>
       <button type="button" role="tab" data-metodo="ref" hidden>🏧 Multibanco</button>

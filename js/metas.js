@@ -236,7 +236,8 @@ function impacto(m, v) {
 function escolherValor(v) {
   valorEscolhido = v;
   const m = metaAberta, d = document.getElementById("m-dialogo");
-  const ref = "META " + m.id.split("-")[0].toUpperCase() + (v ? " " + v + "EUR" : "") + " + o teu nome";
+  const nome = (document.getElementById("m-nome").value || "").trim();
+  const ref = "META " + m.id.split("-")[0].toUpperCase() + (v ? " " + v + "EUR" : "") + " " + (nome || "+ o teu nome");
   d.querySelector("#m-ref").textContent = ref;
   d.querySelector("#m-ref2").textContent = ref;
   d.querySelectorAll(".m-v").forEach(s => { s.textContent = v ? v + " €" : "o valor"; });
@@ -307,7 +308,9 @@ async function pagar(tipo) {
 // Pagamento recebido: mensagem, linha na Sheet (por confirmar), barra avança só neste browser.
 async function pago(m, v, tipo, resp) {
   resp.innerHTML = tipo === "transf" ? `✅ <b>Obrigado pelos teus ${v} €!</b> 💛` : `✅ <b>Recebemos os teus ${v} €.</b> Obrigado! 💛`;
-  enviar("doacao_meta", { meta: m.id, valor: v, metodo: tipo, demo: DEMO, nota: DEMO ? "Demonstração (não é dinheiro real)" : tipo === "transf" ? "Avisou no site que transferiu" : "" });
+  enviar("doacao_meta", { meta: m.id, valor: v, metodo: tipo, demo: DEMO,
+    nome: document.getElementById("m-nome").value.trim(), contacto: document.getElementById("m-contacto").value.trim(),
+    publico: document.getElementById("m-publico").checked, nota: DEMO ? "Demonstração (não é dinheiro real)" : tipo === "transf" ? "Avisou no site que transferiu" : "" });
   guardarMinha(m.id, v);
   m.meu = (m.meu || 0) + v;
   await espera(1400);
@@ -399,6 +402,7 @@ function filtrar(grupo) {
     const s = e.target.closest("[data-partilhar]");
     if (s) partilhar(publicas.find(m => m.id === s.dataset.partilhar));
   });
+  document.getElementById("m-nome").addEventListener("input", () => escolherValor(valorEscolhido));
   document.getElementById("m-outro-valor").addEventListener("input", e => escolherValor(Math.max(0, parseInt(e.target.value, 10) || 0)));
   if (location.hash) { const alvo = document.querySelector(location.hash); if (alvo) setTimeout(() => alvo.scrollIntoView({ block: "center" }), 300); }
   document.querySelectorAll("[data-copiar]").forEach(b => b.addEventListener("click", () =>

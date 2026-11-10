@@ -431,9 +431,13 @@ function guardarDoacaoMeta(d) {
   const ab = aba.getRange(2, 1, Math.max(1, aba.getLastRow() - 1), 2).getValues();
   let livre = ab.findIndex(r => !String(r[0]).trim() && !String(r[1]).trim());
   livre = livre === -1 ? aba.getLastRow() + 1 : livre + 2;
-  const origem = "Site · " + ({ ref: "Multibanco", transf: "Transferência" }[d.metodo] || "MB WAY") + (d.demo ? " · DEMONSTRAÇÃO" : "");
+  const via = "Site · " + ({ ref: "Multibanco", transf: "Transferência" }[d.metodo] || "MB WAY") + (d.demo ? " · DEMONSTRAÇÃO" : "");
+  const nome = limpar(d.nome, 80);
+  const origem = (nome || "Anónimo") + " (" + via + ")";
+  if (!String(aba.getRange(1, 8).getValue()).trim()) aba.getRange(1, 8, 1, 2).setValues([["contacto", "agradecer em público"]]).setFontWeight("bold");
   aba.getRange(livre, 1, 1, 6).setValues([[new Date(), limpar(d.meta, 60), "entrada", valor, origem, limpar(d.nota, 200)]]);
   aba.getRange(livre, 7).setValue(false);
+  aba.getRange(livre, 8, 1, 2).setValues([[limpar(d.contacto, 80), d.publico ? "sim" : "não"]]);
   return ContentService.createTextOutput("ok");
 }
 
