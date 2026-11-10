@@ -110,6 +110,20 @@ function linha(m) {
   return el;
 }
 
+// Metas garantidas e feitas: cartão com as fotos de como foi (galeria grande), título e o que se conseguiu.
+function feita(m) {
+  const el = document.createElement("article");
+  el.className = "m-cartao m-feita estado-" + m.estado.replace(" ", "-");
+  el.id = "meta-" + m.id;
+  el.dataset.grupo = m.grupo || "";
+  const valor = EUROS ? ` · <b>${euros(m.angariado || m.custo)}</b>` : "";
+  const estado = m.estado === "feito" ? `🎉 Feito a ${dataCurta(m.feito_em)}${valor}` : `✅ Garantido${valor}`;
+  el.innerHTML = `${imagem(m)}<div class="m-corpo"><h3>${escapar(m.emoji)} ${escapar(m.titulo)}</h3>
+    <p class="m-linha-estado">${estado}${m.nota ? " · " + escapar(m.nota) : ""}</p>
+    <p class="m-frase">${escapar(m.frase)}</p></div>`;
+  return el;
+}
+
 function cartao(m, lista) {
   const el = document.createElement("article");
   el.className = "m-cartao anima estado-" + m.estado.replace(" ", "-");
@@ -302,7 +316,7 @@ function filtrar(grupo) {
 
   const por = (id, l, f) => { const el = document.getElementById(id); l.forEach(m => el.appendChild(f ? f(m) : cartao(m, publicas))); };
   por("m-ativas", ativas);
-  if (ativas.length === 1) document.getElementById("m-ativas").classList.add("uma"); por("m-seguir", seguir, linha); por("m-feitas-lista", feitas, linha);
+  if (ativas.length === 1) document.getElementById("m-ativas").classList.add("uma"); por("m-seguir", seguir, linha); por("m-feitas-lista", feitas, feita);
   caminho(publicas);
   galerias(document);
   animar(document);
@@ -311,10 +325,6 @@ function filtrar(grupo) {
   contar(document.getElementById("m-agora"), ativas.length);
   festejar(publicas);
 
-  document.querySelectorAll(".metas-filtros button").forEach(b => b.addEventListener("click", () => {
-    document.querySelectorAll(".metas-filtros button").forEach(x => { x.classList.toggle("ativo", x === b); x.setAttribute("aria-pressed", x === b); });
-    filtrar(b.dataset.grupo);
-  }));
   document.addEventListener("click", e => {
     const b = e.target.closest(".m-ajudar");
     if (b) abrirDialogo(publicas.find(m => m.id === b.dataset.meta));
