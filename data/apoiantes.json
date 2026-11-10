@@ -256,5 +256,13 @@
   "maps_url": "https://www.google.com/maps/search/?api=1&query=DFB%20Constru%C3%A7%C3%B5es%2C%20Esposende",
   "publicar": true,
   "tamanho": "grande"
+ },
+ {
+  "nome": "Cavaquinha",
+  "logo": "img/apoiantes/cavaquinha.jpg",
+  "tipo": "cafetaria",
+  "maps_url": "https://www.google.com/maps/search/?api=1&query=Cavaquinha%2C%20F%C3%A3o",
+  "publicar": true,
+  "tamanho": "pequeno"
  }
 ]
