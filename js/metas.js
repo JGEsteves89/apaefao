@@ -1,11 +1,13 @@
 // Metas: cada pessoa escolhe para que coisa vai a sua ajuda.
-// Dados: Google Sheet (folha "metas", lida pelo Apps Script com ?acao=metas). Se falhar, data/metas.json.
+// Dados: Google Sheet (folhas "metas" e "movimentos", lidas pelo Apps Script com ?acao=metas). Se falhar, data/metas.json.
+// Valores: barra = entradas + passagens da meta; meta feita = o que custou (saídas). fundo_livre = dinheiro ainda sem destino.
 // Estados: "a angariar" (barra), "garantido" (barra cheia), "feito" (foto + fatura), "a seguir" (fechada).
 // MOSTRAR_EUROS (config.js): enquanto for false, a página mostra só percentagens, sem valores em €.
 
 const EUROS = typeof MOSTRAR_EUROS !== "undefined" && MOSTRAR_EUROS;
 const euros = v => Number(v).toLocaleString("pt-PT", { maximumFractionDigits: 0 }) + " €";
 const pct = m => Math.min(100, Math.round((m.angariado / m.custo) * 100)) || 0;
+let FUNDO_LIVRE = 0;
 const dataCurta = d => new Date(d + "T12:00").toLocaleDateString("pt-PT", { day: "numeric", month: "short" });
 
 async function carregarMetas() {
@@ -13,11 +15,13 @@ async function carregarMetas() {
     try {
       const r = await fetch(ENDPOINT + "?acao=metas", { signal: AbortSignal.timeout(6000) });
       const dados = await r.json();
+      FUNDO_LIVRE = (dados && dados.fundo_livre) || 0;
       const lista = Array.isArray(dados) ? dados : dados && dados.metas;
       if (Array.isArray(lista) && lista.length) return lista;
     } catch (e) {}
   }
   const dados = await carregarJSON("data/metas.json");
+  FUNDO_LIVRE = (dados && dados.fundo_livre) || 0;
   return Array.isArray(dados) ? dados : dados && dados.metas;
 }
 
@@ -112,7 +116,8 @@ function linha(m) {
   const mini = src ? `<img src="${escapar(src)}" alt="" loading="lazy">` : `<span aria-hidden="true">${escapar(m.emoji || "🎯")}</span>`;
   let estado;
   const valor = EUROS ? ` · <b>${euros(m.angariado || m.custo)}</b>` : "";
-  if (m.estado === "feito") estado = `🎉 Feito a ${dataCurta(m.feito_em)}${valor}` + (m.nota ? " · " + escapar(m.nota) : "") + (m.fatura ? ` · <a href="${escapar(m.fatura)}" target="_blank" rel="noopener">🧾 fatura</a>` : "");
+  const custou = EUROS ? ` · custou <b>${euros(m.gasto || m.custo)}</b>` : "";
+  if (m.estado === "feito") estado = `🎉 Feito a ${dataCurta(m.feito_em)}${custou}` + (m.nota ? " · " + escapar(m.nota) : "") + (m.fatura ? ` · <a href="${escapar(m.fatura)}" target="_blank" rel="noopener">🧾 fatura</a>` : "");
   else if (m.estado === "garantido") estado = `✅ Garantido${valor}` + (m.nota ? " · " + escapar(m.nota) : "");
   else estado = "🔒 Abre a seguir" + (EUROS ? ` · ${euros(m.custo)}` : "");
   el.innerHTML = `<div class="m-mini">${mini}</div><div><h3>${escapar(m.emoji)} ${escapar(m.titulo)}</h3><p class="m-linha-estado">${estado}</p></div>`;
@@ -126,7 +131,8 @@ function feita(m) {
   el.id = "meta-" + m.id;
   el.dataset.grupo = m.grupo || "";
   const valor = EUROS ? ` · <b>${euros(m.angariado || m.custo)}</b>` : "";
-  const estado = m.estado === "feito" ? `🎉 Feito a ${dataCurta(m.feito_em)}${valor}` : `✅ Garantido${valor}`;
+  const custou = EUROS ? ` · custou <b>${euros(m.gasto || m.custo)}</b>` : "";
+  const estado = m.estado === "feito" ? `🎉 Feito a ${dataCurta(m.feito_em)}${custou}` : `✅ Garantido${valor}`;
   el.innerHTML = `${imagem(m)}<div class="m-corpo"><h3>${escapar(m.emoji)} ${escapar(m.titulo)}</h3>
     <p class="m-linha-estado">${estado}${m.nota ? " · " + escapar(m.nota) : ""}</p>
     <p class="m-frase">${escapar(m.frase)}</p></div>`;
@@ -380,6 +386,11 @@ function filtrar(grupo) {
 
   contar(document.getElementById("m-feitas"), feitas.length);
   contar(document.getElementById("m-agora"), ativas.length);
+  const fundo = document.getElementById("m-fundo");
+  if (fundo && EUROS && FUNDO_LIVRE >= 1) {
+    fundo.innerHTML = `💛 No fundo geral há <b>${euros(FUNDO_LIVRE)}</b> ainda sem destino. A Direção decide em que meta entram.`;
+    fundo.hidden = false;
+  }
   festejar(publicas);
 
   document.addEventListener("click", e => {

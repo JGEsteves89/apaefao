@@ -26,9 +26,9 @@
    ],
    "fatura": "",
    "publicar": true,
-   "angariado": 50,
-   "apoiantes": 0,
-   "do_fundo": 0
+   "angariado": 120,
+   "gasto": 0,
+   "apoiantes": 0
   },
   {
    "id": "cinema-2026",
@@ -55,9 +55,9 @@
    ],
    "fatura": "",
    "publicar": true,
-   "angariado": 200,
-   "apoiantes": 0,
-   "do_fundo": 0
+   "angariado": 0,
+   "gasto": 310,
+   "apoiantes": 0
   },
   {
    "id": "passeio-4ano",
@@ -89,9 +89,9 @@
    ],
    "fatura": "",
    "publicar": true,
-   "angariado": 44.59,
-   "apoiantes": 0,
-   "do_fundo": 44.59
+   "angariado": 0,
+   "gasto": 0,
+   "apoiantes": 0
   },
   {
    "id": "presentes-natal-2026",
@@ -127,9 +127,9 @@
    ],
    "fatura": "",
    "publicar": true,
-   "angariado": 111.7,
-   "apoiantes": 1,
-   "do_fundo": 11.7
+   "angariado": 100,
+   "gasto": 0,
+   "apoiantes": 1
   },
   {
    "id": "baloico-pre",
@@ -162,9 +162,9 @@
    ],
    "fatura": "",
    "publicar": true,
-   "angariado": 181.04,
-   "apoiantes": 0,
-   "do_fundo": 181.04
+   "angariado": 0,
+   "gasto": 0,
+   "apoiantes": 0
   },
   {
    "id": "areia-2026",
@@ -192,8 +192,8 @@
    "fatura": "",
    "publicar": true,
    "angariado": 0,
-   "apoiantes": 0,
-   "do_fundo": 0
+   "gasto": 0,
+   "apoiantes": 0
   },
   {
    "id": "estrutura-1ciclo",
@@ -225,8 +225,8 @@
    "fatura": "",
    "publicar": true,
    "angariado": 0,
-   "apoiantes": 0,
-   "do_fundo": 0
+   "gasto": 0,
+   "apoiantes": 0
   },
   {
    "id": "arvores-2027",
@@ -258,8 +258,8 @@
    "fatura": "",
    "publicar": true,
    "angariado": 0,
-   "apoiantes": 0,
-   "do_fundo": 0
+   "gasto": 0,
+   "apoiantes": 0
   },
   {
    "id": "insuflaveis-2027",
@@ -282,9 +282,9 @@
    "fatura": "",
    "publicar": true,
    "angariado": 0,
-   "apoiantes": 0,
-   "do_fundo": 0
+   "gasto": 0,
+   "apoiantes": 0
   }
  ],
- "fundo_livre": 0
+ "fundo_livre": 827.33
 }

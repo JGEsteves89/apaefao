@@ -339,19 +339,26 @@ function responsaveis() {
 //   estado: "a angariar" (barra), "a seguir" (fechada), "garantido" (já há dinheiro), "feito" (com foto e fatura).
 //   prioridade: só interna (ordem e para onde vai o que sobra). imagens: "caminho | legenda ; caminho | legenda".
 //   custos_detalhe: linhas separadas por ";". unidade ("ioiô|ioiôs": singular|plural) + preco_unidade: para o impacto ("10 € = 14 ioiôs").
-// Folha "doacoes_metas": uma linha por movimento. Só contam as linhas com confirmado = sim.
-//   tipo "entrada" + meta "geral"   → dinheiro para o fundo geral (Halloween, quotas…).
-//   tipo "entrada" + meta = id       → donativo para essa meta (ex.: 100 € da DFB para os presentes).
-//   tipo "do fundo geral" + meta = id → a APAEF usa dinheiro do fundo geral nessa meta (sai do fundo).
-// O que sobra no fundo geral divide-se pelas metas "a angariar", proporcional ao custo, sem passar o que falta a cada uma.
-// Quando uma meta fica feita: juntar uma linha "do fundo geral" com o valor que a APAEF lá pôs, e mudar o estado.
+// Folha "movimentos": o ÚNICO sítio com valores. Uma linha por movimento de dinheiro. Só contam as linhas com confirmado = sim.
+//   tipo "entrada"  → entra dinheiro. destino "geral" (Halloween, quotas…) ou o id de uma meta (donativo com destino).
+//   tipo "saída"    → sai dinheiro. destino = a meta onde foi gasto (ex.: bilhetes do cinema) ou "geral" (outras despesas).
+//   tipo "passagem" → não mexe no banco: a Direção decide pôr dinheiro do fundo geral numa meta.
+// Contas (sem divisões automáticas):
+//   barra de uma meta = entradas + passagens dessa meta.   custo real de uma meta feita = saídas dessa meta.
+//   fundo geral livre = (todas as entradas − todas as saídas) − o que está guardado nas metas ainda não feitas.
+//   O que uma meta não juntou sozinha sai do fundo geral. O que sobra de uma meta feita volta ao fundo geral.
 const META_COLS = ["id", "publicar", "prioridade", "estado", "emoji", "titulo", "frase", "grupo", "custo", "data_limite", "feito_em", "nota", "unidade", "preco_unidade", "imagens", "custos_detalhe", "fatura"];
-const DOACAO_COLS = ["data", "meta", "tipo", "valor", "origem", "nota", "confirmado"];
+const MOV_COLS = ["data", "tipo", "valor", "destino", "descrição", "como", "quem tratou", "comprovativo", "confirmado", "doador", "contacto", "agradecer em público", "nota"];
 
 function numero(v) { return parseFloat(String(v).replace(/\s/g, "").replace(",", ".")) || 0; }
 function dataISO(v) {
   if (v instanceof Date) return Utilities.formatDate(v, "Europe/Lisbon", "yyyy-MM-dd");
   return String(v || "").trim();
+}
+const r2 = v => Math.round(v * 100) / 100;
+function tipoMov(t) {
+  t = String(t || "").trim().toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+  return /^sai/.test(t) ? "saida" : /^pass/.test(t) ? "passagem" : "entrada";
 }
 
 function linhasDe(nome) {
@@ -379,91 +386,78 @@ function metas() {
     fatura: /^https:\/\//.test(String(m.fatura || "")) ? String(m.fatura).trim() : "",
     publicar: true,
   }));
-  const resultado = calcularMetas(lista, linhasDe("doacoes_metas"));
+  const resultado = calcularMetas(lista, linhasDe("movimentos"));
   cache.put("metas", JSON.stringify(resultado), 60);
   return resultado;
 }
 
-// Soma as doações de cada meta e divide o fundo geral pelas metas ativas.
-function calcularMetas(lista, doacoes) {
-  const conf = doacoes.filter(d => sim(d.confirmado) && numero(d.valor) > 0);
-  let fundo = 0;
-  const porMeta = {}, origens = {};
-  conf.forEach(d => {
-    const meta = String(d.meta || "").trim().toLowerCase(), tipo = String(d.tipo || "").trim().toLowerCase(), v = numero(d.valor);
-    if (!meta || meta === "geral") { fundo += v; return; }
-    porMeta[meta] = (porMeta[meta] || 0) + v;
-    if (/fundo/.test(tipo)) fundo -= v;
-    else (origens[meta] = origens[meta] || new Set()).add(String(d.origem || "anónimo").trim().toLowerCase() + "|" + dataISO(d.data));
+// Lê os movimentos confirmados e diz, para cada meta, quanto juntou e quanto custou. Não divide nada sozinho.
+function calcularMetas(lista, movimentos) {
+  const ent = {}, pas = {}, sai = {}, doadores = {};
+  let saldo = 0;
+  movimentos.filter(d => sim(d.confirmado) && numero(d.valor) > 0).forEach(d => {
+    const t = tipoMov(d.tipo), v = numero(d.valor);
+    const dest = String(d.destino || "").trim().toLowerCase() || "geral";
+    if (t === "entrada") {
+      saldo += v; ent[dest] = (ent[dest] || 0) + v;
+      if (dest !== "geral") (doadores[dest] = doadores[dest] || new Set()).add((String(d.doador || d["descrição"] || "anónimo").trim() + "|" + dataISO(d.data)).toLowerCase());
+    } else if (t === "saida") { saldo -= v; sai[dest] = (sai[dest] || 0) + v; }
+    else pas[dest] = (pas[dest] || 0) + v;
   });
+  let guardado = 0;
   lista.forEach(m => {
-    m.angariado = Math.round((porMeta[m.id.toLowerCase()] || 0) * 100) / 100;
-    m.apoiantes = origens[m.id.toLowerCase()] ? origens[m.id.toLowerCase()].size : 0;
-    m.do_fundo = 0;
+    const id = m.id.toLowerCase();
+    m.angariado = r2((ent[id] || 0) + (pas[id] || 0));
+    m.gasto = r2(sai[id] || 0);
+    m.apoiantes = doadores[id] ? doadores[id].size : 0;
+    if (m.estado !== "feito") guardado += Math.max(0, m.angariado - m.gasto);
   });
-  // Divisão proporcional ao custo, sem passar o que falta; o que não cabe numa meta vai para as outras.
-  let resto = Math.max(0, fundo);
-  for (let volta = 0; volta < 10 && resto > 0.01; volta++) {
-    const abertas = lista.filter(m => m.estado === "a angariar" && m.angariado + m.do_fundo < m.custo - 0.01);
-    const soma = abertas.reduce((s, m) => s + m.custo, 0);
-    if (!soma) break;
-    let usado = 0;
-    abertas.forEach(m => {
-      const falta = m.custo - m.angariado - m.do_fundo;
-      const parte = Math.min(falta, resto * m.custo / soma);
-      m.do_fundo += parte; usado += parte;
-    });
-    resto -= usado;
-  }
-  lista.forEach(m => {
-    m.do_fundo = Math.round(m.do_fundo * 100) / 100;
-    m.angariado = Math.round((m.angariado + m.do_fundo) * 100) / 100;
-  });
-  return { metas: lista, fundo_livre: Math.round(resto * 100) / 100 };
+  return { metas: lista, fundo_livre: r2(Math.max(0, saldo - guardado)) };
 }
 
-// Donativo para uma meta vindo do site (MB WAY / Multibanco). Entra sempre por confirmar: só conta na barra
-// depois de a tesoureira marcar "confirmado". Não guarda o telemóvel de quem paga.
+// Donativo para uma meta vindo do site. Entra sempre por confirmar: só conta para todos
+// depois de a tesoureira marcar "confirmado" (quem pagou já vê a sua parte no próprio browser).
 function guardarDoacaoMeta(d) {
-  const aba = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("doacoes_metas");
-  const valor = Math.round(numero(d.valor) * 100) / 100;
+  const aba = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("movimentos");
+  const valor = r2(numero(d.valor));
   if (!aba || !(valor > 0 && valor <= 5000)) return ContentService.createTextOutput("erro");
-  const ab = aba.getRange(2, 1, Math.max(1, aba.getLastRow() - 1), 2).getValues();
-  let livre = ab.findIndex(r => !String(r[0]).trim() && !String(r[1]).trim());
+  const abc = aba.getRange(2, 1, Math.max(1, aba.getLastRow() - 1), 3).getValues();
+  let livre = abc.findIndex(r => r.every(c => !String(c).trim()));
   livre = livre === -1 ? aba.getLastRow() + 1 : livre + 2;
-  const via = "Site · " + ({ ref: "Multibanco", transf: "Transferência" }[d.metodo] || "MB WAY") + (d.demo ? " · DEMONSTRAÇÃO" : "");
-  const nome = limpar(d.nome, 80);
-  const origem = (nome || "Anónimo") + " (" + via + ")";
-  if (!String(aba.getRange(1, 8).getValue()).trim()) aba.getRange(1, 8, 1, 2).setValues([["contacto", "agradecer em público"]]).setFontWeight("bold");
-  aba.getRange(livre, 1, 1, 6).setValues([[new Date(), limpar(d.meta, 60), "entrada", valor, origem, limpar(d.nota, 200)]]);
-  aba.getRange(livre, 7).setValue(false);
-  aba.getRange(livre, 8, 1, 2).setValues([[limpar(d.contacto, 80), d.publico ? "sim" : "não"]]);
+  const como = ({ ref: "Multibanco", transf: "Transferência" }[d.metodo] || "MB WAY") + " (site)" + (d.demo ? " · DEMONSTRAÇÃO" : "");
+  aba.getRange(livre, 1, 1, MOV_COLS.length).setValues([[new Date(), "entrada", valor, limpar(d.meta, 60), "Donativo pelo site", como, "", "", false,
+    limpar(d.nome, 80) || "Anónimo", limpar(d.contacto, 80), d.publico ? "sim" : "não", limpar(d.nota, 200)]]);
   return ContentService.createTextOutput("ok");
 }
 
-// Correr UMA vez no editor (▶ criarFolhasMetas) para criar as folhas "metas" e "doacoes_metas" com os dados iniciais.
-function criarFolhasMetas() {
+// Correr UMA vez no editor (▶ criarMovimentos): cria a folha "movimentos" com o que estava em "doacoes_metas"
+// e muda o nome da folha antiga para "antigo_doacoes_metas" (pode ser apagada depois).
+function criarMovimentos() {
   const folha = SpreadsheetApp.getActiveSpreadsheet();
-  if (!folha.getSheetByName("metas")) {
-    const aba = folha.insertSheet("metas");
-    const dados = [["castanhas-2026", true, 0, "garantido", "🌰", "Castanhas assadas no Magusto", "A senhora das castanhas assa para todas as crianças no Magusto da escola.", "Atividades", 50, "", "", "Obrigado a todos! 💛", "", "", "img/magusto-castanhas.jpg", "Serviço da assadora ≈ 50 € ; Carvão: oferta do Supermercado Ramalhão", ""], ["cinema-2026", true, 0, "feito", "🎬", "Um bilhete de cinema para cada criança", "206 crianças ganharam um bilhete para ver um filme de animação à escolha.", "Atividades", 200, "", "2026-11-05", "Obrigado a todos! 💛", "", "", "img/cinema-vouchers.jpg", "206 bilhetes com desconto (Esposende 2000) ≈ 200 €", ""], ["passeio-4ano", true, 1, "a angariar", "🚌", "Passeio dos finalistas", "Um dia especial para os finalistas do 4.º ano, que se despedem da escola.", "Atividades", 800, "", "", "", "lugar no passeio|lugares no passeio", 20, "img/metas/passeio-2.jpg | Ilustração ; img/metas/passeio-1.jpg | Ilustração", "Autocarro 1 dia ≈ 400 € ; Entradas ≈ 10 € × 40 alunos", ""], ["presentes-natal-2026", true, 2, "a angariar", "🎁", "Um presente de Natal para cada criança", "Cada criança da escola recebe um ioiô da Lumi, a nossa mascote, na festa de Natal.", "Natal", 210, "2026-12-04", "", "", "ioiô|ioiôs", 0.7, "img/metas/presentes-entrega.jpg | Ilustração ; img/metas/presentes-ioio.jpg | Ilustração do ioiô da Lumi ; img/metas/presentes-2.jpg | Ilustração", "300 ioiôs personalizados com a Lumi × 0,70 € = 210 € ; Os que sobrarem vendem-se na Feirinha", ""], ["baloico-pre", true, 3, "a angariar", "🛝", "Baloiço de dois lugares para a pré", "O primeiro passo do projeto do recreio: um baloiço novo na caixa de areia da pré. O dinheiro das rifas de S. Martinho vai para aqui.", "Recreio", 3248, "", "", "", "", "", "img/metas/baloico-pre-simulacao.jpg | Simulação ; img/metas/baloico-pre.jpg | O baloiço (Greenplay)", "Baloiço Greenplay PO732 (2 assentos) 2 798 € ; Transporte 450 € ; Montagem: oferta da Greenplay", ""], ["areia-2026", true, 4, "a seguir", "🏖️", "Areia nova para a caixa do parque", "Repor a areia da caixa onde vai ficar o baloiço da pré.", "Recreio", 350, "", "", "", "", "", "img/metas/areia-1.jpg | Ilustração", "≈ 5 m³ de areia lavada + transporte ≈ 350 € (vamos pedir à Junta)", ""], ["estrutura-1ciclo", true, 5, "a seguir", "🧗", "Escorrega e parede de escalada para o 1.º ciclo", "Uma estrutura com escorrega, escalada e barras para o recreio do 1.º ciclo.", "Recreio", 4744, "", "", "", "", "", "img/metas/estrutura-simulacao.jpg | Simulação ; img/metas/estrutura-1ciclo.jpg | A estrutura (Greenplay)", "Estrutura Greenplay ≈ 4 744 €", ""], ["arvores-2027", true, 6, "a seguir", "🌳", "10 árvores para dar sombra ao recreio", "Uma árvore por turma, plantada no Dia da Árvore (19 de março).", "Recreio", 600, "", "", "", "árvore|árvores", 60, "img/metas/arvores-simulacao.jpg | Simulação ; img/metas/arvores-plantacao.jpg | Ilustração", "10 árvores de 2–3 m × ≈ 60 € (com tutor e terra)", ""], ["insuflaveis-2027", true, 7, "a seguir", "🎈", "Insufláveis no Dia da Criança", "Dois insufláveis no recreio a 1 de junho.", "Atividades", 350, "", "", "", "", "", "", "2 insufláveis, 1 dia, com montagem ≈ 350 €", ""]];
-    aba.getRange(1, 1, 1, META_COLS.length).setValues([META_COLS]).setFontWeight("bold");
-    aba.getRange(2, 1, dados.length, META_COLS.length).setValues(dados);
-    aba.getRange(2, 2, dados.length, 1).insertCheckboxes();
-    aba.setFrozenRows(1);
-  }
-  if (!folha.getSheetByName("doacoes_metas")) {
-    const aba = folha.insertSheet("doacoes_metas");
-    const dados = [
-      ["2026-10-31", "geral", "entrada", 487.33, "Halloween (mealheiros)", "Valor anunciado pela Daniela a 1/11", true],
-      ["", "geral", "entrada", "", "Quotas 2026/27", "Falta o valor (Liliana)", false],
-      ["2026-11-09", "presentes-natal-2026", "entrada", 100, "DFB Construções (via Catarina)", "Paga a fatura diretamente ao fornecedor", true],
-      ["2026-11-05", "cinema-2026", "do fundo geral", 200, "APAEF", "Valor estimado: confirmar com a fatura", true],
-      ["2026-11-11", "castanhas-2026", "do fundo geral", 50, "APAEF", "Valor estimado: confirmar com a fatura", true],
-    ];
-    aba.getRange(1, 1, 1, DOACAO_COLS.length).setValues([DOACAO_COLS]).setFontWeight("bold");
-    aba.getRange(2, 1, dados.length, DOACAO_COLS.length).setValues(dados);
-    aba.getRange(2, 7, 200, 1).insertCheckboxes();
-    aba.setFrozenRows(1);
-  }
+  if (folha.getSheetByName("movimentos")) return;
+  const aba = folha.insertSheet("movimentos", 1);
+  const dados = [
+    ["2026-09-01", "entrada", "", "geral", "Saldo da conta no fim de 2025/26", "conta", "Liliana", "extrato de 1/9", false, "", "", "", "Falta o valor (relatório de contas da AG)"],
+    ["2026-09-01", "entrada", 1200, "geral", "Quotas 2026/27", "transferência / numerário", "Liliana", "", true, "", "", "", "ESTIMATIVA — trocar pelo valor certo"],
+    ["2026-09-01", "saída", 430, "geral", "Outras despesas (rifas, roll-up, …)", "", "", "", true, "", "", "", "ESTIMATIVA — separar em linhas, uma por fatura"],
+    ["2026-10-31", "entrada", 487.33, "geral", "Halloween: mealheiros dos 7 grupos", "numerário", "Daniela", "", true, "", "", "", "Valor anunciado no grupo a 1/11"],
+    ["2026-11-05", "saída", 310, "cinema-2026", "Bilhetes de cinema para as crianças (Esposende 2000)", "", "Daniela", "", true, "", "", "", "ESTIMATIVA — confirmar com a fatura"],
+    ["2026-11-09", "entrada", 100, "presentes-natal-2026", "DFB Construções paga parte dos presentes", "paga a fatura ao fornecedor", "Catarina", "", true, "DFB Construções", "", "sim", "Não passa pela conta. Quando houver fatura, juntar também a saída de 100 €"],
+    ["2026-11-11", "passagem", 120, "castanhas-2026", "A Direção guarda dinheiro do fundo geral para a assadora", "", "Direção", "", true, "", "", "", "ESTIMATIVA. Quando pagar: juntar a saída com a fatura"],
+  ];
+  aba.getRange(1, 1, 1, MOV_COLS.length).setValues([MOV_COLS]).setFontWeight("bold").setBackground("#ebce58");
+  aba.getRange(2, 1, dados.length, MOV_COLS.length).setValues(dados);
+  aba.getRange(2, 9, 300, 1).insertCheckboxes();
+  aba.getRange(2, 9, dados.length, 1).setValues(dados.map(d => [d[8]]));
+  aba.getRange(2, 2, 300, 1).setDataValidation(SpreadsheetApp.newDataValidation().requireValueInList(["entrada", "saída", "passagem"], true).setAllowInvalid(false).build());
+  const ids = linhasDe("metas").map(m => String(m.id).trim()).filter(Boolean);
+  aba.getRange(2, 4, 300, 1).setDataValidation(SpreadsheetApp.newDataValidation().requireValueInList(["geral"].concat(ids), true).setAllowInvalid(true).build());
+  aba.getRange(2, 3, 300, 1).setNumberFormat("#,##0.00 €");
+  aba.getRange(1, 2).setNote("entrada: entra dinheiro\nsaída: sai dinheiro\npassagem: a Direção põe dinheiro do fundo geral numa meta (não mexe no banco)");
+  aba.getRange(1, 4).setNote("geral, ou o id de uma meta (folha metas)");
+  aba.getRange(1, 9).setNote("Só as linhas confirmadas contam no site");
+  aba.setFrozenRows(1);
+  const antiga = folha.getSheetByName("doacoes_metas");
+  if (antiga) antiga.setName("antigo_doacoes_metas");
+  CacheService.getScriptCache().remove("metas");
 }
