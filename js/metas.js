@@ -80,6 +80,23 @@ function custos(m) {
   return `<details class="m-custos"><summary>Ver custos</summary><ul>${linhas}</ul></details>`;
 }
 
+// Metas "a seguir" e "garantidas/feitas": linha curta (miniatura + título + estado), sem barra nem texto longo.
+function linha(m) {
+  const el = document.createElement("article");
+  el.className = "m-linha m-cartao estado-" + m.estado.replace(" ", "-");
+  el.id = "meta-" + m.id;
+  el.dataset.grupo = m.grupo || "";
+  const l = m.imagens && m.imagens.length ? m.imagens : (m.imagem ? [m.imagem] : []);
+  const src = m.estado === "feito" && m.imagem_depois ? m.imagem_depois : (l[0] && (l[0].src || l[0]));
+  const mini = src ? `<img src="${escapar(src)}" alt="" loading="lazy">` : `<span aria-hidden="true">${escapar(m.emoji || "🎯")}</span>`;
+  let estado;
+  if (m.estado === "feito") estado = `🎉 Feito a ${dataCurta(m.feito_em)}` + (m.fatura ? ` · <a href="${escapar(m.fatura)}" target="_blank" rel="noopener">🧾 fatura</a>` : "");
+  else if (m.estado === "garantido") estado = "✅ Garantido" + (m.nota ? " · " + escapar(m.nota) : "");
+  else estado = "🔒 Abre a seguir" + (EUROS ? ` · ${euros(m.custo)}` : "");
+  el.innerHTML = `<div class="m-mini">${mini}</div><div><h3>${escapar(m.emoji)} ${escapar(m.titulo)}</h3><p class="m-linha-estado">${estado}</p></div>`;
+  return el;
+}
+
 function cartao(m, lista) {
   const el = document.createElement("article");
   el.className = "m-cartao anima estado-" + m.estado.replace(" ", "-");
@@ -192,9 +209,9 @@ function abrirDialogo(m) {
   fila.forEach((m, i) => { if (!m.proxima && fila[i + 1]) m.proxima = fila[i + 1].id; });
   const feitas = publicas.filter(m => m.estado === "garantido" || m.estado === "feito");
 
-  const por = (id, l) => { const el = document.getElementById(id); l.forEach(m => el.appendChild(cartao(m, publicas))); };
+  const por = (id, l, f) => { const el = document.getElementById(id); l.forEach(m => el.appendChild(f ? f(m) : cartao(m, publicas))); };
   por("m-ativas", ativas);
-  if (ativas.length === 1) document.getElementById("m-ativas").classList.add("uma"); por("m-seguir", seguir); por("m-feitas-lista", feitas);
+  if (ativas.length === 1) document.getElementById("m-ativas").classList.add("uma"); por("m-seguir", seguir, linha); por("m-feitas-lista", feitas, linha);
   caminho(publicas);
   galerias(document);
   animar(document);
