@@ -4,7 +4,7 @@
 //   Apoiantes:  "Obrigada a todos"
 // Donativo: SEMPRE que alguém faz um donativo nas Metas ou envia a ficha de sócio.
 // No máximo 1 cena por página aberta.
-// Para testar: ?lumi=ola | espreitar | obrigado | donativo (mostra sempre) · ?lumi=limpar (esquece o que já viu)
+// Para testar (em qualquer página): ?lumi=ola | espreitar | obrigado | donativo (mostra sempre) · ?lumi=limpar (esquece o que já viu)
 (function () {
   const CENAS = ["ola", "espreitar", "obrigado", "donativo"];
   const CHAVE = "lumi-cenas-vistas";
@@ -32,14 +32,13 @@
       if (texto) caixa.querySelector(".globo").innerHTML = texto;
       caixa.style.setProperty("--k", Math.min(1, (innerWidth - 24) / 540).toFixed(3));
       document.body.appendChild(caixa);
-      document.body.classList.add("lumi-a-tocar");   // só 1 Lumi de cada vez: a 3D esconde-se
       marcar(nome);
       let fechada = false;
       const fechar = () => {
         if (fechada) return;
         fechada = true;
         caixa.classList.add("sai");
-        setTimeout(() => { caixa.remove(); document.body.classList.remove("lumi-a-tocar"); aTocar = false; }, 450);
+        setTimeout(() => { caixa.remove(); aTocar = false; }, 450);
       };
       setTimeout(fechar, Number(caixa.querySelector(".palco").dataset.duracao) || 6000);
       caixa.addEventListener("click", fechar);

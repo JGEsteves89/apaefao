@@ -836,4 +836,3 @@ section[hidden] { display: none; }
 .cena-donativo .figura { transform-origin: 100% 100%; }
 .cena-espreitar .palco { padding: 0; }
 .cena-espreitar .esp-caixa { position: absolute; right: 0; bottom: 0; width: 460px; height: 360px; transform-origin: 100% 100%; }
-.lumi-a-tocar .mascote-zona, .lumi-a-tocar .mascote-salta { visibility: hidden; }
