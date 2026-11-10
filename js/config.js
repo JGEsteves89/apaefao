@@ -4,3 +4,6 @@ const ENDPOINT = "https://script.google.com/macros/s/AKfycbzkDekJna7Yb_CBh2rxkVy
 function escapar(t) {
   return String(t == null ? "" : t).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 }
+
+// Mostrar valores em € na página das metas (precisa do OK da Direção).
+const MOSTRAR_EUROS = false;

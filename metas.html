@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Metas — APAEF Fão</title>
+  <meta name="description" content="Escolhe para que coisa vai a tua ajuda: presentes de Natal, castanhas, baloiços para o recreio… Cada euro tem destino.">
+  <meta name="robots" content="noindex">
+  <link rel="canonical" href="https://apaefao.pt/metas.html">
+  <meta name="theme-color" content="#ebce58">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="APAEF Fão">
+  <meta property="og:locale" content="pt_PT">
+  <meta property="og:url" content="https://apaefao.pt/metas.html">
+  <meta property="og:title" content="As metas da APAEF">
+  <meta property="og:description" content="Escolhe para que coisa vai a tua ajuda. Cada euro tem destino.">
+  <meta property="og:image" content="https://apaefao.pt/img/preview.jpg">
+  <link rel="icon" href="favicon.ico" sizes="any">
+  <link rel="icon" href="favicon-96.png" type="image/png" sizes="96x96">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="manifest" href="site.webmanifest">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topo">
+    <div class="wrap">
+      <a class="marca" href="./"><img src="img/logo.png" alt="Logótipo da APAEF" width="52" height="52"><span>APAEF</span></a>
+      <button class="menu-botao" type="button" aria-expanded="false" aria-controls="menu"><span class="abrir">☰ Menu</span><span class="fechar">✕ Fechar</span></button>
+      <nav class="menu" id="menu" aria-label="Menu principal">
+        <a href="agenda.html"><span aria-hidden="true">📅</span>Agenda</a>
+        <a href="documentos.html"><span aria-hidden="true">📄</span>Documentos</a>
+        <a href="socios.html"><span aria-hidden="true">🤝</span>Sócios</a>
+        <a href="quem-somos.html"><span aria-hidden="true">🌻</span>Quem somos</a>
+        <a href="noticias.html"><span aria-hidden="true">📰</span>Notícias</a>
+        <a href="sugestoes.html"><span aria-hidden="true">💬</span>Sugestões</a>
+        <a href="links.html"><span aria-hidden="true">🔗</span>Links</a>
+        <a href="apoiantes.html"><span aria-hidden="true">💛</span>Apoiantes</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap pagina metas-pagina">
+    <h1 class="titulo-pagina">As nossas metas 🎯</h1>
+    <p class="metas-resumo">Já cumprimos <b class="contador" id="m-feitas">0</b> metas. Neste momento estamos a angariar para <b class="contador" id="m-agora">0</b>.</p>
+    <p class="nota">Escolhe <b>para que coisa</b> vai a tua ajuda. Quando a barra enche, fica garantido. Depois mostramos a foto e a fatura: cada euro tem destino.</p>
+
+    <div class="metas-filtros" role="group" aria-label="Filtrar metas">
+      <button type="button" class="ativo" data-grupo="">Todas</button>
+      <button type="button" data-grupo="Natal">🎄 Natal</button>
+      <button type="button" data-grupo="Atividades">🎉 Atividades</button>
+      <button type="button" data-grupo="Recreio">🛝 Recreio</button>
+    </div>
+
+    <section aria-labelledby="h-ativas">
+      <h2 id="h-ativas" class="metas-h2">A angariar agora</h2>
+      <div class="metas-grelha" id="m-ativas"></div>
+    </section>
+
+    <section aria-labelledby="h-caminho" class="metas-caminho-sec">
+      <h2 id="h-caminho" class="metas-h2">O caminho do recreio</h2>
+      <ol class="metas-caminho" id="m-caminho"></ol>
+    </section>
+
+    <section aria-labelledby="h-seguir">
+      <h2 id="h-seguir" class="metas-h2">A seguir 🔒</h2>
+      <p class="metas-sub">Abrem quando a meta de cima ficar garantida.</p>
+      <div class="metas-grelha pequenas" id="m-seguir"></div>
+    </section>
+
+    <section aria-labelledby="h-feitas">
+      <h2 id="h-feitas" class="metas-h2">Garantidas e feitas</h2>
+      <div class="metas-grelha pequenas" id="m-feitas-lista"></div>
+    </section>
+
+    <details class="metas-regras">
+      <summary>Como funciona o dinheiro?</summary>
+      <ul>
+        <li><b>Se uma meta passar dos 100%</b>, o que sobra vai para a meta seguinte. O cartão diz qual.</li>
+        <li><b>Se uma meta não encher até à data</b>, o dinheiro vai para a meta mais parecida, e escrevemos aqui qual foi.</li>
+        <li><b>A barra sobe quando a tesoureira confirma o dinheiro no banco</b> (1 a 3 dias).</li>
+        <li><b>Quando a meta é feita</b>, mostramos a foto e a fatura, no máximo 30 dias depois.</li>
+      </ul>
+    </details>
+  </main>
+
+  <dialog class="metas-dialogo" id="m-dialogo" aria-labelledby="m-d-titulo">
+    <form method="dialog" class="m-d-fechar"><button aria-label="Fechar">✕</button></form>
+    <h2 id="m-d-titulo"></h2>
+    <p class="m-d-frase"></p>
+    <p><b>Quanto queres dar?</b></p>
+    <div class="m-valores" id="m-valores"></div>
+    <p>Faz uma transferência para o IBAN da APAEF:</p>
+    <div class="copiar-linha">
+      <code id="m-iban">PT50 0033 0000 4566 4874 4950 5</code>
+      <button class="b-copiar" type="button" data-copiar="m-iban"><span class="txt">Copiar</span><span class="ok">✓ Copiado</span></button>
+    </div>
+    <p>No descritivo, escreve:</p>
+    <div class="copiar-linha">
+      <code id="m-ref"></code>
+      <button class="b-copiar" type="button" data-copiar="m-ref"><span class="txt">Copiar</span><span class="ok">✓ Copiado</span></button>
+    </div>
+    <p class="m-d-nota">A barra sobe quando a tesoureira confirmar a transferência (1 a 3 dias). Em breve: MB WAY e Multibanco aqui mesmo.</p>
+  </dialog>
+
+  <footer>
+    <div class="wrap">
+      <div>APAEF · Escola Básica de Fão, Rua da Caixa de Água, 4740-364 Fão · <a href="mailto:apaefao@gmail.com">apaefao@gmail.com</a></div>
+    </div>
+  </footer>
+
+  <script src="js/config.js"></script>
+  <script src="js/comum.js"></script>
+  <script src="js/metas.js"></script>
+</body>
+</html>
