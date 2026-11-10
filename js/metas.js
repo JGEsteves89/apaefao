@@ -97,7 +97,6 @@ function cartao(m, lista) {
   }
   el.innerHTML = `${imagem(m)}${selo(m)}
     <div class="m-corpo">
-      ${m.estado !== "feito" && m.estado !== "garantido" && m.prioridade ? `<p class="m-prio">⭐ Prioridade ${m.prioridade}${m.motivo ? " · " + escapar(m.motivo) : ""}</p>` : ""}
       <h3>${escapar(m.emoji)} ${escapar(m.titulo)}</h3>
       <p class="m-frase">${escapar(m.frase)}</p>
       ${m.estado === "a seguir" ? "" : barra(m)}

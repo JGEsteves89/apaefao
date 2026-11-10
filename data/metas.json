@@ -17,7 +17,6 @@
   "data_limite": "2026-12-04",
   "ordem": 1,
   "prioridade": 2,
-  "motivo": "É o próximo (festa a 12/12)",
   "imagens": [
    {
     "src": "img/metas/presentes-entrega.jpg",
@@ -203,7 +202,7 @@
   "publicar": true,
   "emoji": "🚌",
   "titulo": "Passeio de fim de ciclo do 4.º ano",
-  "frase": "A APAEF comprometeu-se a oferecer este passeio aos finalistas do 4.º ano, que se despedem da escola.",
+  "frase": "Um dia especial para os finalistas do 4.º ano, que se despedem da escola.",
   "grupo": "Atividades",
   "custo": 800,
   "angariado": 0,
@@ -215,7 +214,6 @@
   "estado": "a angariar",
   "ordem": 9,
   "prioridade": 1,
-  "motivo": "Já prometido",
   "imagens": [
    {
     "src": "img/metas/passeio-1.jpg",
