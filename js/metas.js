@@ -307,8 +307,8 @@ async function pagar(tipo) {
 
 // Pagamento recebido: mensagem, linha na Sheet (por confirmar), barra avança só neste browser.
 async function pago(m, v, tipo, resp) {
-  resp.innerHTML = `✅ <b>Recebemos os teus ${v} €.</b> Obrigado! 💛`;
-  enviar("doacao_meta", { meta: m.id, valor: v, metodo: tipo, demo: DEMO, nota: DEMO ? "Demonstração (não é dinheiro real)" : "" });
+  resp.innerHTML = tipo === "transf" ? `✅ <b>Obrigado pelos teus ${v} €!</b> 💛` : `✅ <b>Recebemos os teus ${v} €.</b> Obrigado! 💛`;
+  enviar("doacao_meta", { meta: m.id, valor: v, metodo: tipo, demo: DEMO, nota: DEMO ? "Demonstração (não é dinheiro real)" : tipo === "transf" ? "Avisou no site que transferiu" : "" });
   guardarMinha(m.id, v);
   m.meu = (m.meu || 0) + v;
   await espera(1400);
@@ -396,6 +396,7 @@ function filtrar(grupo) {
     const p = e.target.closest("[data-pagar]");
     if (p) pagar(p.dataset.pagar);
     if (e.target.closest("[data-simular]")) pago(metaAberta, valorEscolhido, "ref", document.getElementById("m-resp-ref"));
+    if (e.target.closest("[data-transferi]") && valorEscolhido) pago(metaAberta, valorEscolhido, "transf", document.getElementById("m-resp-transf"));
     const s = e.target.closest("[data-partilhar]");
     if (s) partilhar(publicas.find(m => m.id === s.dataset.partilhar));
   });

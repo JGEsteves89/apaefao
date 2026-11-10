@@ -729,7 +729,7 @@ button.m-valor { font: inherit; font-weight: 800; color: var(--tinta); }
 .m-campo { display: block; font-weight: 700; margin: 8px 0; }
 .m-campo input { display: block; width: 100%; margin-top: 6px; box-sizing: border-box; }
 .m-impacto { margin: 10px 0 0; min-height: 1.4em; font-family: "Fredoka", sans-serif; font-size: 18px; color: var(--sol-escuro); }
-.m-pagar { width: 100%; margin-top: 4px; }
+.m-pagar { width: 100%; margin-top: 12px; }
 .m-pagar:disabled { opacity: .5; cursor: not-allowed; }
 .m-resposta { font-weight: 700; margin: 10px 0 0; }
 .m-refmb { display: grid; grid-template-columns: auto 1fr; gap: 4px 14px; margin: 12px 0 0; padding: 12px 14px; background: #fff; border: 2px dashed var(--tinta); border-radius: 10px; font-size: 18px; }
