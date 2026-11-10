@@ -27,11 +27,31 @@ function selo(m) {
   return "";
 }
 
+// Várias imagens por meta (como numa loja online): "imagens" = lista; "imagem" continua a servir.
+// Cada imagem pode ser "caminho" ou {src, legenda}.
 function imagem(m) {
-  const src = m.estado === "feito" && m.imagem_depois ? m.imagem_depois : m.imagem;
-  return src
-    ? `<div class="m-img"><img src="${escapar(src)}" alt="" loading="lazy"></div>`
-    : `<div class="m-img icone" aria-hidden="true">${escapar(m.emoji || "🎯")}</div>`;
+  let lista = m.imagens && m.imagens.length ? m.imagens : (m.imagem ? [m.imagem] : []);
+  if (m.estado === "feito" && m.imagem_depois) lista = [m.imagem_depois].concat(lista);
+  lista = lista.map(i => typeof i === "string" ? { src: i } : i);
+  if (!lista.length) return `<div class="m-img icone" aria-hidden="true">${escapar(m.emoji || "🎯")}</div>`;
+  const slides = lista.map((i, n) => `<figure class="m-slide"><img src="${escapar(i.src)}" alt="${escapar(i.legenda || "")}" loading="${n ? "lazy" : "eager"}">${i.legenda ? `<figcaption>${escapar(i.legenda)}</figcaption>` : ""}</figure>`).join("");
+  if (lista.length === 1) return `<div class="m-img">${slides}</div>`;
+  const pontos = lista.map((_, n) => `<button type="button" class="${n ? "" : "ativo"}" aria-label="Imagem ${n + 1}"></button>`).join("");
+  return `<div class="m-img m-galeria"><div class="m-pista">${slides}</div>
+    <button type="button" class="m-seta ant" aria-label="Imagem anterior">‹</button><button type="button" class="m-seta seg" aria-label="Imagem seguinte">›</button>
+    <div class="m-pontos">${pontos}</div></div>`;
+}
+
+function galerias(raiz) {
+  raiz.querySelectorAll(".m-galeria").forEach(g => {
+    const pista = g.querySelector(".m-pista"), pontos = [...g.querySelectorAll(".m-pontos button")];
+    const ir = n => pista.scrollTo({ left: n * pista.clientWidth, behavior: MOVIMENTO ? "smooth" : "auto" });
+    const atual = () => Math.round(pista.scrollLeft / pista.clientWidth);
+    pista.addEventListener("scroll", () => pontos.forEach((p, n) => p.classList.toggle("ativo", n === atual())), { passive: true });
+    pontos.forEach((p, n) => p.addEventListener("click", () => ir(n)));
+    g.querySelector(".ant").addEventListener("click", () => ir(Math.max(0, atual() - 1)));
+    g.querySelector(".seg").addEventListener("click", () => ir((atual() + 1) % pontos.length));
+  });
 }
 
 function barra(m) {
@@ -171,6 +191,7 @@ function abrirDialogo(m) {
   por("m-ativas", ativas);
   if (ativas.length === 1) document.getElementById("m-ativas").classList.add("uma"); por("m-seguir", seguir); por("m-feitas-lista", feitas);
   caminho(publicas);
+  galerias(document);
   animar(document);
 
   contar(document.getElementById("m-feitas"), feitas.length);
