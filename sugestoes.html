@@ -15,7 +15,7 @@
   <meta property="og:description" content="Tens uma ideia ou viste alguma coisa que pode melhorar na escola? Diz à APAEF. Pode ser anónimo.">
   <meta property="og:image" content="https://apaefao.pt/img/preview.jpg">
   <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="457">
+  <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" href="favicon.ico" sizes="any">
   <link rel="icon" href="favicon-96.png" type="image/png" sizes="96x96">
@@ -45,9 +45,12 @@
   </header>
 
   <main class="wrap pagina">
-    <h1 class="titulo-pagina">Sugestões e reclamações 💬</h1>
-    <p class="intro">Viste alguma coisa que pode melhorar? Tens uma ideia? Diz-nos. Lemos tudo.</p>
-    <p class="nota">Mensagens anónimas também contam. Não escrevas dados de crianças.</p>
+    <div class="cabeca-lumi esq">
+      <button class="mascote-zona mascote-lado" type="button" data-fala="Tens uma ideia? Conta-nos! ✉️" aria-label="Toca na Lumi"><img class="mascote" src="img/mascote/carta.webp" alt="A Lumi, a mascote da APAEF, com uma carta" width="420" height="515"></button>
+      <h1 class="titulo-pagina">Sugestões e reclamações 💬</h1>
+      <p class="intro">Viste alguma coisa que pode melhorar? Tens uma ideia? Diz-nos. Lemos tudo.</p>
+      <p class="nota">Mensagens anónimas também contam. Não escrevas dados de crianças.</p>
+    </div>
 
     <div class="carta-zona">
       <form id="form-sugestao" class="formulario carta" novalidate>
@@ -76,6 +79,7 @@
       </form>
       <div class="envelope" hidden aria-hidden="true"></div>
       <div id="sugestao-ok" class="sucesso" hidden tabindex="-1">
+        <img class="mascote mascote-salta" src="img/mascote/salta.webp" alt="" width="420" height="517" loading="lazy">
         <h3>Recebido! ✉️</h3>
         <p>A Direção vai ler. Obrigado por ajudares a melhorar a escola.</p>
         <button class="b-peq" type="button" id="outra">Escrever outra</button>

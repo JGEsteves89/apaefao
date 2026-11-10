@@ -5,6 +5,9 @@ function escapar(t) {
   return String(t == null ? "" : t).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 }
 
+// Nome da mascote (escolhido pelas turmas em novembro de 2026).
+const MASCOTE_NOME = "Lumi";
+
 // Mostrar valores em € na página das metas (precisa do OK da Direção).
 const MOSTRAR_EUROS = true;
 // MB WAY da APAEF (número de telemóvel). Vazio = a opção MB WAY não aparece.

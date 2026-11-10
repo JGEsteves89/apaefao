@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /img/mascote/cenas/
 
 Sitemap: https://apaefao.pt/sitemap.xml

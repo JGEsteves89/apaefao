@@ -774,3 +774,66 @@ section[hidden] { display: none; }
   .metas-grelha.uma .m-ajudar { width: auto; align-self: flex-start; }
 }
 @media (prefers-reduced-motion: reduce) { .m-barra i { transition: none; } .m-barra.brilho i::after { animation: none; } }
+
+/* ===== Mascote ===== */
+.mascote { display: block; width: 100%; height: auto; -webkit-user-drag: none; user-select: none; }
+/* A Lumi 3D NUNCA mexe (decisão do Jose, 10/11). Animações só nas cenas 2D, raras. */
+.mascote-zona { position: relative; display: block; background: none; border: 0; padding: 0; cursor: pointer; }
+.mascote-zona:focus-visible { outline: 3px solid var(--tinta); outline-offset: 4px; border-radius: 12px; }
+.mascote-balao { position: absolute; bottom: 88%; right: 45%; z-index: 5; width: max-content; max-width: 210px;
+  background: #fff; border: 3px solid var(--tinta); border-radius: 16px; padding: 8px 12px;
+  font: 600 16px/1.3 "Fredoka", "Nunito", sans-serif; color: var(--tinta); text-align: left;
+  display: none; pointer-events: none; }
+.mascote-balao::after { content: ""; position: absolute; right: 14px; bottom: -11px; width: 16px; height: 16px; background: #fff;
+  border-right: 3px solid var(--tinta); border-bottom: 3px solid var(--tinta); transform: rotate(45deg); }
+.mascote-balao.ver { display: block; }
+/* Ao lado de um título (flutua à direita) */
+.mascote-lado { float: right; width: clamp(88px, 24vw, 200px); margin: 4px 0 8px 12px; }
+/* Cabeçalho da página com a Lumi: o texto fica ao lado dela e o resto da página começa por baixo */
+.cabeca-lumi { display: flow-root; margin-bottom: 8px; }
+.cabeca-lumi > p.nota { display: flow-root; }
+/* Em metade das páginas a Lumi fica à esquerda */
+.cabeca-lumi.esq .mascote-lado { float: left; margin: 4px 12px 8px 0; }
+.cabeca-lumi.esq .mascote-balao { right: auto; left: 45%; }
+.cabeca-lumi.esq .mascote-balao::after { right: auto; left: 14px; }
+.heroi, .com-mascote { display: flow-root; }
+/* Pequena, nas mensagens "vazio" */
+.mascote-mini { display: block; width: 70px; height: auto; margin: 0 auto 8px; }
+/* Nos "Obrigado!" dos formulários */
+.mascote-salta { width: 130px; margin: 0 auto 6px; }
+/* Quem somos: a história da mascote */
+.mh-topo { display: flex; gap: 16px; align-items: center; }
+.mh-topo .mascote-zona { flex: none; width: clamp(110px, 30vw, 200px); }
+.mh-topo p { margin: 0 0 10px; }
+.nomes-mascote { list-style: none; padding: 0; margin: 12px 0; display: grid; gap: 10px; }
+.nomes-mascote li { background: var(--cartao); border: 2px solid var(--tinta); border-radius: var(--raio); padding: 10px 14px; }
+.nomes-mascote b { display: block; font-family: "Fredoka", sans-serif; font-size: 24px; letter-spacing: .04em; }
+.nomes-mascote span { color: var(--suave); font-size: 15px; }
+@media (min-width: 640px) { .nomes-mascote { grid-template-columns: repeat(3, 1fr); } }
+.mh-foto { margin: 16px auto 0; max-width: 420px; }
+.mh-foto img { width: 100%; height: auto; border-radius: var(--raio); border: 3px solid var(--tinta); }
+.mh-foto figcaption { text-align: center; font-size: 14px; color: var(--suave); margin-top: 6px; }
+.mh-topo .mascote-balao { right: auto; left: 40%; }
+.mh-topo .mascote-balao::after { right: auto; left: 14px; }
+@media (max-width: 420px) {
+  .mh-topo { flex-direction: column; text-align: center; }
+  .mh-topo .mascote-balao { left: 50%; width: 200px; margin-left: -100px; }
+  .mh-topo .mascote-balao::after { left: 50%; margin-left: -8px; }
+}
+
+/* A carregar: a Lumi com a lupa */
+.a-carregar { list-style: none; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 18px; color: var(--suave); font-weight: 700; }
+.a-carregar img { width: 80px; height: auto; }
+
+/* ===== Lumi 2D: cenas raras (img/mascote/cenas/*.html + js/lumi-cenas.js) ===== */
+.lumi-cena { position: fixed; inset: 0; z-index: 60; pointer-events: none; transition: opacity .4s; }
+.lumi-cena.sai { opacity: 0; }
+.lumi-cena .palco { position: absolute; inset: 0; overflow: hidden; display: flex; align-items: flex-end; padding: 0 12px 16px; }
+.lumi-cena .figura, .lumi-cena .esp-caixa { pointer-events: auto; cursor: pointer; transform: scale(var(--k, 1)); }
+.cena-ola .palco, .cena-obrigado .palco { justify-content: flex-start; }
+.cena-ola .figura, .cena-obrigado .figura { transform-origin: 0 100%; }
+.cena-donativo .palco { justify-content: flex-end; }
+.cena-donativo .figura { transform-origin: 100% 100%; }
+.cena-espreitar .palco { padding: 0; }
+.cena-espreitar .esp-caixa { position: absolute; right: 0; bottom: 0; width: 460px; height: 360px; transform-origin: 100% 100%; }
+.lumi-a-tocar .mascote-zona { visibility: hidden; }

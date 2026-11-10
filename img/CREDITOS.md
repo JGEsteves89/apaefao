@@ -3,6 +3,9 @@
 ## Imagens da APAEF
 Logótipo, capa e cartazes (Magusto, Jantar de Natal, Janeiras, Noite das Sopas, Marchas Luminosas, Feira do Livro, Caminhada da Família) e a foto dos legumes da Feirinha de Outono: **APAEF**, da página oficial no Facebook. Cartazes 2025/26: Graphic Design © Raquel Lopes.
 
+## Mascote
+Imagens da mascote (pasta `mascote/`): **APAEF**.
+
 ## Fotos com licença livre (Unsplash License)
 | Ficheiro | Autor | Origem |
 |---|---|---|

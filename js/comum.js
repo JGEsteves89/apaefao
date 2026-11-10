@@ -30,13 +30,25 @@ const espera = ms => new Promise(r => setTimeout(r, ms));
 
 // Lê um ficheiro de data/. Se falhar, deixa uma mensagem simpática no sítio.
 async function carregarJSON(url, el) {
+  let aCarregar = null;
+  const t = el && setTimeout(() => {
+    if (el.children.length) return;               // já tem conteúdo (ex.: esqueletos)
+    aCarregar = document.createElement(/^(OL|UL)$/.test(el.tagName) ? "li" : "div");
+    aCarregar.className = "a-carregar";
+    aCarregar.innerHTML = '<img src="img/mascote/lupa.webp" alt="" width="80" height="97"><span>A procurar…</span>';
+    el.appendChild(aCarregar);
+  }, 300);
   try {
     const r = await fetch(url, { cache: "no-cache" });
     if (!r.ok) throw new Error(r.status);
     return await r.json();
   } catch (e) {
-    if (el) el.innerHTML = '<p class="vazio">Ainda não há nada aqui 🙂 Volta daqui a uns dias.</p>';
+    if (aCarregar) aCarregar.remove(), aCarregar = null;
+    if (el) el.innerHTML = '<p class="vazio"><img class="mascote-mini" src="img/mascote/pensa.webp" alt="" width="70" height="89">Ainda não há nada aqui 🙂 Volta daqui a uns dias.</p>';
     return null;
+  } finally {
+    clearTimeout(t);
+    if (aCarregar) aCarregar.remove();
   }
 }
 
@@ -145,4 +157,24 @@ function confetti() {
     .then(r => r.ok ? r.json() : Promise.reject())
     .then(c => mostrar(new Date(c[0].commit.committer.date)))
     .catch(() => mostrar(new Date(document.lastModified)));
+})();
+
+// Lumi (imagem 3D, sempre parada): ao tocar, mostra um balão.
+// O texto vem de data-fala; sem data-fala diz olá com o nome.
+(function () {
+  document.querySelectorAll(".mascote-zona").forEach(zona => {
+    const nome = typeof MASCOTE_NOME !== "undefined" && MASCOTE_NOME;
+    const fala = zona.dataset.fala || (nome ? "Olá! Chamo-me " + nome + "! 🌻" : "Olá! 🌻");
+    const balao = document.createElement("span");
+    balao.className = "mascote-balao";
+    balao.setAttribute("aria-live", "polite");
+    zona.appendChild(balao);
+    let tempo;
+    zona.addEventListener("click", () => {
+      balao.textContent = fala;
+      balao.classList.add("ver");
+      clearTimeout(tempo);
+      tempo = setTimeout(() => balao.classList.remove("ver"), 3500);
+    });
+  });
 })();
