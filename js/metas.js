@@ -83,8 +83,7 @@ function barra(m) {
     </div>
     <p class="m-valores-linha">${valores}${m.apoiantes ? ` · ${m.apoiantes} ${m.apoiantes === 1 ? "apoiante" : "apoiantes"}` : ""}</p>
     ${meu ? `<p class="m-meu">💛 ${EUROS ? euros(meu) + " são teus" : "Uma parte é tua"}. Obrigado!</p>` : ""}
-    ${resto.length ? `<p class="m-falta">${resto.join(" · ")}</p>` : ""}
-    ${EUROS && m.do_fundo > 0 && m.estado === "a angariar" ? `<p class="m-fundo">Inclui ${euros(m.do_fundo)} do fundo geral da APAEF</p>` : ""}`;
+    ${resto.length ? `<p class="m-falta">${resto.join(" · ")}</p>` : ""}`;
 }
 
 // Partilhar uma meta (WhatsApp ou o menu de partilha do telemóvel). O link abre a página nessa meta.
@@ -322,7 +321,7 @@ async function pago(m, v, tipo, resp) {
   const novo = document.createElement("div");
   novo.innerHTML = barra(m);
   const antes = c.querySelector(".m-barra");
-  antes.parentElement.querySelectorAll(".m-barra, .m-valores-linha, .m-meu, .m-falta, .m-fundo").forEach(e => e.remove());
+  antes.parentElement.querySelectorAll(".m-barra, .m-valores-linha, .m-meu, .m-falta").forEach(e => e.remove());
   const custo = velho.querySelector(".m-custos") || velho.querySelector(".m-acoes");
   [...novo.children].forEach(e => velho.insertBefore(e, custo));
   // Só a parte nova avança; o resto da barra fica onde estava.
