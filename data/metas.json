@@ -72,15 +72,16 @@
   "custos_detalhe": [
    "≈ 5 m³ de areia lavada + transporte ≈ 350 € (vamos pedir à Junta)"
   ],
-  "estado": "a seguir",
-  "ordem": 4
+  "estado": "a angariar",
+  "ordem": 4,
+  "proxima": "baloico-pre"
  },
  {
   "id": "baloico-pre",
   "publicar": true,
   "emoji": "🛝",
   "titulo": "Baloiço de dois lugares para a pré",
-  "frase": "O primeiro passo do projeto do recreio: um baloiço novo na caixa de areia da pré.",
+  "frase": "O primeiro passo do projeto do recreio: um baloiço novo na caixa de areia da pré. O dinheiro das rifas de S. Martinho vai para aqui.",
   "grupo": "Recreio",
   "custo": 3248,
   "angariado": 0,
@@ -90,9 +91,10 @@
    "Transporte 450 €",
    "Montagem: oferta da Greenplay"
   ],
-  "estado": "a seguir",
+  "estado": "a angariar",
   "imagem": "img/metas/baloico-pre.jpg",
-  "ordem": 5
+  "ordem": 5,
+  "proxima": "estrutura-1ciclo"
  },
  {
   "id": "estrutura-1ciclo",

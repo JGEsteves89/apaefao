@@ -687,6 +687,10 @@ footer .atualizado:empty { display: none; }
 .m-valores { display: flex; flex-wrap: wrap; gap: 8px; }
 .m-valor { padding: 8px 16px; border: 2px solid var(--tinta); border-radius: 999px; font-weight: 800; cursor: pointer; background: #fff; }
 .m-valor.ativo { background: var(--sol); }
+.m-metodos { display: flex; flex-wrap: wrap; gap: 6px; margin: 14px 0 4px; }
+.m-metodos button { font: inherit; font-weight: 800; font-size: 14px; padding: 8px 12px; border-radius: 10px; border: 2px solid var(--tinta); background: #fff; cursor: pointer; }
+.m-metodos button.ativo { background: var(--tinta); color: var(--sol); }
+.m-metodos button[hidden], .m-metodo[hidden] { display: none; }
 .m-d-nota { font-size: 13px; color: var(--suave); }
 .metas-grelha.uma { grid-template-columns: 1fr; }
 @media (min-width: 720px) {

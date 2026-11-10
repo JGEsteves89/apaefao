@@ -6,4 +6,8 @@ function escapar(t) {
 }
 
 // Mostrar valores em € na página das metas (precisa do OK da Direção).
-const MOSTRAR_EUROS = false;
+const MOSTRAR_EUROS = true;
+// MB WAY da APAEF (número de telemóvel). Vazio = a opção MB WAY não aparece.
+const MBWAY_NUMERO = "";
+// Referência Multibanco: só com contrato Eupago/ifthenpay. false = não aparece.
+const REFERENCIA_MB = false;

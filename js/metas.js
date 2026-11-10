@@ -144,6 +144,11 @@ function abrirDialogo(m) {
   d.querySelector(".m-d-frase").textContent = m.frase;
   const ref = "META " + m.id.split("-")[0].toUpperCase() + " + o teu nome";
   d.querySelector("#m-ref").textContent = ref;
+  d.querySelector("#m-ref2").textContent = ref;
+  const temMbway = typeof MBWAY_NUMERO !== "undefined" && MBWAY_NUMERO;
+  d.querySelector('[data-metodo="mbway"]').hidden = !temMbway;
+  if (temMbway) d.querySelector("#m-mbway").textContent = MBWAY_NUMERO;
+  d.querySelector('[data-metodo="ref"]').hidden = !(typeof REFERENCIA_MB !== "undefined" && REFERENCIA_MB);
   const sugestoes = m.custo <= 300 ? [5, 10, 20] : [10, 25, 50];
   d.querySelector("#m-valores").innerHTML = sugestoes.map(v => `<span class="m-valor">${v} €</span>`).join("") + '<span class="m-valor">Outro</span>';
   if (d.showModal) d.showModal(); else d.setAttribute("open", "");
@@ -174,6 +179,11 @@ function abrirDialogo(m) {
   document.addEventListener("click", e => {
     const b = e.target.closest(".m-ajudar");
     if (b) abrirDialogo(publicas.find(m => m.id === b.dataset.meta));
+    const t = e.target.closest(".m-metodos button");
+    if (t) {
+      document.querySelectorAll(".m-metodos button").forEach(x => x.classList.toggle("ativo", x === t));
+      document.querySelectorAll(".m-metodo").forEach(p => { p.hidden = p.dataset.painel !== t.dataset.metodo; });
+    }
     const v = e.target.closest(".m-valor");
     if (v) { v.parentElement.querySelectorAll(".m-valor").forEach(x => x.classList.toggle("ativo", x === v)); }
   });
