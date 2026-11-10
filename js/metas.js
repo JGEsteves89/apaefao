@@ -115,12 +115,10 @@ function cartao(m, lista) {
   el.className = "m-cartao anima estado-" + m.estado.replace(" ", "-");
   el.id = "meta-" + m.id;
   el.dataset.grupo = m.grupo || "";
-  const prox = m.proxima && lista.find(x => x.id === m.proxima);
   let fundo = "";
   if (m.estado === "a angariar") {
     fundo = `<div class="m-acoes"><button class="botao m-ajudar" type="button" data-meta="${escapar(m.id)}">Quero ajudar esta meta</button>`
-      + `<button class="m-partilhar" type="button" data-partilhar="${escapar(m.id)}">📤 Partilhar esta meta</button></div>`
-      + (prox ? `<p class="m-prox">Se sobrar, vai para: ${escapar(prox.emoji)} ${escapar(prox.titulo)}</p>` : "");
+      + `<button class="m-partilhar" type="button" data-partilhar="${escapar(m.id)}">📤 Partilhar esta meta</button></div>`;
   } else if (m.estado === "feito") {
     fundo = `<p class="m-feito">Feito a ${dataCurta(m.feito_em)}${m.nota ? " · " + escapar(m.nota) : ""}</p>`
       + (m.fatura ? `<a class="m-fatura" href="${escapar(m.fatura)}" target="_blank" rel="noopener">🧾 Ver fatura</a>` : "");
