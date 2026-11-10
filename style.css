@@ -727,6 +727,9 @@ button.m-valor { font: inherit; font-weight: 800; color: var(--tinta); }
 .m-outro span { display: inline-flex; align-items: center; gap: 6px; margin-left: 6px; }
 .m-outro input, .m-campo input { font: inherit; font-size: 18px; padding: 8px 10px; border: 2px solid var(--tinta); border-radius: 10px; width: 7em; background: #fff; }
 .m-campo { display: block; font-weight: 700; margin: 8px 0; }
+.m-check { display: flex; gap: 8px; align-items: center; font-size: 14px; margin: 4px 0 0; }
+.m-check input { width: 18px; height: 18px; }
+.m-d-passo small { font-weight: 400; color: var(--suave); }
 .m-campo input { display: block; width: 100%; margin-top: 6px; box-sizing: border-box; }
 .m-impacto { margin: 10px 0 0; min-height: 1.4em; font-family: "Fredoka", sans-serif; font-size: 18px; color: var(--sol-escuro); }
 .m-pagar { width: 100%; margin-top: 12px; }
