@@ -91,39 +91,59 @@
     <form method="dialog" class="m-d-fechar"><button aria-label="Fechar">✕</button></form>
     <h2 id="m-d-titulo"></h2>
     <p class="m-d-frase"></p>
-    <p><b>Quanto queres dar?</b></p>
-    <div class="m-valores" id="m-valores"></div>
+    <p class="m-d-passo"><b>1. Quanto queres dar?</b></p>
+    <div class="m-valores" id="m-valores" role="radiogroup" aria-label="Valor do donativo"></div>
+    <label class="m-outro" id="m-outro" hidden>Outro valor:
+      <span><input type="number" id="m-outro-valor" min="1" step="1" inputmode="numeric" placeholder="15"> €</span>
+    </label>
+    <p class="m-impacto" id="m-impacto" aria-live="polite"></p>
+    <p class="m-d-passo"><b>2. Como queres pagar?</b></p>
     <div class="m-metodos" role="tablist" aria-label="Como pagar">
-      <button type="button" role="tab" class="ativo" data-metodo="transf">🏦 Transferência</button>
       <button type="button" role="tab" data-metodo="mbway" hidden>📱 MB WAY</button>
-      <button type="button" role="tab" data-metodo="ref" hidden>🏧 Referência</button>
+      <button type="button" role="tab" data-metodo="ref" hidden>🏧 Multibanco</button>
+      <button type="button" role="tab" data-metodo="transf">🏦 Transferência</button>
     </div>
-    <div class="m-metodo" data-painel="transf">
+    <div class="m-metodo" data-painel="mbway" hidden>
+      <div data-online>
+        <label class="m-campo">O teu número de telemóvel
+          <input type="tel" id="m-tel" inputmode="tel" autocomplete="tel" placeholder="912 345 678">
+        </label>
+        <button class="botao m-pagar" type="button" data-pagar="mbway">Pedir <span class="m-v"></span> no MB WAY</button>
+        <p class="m-resposta" id="m-resp-mbway" aria-live="polite"></p>
+      </div>
+      <div data-manual>
+        <p>Envia por MB WAY para o número da APAEF:</p>
+        <div class="copiar-linha">
+          <code id="m-mbway"></code>
+          <button class="b-copiar" type="button" data-copiar="m-mbway"><span class="txt">Copiar</span><span class="ok">✓ Copiado</span></button>
+        </div>
+        <p>Na mensagem do MB WAY, escreve:</p>
+        <div class="copiar-linha">
+          <code id="m-ref2"></code>
+          <button class="b-copiar" type="button" data-copiar="m-ref2"><span class="txt">Copiar</span><span class="ok">✓ Copiado</span></button>
+        </div>
+      </div>
+    </div>
+    <div class="m-metodo" data-painel="ref" hidden>
+      <button class="botao m-pagar" type="button" data-pagar="ref">Gerar referência de <span class="m-v"></span></button>
+      <dl class="m-refmb" id="m-refmb" hidden>
+        <dt>Entidade</dt><dd id="m-ent"></dd>
+        <dt>Referência</dt><dd id="m-refn"></dd>
+        <dt>Valor</dt><dd id="m-refv"></dd>
+      </dl>
+      <p class="m-resposta" id="m-resp-ref" aria-live="polite"></p>
+    </div>
+    <div class="m-metodo" data-painel="transf" hidden>
       <p>IBAN da APAEF:</p>
       <div class="copiar-linha">
         <code id="m-iban">PT50 0033 0000 4566 4874 4950 5</code>
         <button class="b-copiar" type="button" data-copiar="m-iban"><span class="txt">Copiar</span><span class="ok">✓ Copiado</span></button>
       </div>
-      <p>No descritivo, escreve:</p>
+      <p>Valor: <b class="m-v"></b>. No descritivo, escreve:</p>
       <div class="copiar-linha">
         <code id="m-ref"></code>
         <button class="b-copiar" type="button" data-copiar="m-ref"><span class="txt">Copiar</span><span class="ok">✓ Copiado</span></button>
       </div>
-    </div>
-    <div class="m-metodo" data-painel="mbway" hidden>
-      <p>Envia por MB WAY para o número da APAEF:</p>
-      <div class="copiar-linha">
-        <code id="m-mbway"></code>
-        <button class="b-copiar" type="button" data-copiar="m-mbway"><span class="txt">Copiar</span><span class="ok">✓ Copiado</span></button>
-      </div>
-      <p>Na mensagem do MB WAY, escreve:</p>
-      <div class="copiar-linha">
-        <code id="m-ref2"></code>
-        <button class="b-copiar" type="button" data-copiar="m-ref2"><span class="txt">Copiar</span><span class="ok">✓ Copiado</span></button>
-      </div>
-    </div>
-    <div class="m-metodo" data-painel="ref" hidden>
-      <p>Em breve.</p>
     </div>
     <p class="m-d-nota">A barra sobe quando a tesoureira confirmar o pagamento (1 a 3 dias). Obrigado! 💛</p>
   </dialog>

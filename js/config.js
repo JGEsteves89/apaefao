@@ -11,3 +11,5 @@ const MOSTRAR_EUROS = true;
 const MBWAY_NUMERO = "";
 // Referência Multibanco: só com contrato Eupago/ifthenpay. false = não aparece.
 const REFERENCIA_MB = false;
+// MB WAY e Multibanco automáticos (Eupago/ifthenpay através do Apps Script). false = só transferência (e MB WAY manual se houver MBWAY_NUMERO).
+const PAGAMENTOS_ONLINE = false;

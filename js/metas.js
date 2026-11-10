@@ -12,11 +12,13 @@ async function carregarMetas() {
   if (ENDPOINT) {
     try {
       const r = await fetch(ENDPOINT + "?acao=metas", { signal: AbortSignal.timeout(6000) });
-      const lista = await r.json();
+      const dados = await r.json();
+      const lista = Array.isArray(dados) ? dados : dados && dados.metas;
       if (Array.isArray(lista) && lista.length) return lista;
     } catch (e) {}
   }
-  return carregarJSON("data/metas.json");
+  const dados = await carregarJSON("data/metas.json");
+  return Array.isArray(dados) ? dados : dados && dados.metas;
 }
 
 function selo(m) {
@@ -71,7 +73,17 @@ function barra(m) {
       <span class="marco" style="left:25%"></span><span class="marco" style="left:50%"></span><span class="marco" style="left:75%"></span>
     </div>
     <p class="m-valores-linha">${valores}${m.apoiantes ? ` · ${m.apoiantes} ${m.apoiantes === 1 ? "apoiante" : "apoiantes"}` : ""}</p>
-    ${resto.length ? `<p class="m-falta">${resto.join(" · ")}</p>` : ""}`;
+    ${resto.length ? `<p class="m-falta">${resto.join(" · ")}</p>` : ""}
+    ${EUROS && m.do_fundo > 0 && m.estado === "a angariar" ? `<p class="m-fundo">Inclui ${euros(m.do_fundo)} do fundo geral da APAEF</p>` : ""}`;
+}
+
+// Partilhar uma meta (WhatsApp ou o menu de partilha do telemóvel). O link abre a página nessa meta.
+function partilhar(m) {
+  const url = location.origin + location.pathname + "#meta-" + m.id;
+  const falta = Math.max(0, m.custo - m.angariado);
+  const texto = `${m.emoji} ${m.titulo}` + (EUROS && falta ? ` — faltam ${euros(falta)}.` : ".") + " Ajudas a APAEF? " + url;
+  if (navigator.share) { navigator.share({ title: m.titulo, text: texto }).catch(() => {}); return; }
+  window.open("https://wa.me/?text=" + encodeURIComponent(texto), "_blank", "noopener");
 }
 
 function custos(m) {
@@ -106,7 +118,8 @@ function cartao(m, lista) {
   const prox = m.proxima && lista.find(x => x.id === m.proxima);
   let fundo = "";
   if (m.estado === "a angariar") {
-    fundo = `<button class="botao m-ajudar" type="button" data-meta="${escapar(m.id)}">Quero ajudar esta meta</button>`
+    fundo = `<div class="m-acoes"><button class="botao m-ajudar" type="button" data-meta="${escapar(m.id)}">Quero ajudar esta meta</button>`
+      + `<button class="m-partilhar" type="button" data-partilhar="${escapar(m.id)}">📤 Partilhar esta meta</button></div>`
       + (prox ? `<p class="m-prox">Se sobrar, vai para: ${escapar(prox.emoji)} ${escapar(prox.titulo)}</p>` : "");
   } else if (m.estado === "feito") {
     fundo = `<p class="m-feito">Feito a ${dataCurta(m.feito_em)}${m.nota ? " · " + escapar(m.nota) : ""}</p>`
@@ -182,20 +195,99 @@ function caminho(lista) {
   if (!recreio.length) el.closest("section").hidden = true;
 }
 
+// Diálogo "Quero ajudar": valor (com impacto) → forma de pagar.
+const ONLINE = (typeof PAGAMENTOS_ONLINE !== "undefined" && PAGAMENTOS_ONLINE) || /demo=pagamentos/.test(location.search);
+const DEMO = /demo=pagamentos/.test(location.search);
+let metaAberta = null, valorEscolhido = 0;
+
+function impacto(m, v) {
+  if (!v) return "";
+  const faltaJa = Math.max(0, m.custo - m.angariado);
+  if (faltaJa && v >= faltaJa) return `${v} € fecham esta meta! 🎉`;
+  if (m.unidade && m.preco_unidade) {
+    const n = Math.floor(v / m.preco_unidade);
+    const [um, varios] = m.unidade.split("|").map(s => s.trim());
+    if (n >= 1) return `${v} € = ${n} ${n === 1 ? um : (varios || um)} 💛`;
+  }
+  return `${v} € = ${Math.max(1, Math.round(v / m.custo * 100))}% desta meta 💛`;
+}
+
+function escolherValor(v) {
+  valorEscolhido = v;
+  const m = metaAberta, d = document.getElementById("m-dialogo");
+  const ref = "META " + m.id.split("-")[0].toUpperCase() + (v ? " " + v + "EUR" : "") + " + o teu nome";
+  d.querySelector("#m-ref").textContent = ref;
+  d.querySelector("#m-ref2").textContent = ref;
+  d.querySelectorAll(".m-v").forEach(s => { s.textContent = v ? v + " €" : "o valor"; });
+  d.querySelector("#m-impacto").textContent = impacto(m, v);
+  d.querySelectorAll(".m-pagar").forEach(b => { b.disabled = !v; });
+}
+
 function abrirDialogo(m) {
+  metaAberta = m;
   const d = document.getElementById("m-dialogo");
   d.querySelector("#m-d-titulo").textContent = `${m.emoji} ${m.titulo}`;
   d.querySelector(".m-d-frase").textContent = m.frase;
-  const ref = "META " + m.id.split("-")[0].toUpperCase() + " + o teu nome";
-  d.querySelector("#m-ref").textContent = ref;
-  d.querySelector("#m-ref2").textContent = ref;
-  const temMbway = typeof MBWAY_NUMERO !== "undefined" && MBWAY_NUMERO;
-  d.querySelector('[data-metodo="mbway"]').hidden = !temMbway;
-  if (temMbway) d.querySelector("#m-mbway").textContent = MBWAY_NUMERO;
-  d.querySelector('[data-metodo="ref"]').hidden = !(typeof REFERENCIA_MB !== "undefined" && REFERENCIA_MB);
   const sugestoes = m.custo <= 300 ? [5, 10, 20] : [10, 25, 50];
-  d.querySelector("#m-valores").innerHTML = sugestoes.map(v => `<span class="m-valor">${v} €</span>`).join("") + '<span class="m-valor">Outro</span>';
+  d.querySelector("#m-valores").innerHTML = sugestoes.map((v, i) =>
+    `<button type="button" role="radio" class="m-valor${i === 1 ? " ativo" : ""}" aria-checked="${i === 1}" data-valor="${v}">${v} €</button>`).join("")
+    + '<button type="button" role="radio" class="m-valor" aria-checked="false" data-valor="outro">Outro</button>';
+  d.querySelector("#m-outro").hidden = true;
+  d.querySelector("#m-outro-valor").value = "";
+  // Formas de pagar: MB WAY (online ou manual), Multibanco (só online), transferência (sempre).
+  const mbManual = typeof MBWAY_NUMERO !== "undefined" && MBWAY_NUMERO;
+  const temMb = ONLINE || mbManual, temRef = ONLINE || (typeof REFERENCIA_MB !== "undefined" && REFERENCIA_MB);
+  d.querySelector('[data-metodo="mbway"]').hidden = !temMb;
+  d.querySelector('[data-metodo="ref"]').hidden = !temRef;
+  d.querySelector('[data-painel="mbway"] [data-online]').hidden = !ONLINE;
+  d.querySelector('[data-painel="mbway"] [data-manual]').hidden = ONLINE || !mbManual;
+  if (mbManual) d.querySelector("#m-mbway").textContent = MBWAY_NUMERO;
+  d.querySelectorAll(".m-resposta").forEach(r => { r.textContent = ""; });
+  d.querySelector("#m-refmb").hidden = true;
+  metodo(temMb ? "mbway" : temRef ? "ref" : "transf");
+  escolherValor(sugestoes[1]);
   if (d.showModal) d.showModal(); else d.setAttribute("open", "");
+}
+
+function metodo(nome) {
+  document.querySelectorAll(".m-metodos button").forEach(x => { x.classList.toggle("ativo", x.dataset.metodo === nome); x.setAttribute("aria-selected", x.dataset.metodo === nome); });
+  document.querySelectorAll(".m-metodo").forEach(p => { p.hidden = p.dataset.painel !== nome; });
+}
+
+// Pagamento online: o Apps Script fala com a Eupago/ifthenpay (?acao=pagamento). Em ?demo=pagamentos é simulado.
+async function pagar(tipo) {
+  const m = metaAberta, v = valorEscolhido;
+  const resp = document.getElementById(tipo === "mbway" ? "m-resp-mbway" : "m-resp-ref");
+  const tel = (document.getElementById("m-tel").value || "").replace(/\D/g, "");
+  if (tipo === "mbway" && !/^9\d{8}$/.test(tel)) { resp.textContent = "Escreve um número de telemóvel português (9 algarismos)."; return; }
+  resp.textContent = "A preparar…";
+  let r;
+  try {
+    if (DEMO) { await espera(800); r = tipo === "mbway" ? { ok: true } : { ok: true, entidade: "00000", referencia: "000 000 000", valor: v }; }
+    else {
+      const q = new URLSearchParams({ acao: "pagamento", tipo, meta: m.id, valor: v, telemovel: tel });
+      r = await (await fetch(ENDPOINT + "?" + q, { signal: AbortSignal.timeout(15000) })).json();
+    }
+  } catch (e) { r = { ok: false }; }
+  if (!r || !r.ok) { resp.textContent = "Não foi possível agora. Experimenta a transferência, por favor."; return; }
+  if (tipo === "mbway") resp.textContent = (DEMO ? "[Demonstração] " : "") + `📱 Abre a app MB WAY e aceita o pedido de ${v} € (tens 4 minutos). Obrigado! 💛`;
+  else {
+    document.getElementById("m-ent").textContent = r.entidade;
+    document.getElementById("m-refn").textContent = r.referencia;
+    document.getElementById("m-refv").textContent = r.valor + " €";
+    document.getElementById("m-refmb").hidden = false;
+    resp.textContent = (DEMO ? "[Demonstração — não pagar] " : "") + "Paga no multibanco ou no homebanking, em Pagamentos de Serviços.";
+  }
+}
+
+// Filtros: esconde cartões, passos e secções que ficam vazias.
+function filtrar(grupo) {
+  document.querySelectorAll(".m-cartao").forEach(c => { c.hidden = !!grupo && c.dataset.grupo !== grupo; });
+  document.querySelectorAll(".metas-caminho li").forEach(li => { li.hidden = !!grupo && grupo !== "Recreio"; });
+  document.querySelectorAll(".metas-pagina section").forEach(s => {
+    const cartoes = s.querySelectorAll(".m-cartao, .metas-caminho li");
+    s.hidden = cartoes.length > 0 && [...cartoes].every(c => c.hidden);
+  });
 }
 
 (async function () {
@@ -222,20 +314,29 @@ function abrirDialogo(m) {
   festejar(publicas);
 
   document.querySelectorAll(".metas-filtros button").forEach(b => b.addEventListener("click", () => {
-    document.querySelectorAll(".metas-filtros button").forEach(x => x.classList.toggle("ativo", x === b));
-    document.querySelectorAll(".m-cartao").forEach(c => { c.hidden = b.dataset.grupo && c.dataset.grupo !== b.dataset.grupo; });
+    document.querySelectorAll(".metas-filtros button").forEach(x => { x.classList.toggle("ativo", x === b); x.setAttribute("aria-pressed", x === b); });
+    filtrar(b.dataset.grupo);
   }));
   document.addEventListener("click", e => {
     const b = e.target.closest(".m-ajudar");
     if (b) abrirDialogo(publicas.find(m => m.id === b.dataset.meta));
     const t = e.target.closest(".m-metodos button");
-    if (t) {
-      document.querySelectorAll(".m-metodos button").forEach(x => x.classList.toggle("ativo", x === t));
-      document.querySelectorAll(".m-metodo").forEach(p => { p.hidden = p.dataset.painel !== t.dataset.metodo; });
-    }
+    if (t) metodo(t.dataset.metodo);
     const v = e.target.closest(".m-valor");
-    if (v) { v.parentElement.querySelectorAll(".m-valor").forEach(x => x.classList.toggle("ativo", x === v)); }
+    if (v) {
+      v.parentElement.querySelectorAll(".m-valor").forEach(x => { x.classList.toggle("ativo", x === v); x.setAttribute("aria-checked", x === v); });
+      const outro = v.dataset.valor === "outro";
+      document.getElementById("m-outro").hidden = !outro;
+      if (outro) { const i = document.getElementById("m-outro-valor"); i.focus(); escolherValor(parseInt(i.value, 10) || 0); }
+      else escolherValor(Number(v.dataset.valor));
+    }
+    const p = e.target.closest("[data-pagar]");
+    if (p) pagar(p.dataset.pagar);
+    const s = e.target.closest("[data-partilhar]");
+    if (s) partilhar(publicas.find(m => m.id === s.dataset.partilhar));
   });
+  document.getElementById("m-outro-valor").addEventListener("input", e => escolherValor(Math.max(0, parseInt(e.target.value, 10) || 0)));
+  if (location.hash) { const alvo = document.querySelector(location.hash); if (alvo) setTimeout(() => alvo.scrollIntoView({ block: "center" }), 300); }
   document.querySelectorAll("[data-copiar]").forEach(b => b.addEventListener("click", () =>
     copiar(document.getElementById(b.dataset.copiar).textContent.trim(), b)));
 })();
