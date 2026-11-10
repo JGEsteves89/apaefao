@@ -16,6 +16,7 @@ function doPost(e) {
   if (dados.evento === "votacao") return guardarVoto(dados);
   if (dados.evento === "responsavel") return guardarResponsavel(dados);
   if (dados.evento === "foto") return mudarFoto(dados);
+  if (dados.evento === "doacao_meta") return guardarDoacaoMeta(dados);
   if (CAMPOS_FORMULARIO[dados.evento]) return guardarFormulario(dados);
 
   const folha = SpreadsheetApp.getActiveSpreadsheet();
@@ -419,6 +420,21 @@ function calcularMetas(lista, doacoes) {
     m.angariado = Math.round((m.angariado + m.do_fundo) * 100) / 100;
   });
   return { metas: lista, fundo_livre: Math.round(resto * 100) / 100 };
+}
+
+// Donativo para uma meta vindo do site (MB WAY / Multibanco). Entra sempre por confirmar: só conta na barra
+// depois de a tesoureira marcar "confirmado". Não guarda o telemóvel de quem paga.
+function guardarDoacaoMeta(d) {
+  const aba = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("doacoes_metas");
+  const valor = Math.round(numero(d.valor) * 100) / 100;
+  if (!aba || !(valor > 0 && valor <= 5000)) return ContentService.createTextOutput("erro");
+  const ab = aba.getRange(2, 1, Math.max(1, aba.getLastRow() - 1), 2).getValues();
+  let livre = ab.findIndex(r => !String(r[0]).trim() && !String(r[1]).trim());
+  livre = livre === -1 ? aba.getLastRow() + 1 : livre + 2;
+  const origem = "Site · " + (d.metodo === "ref" ? "Multibanco" : "MB WAY") + (d.demo ? " · DEMONSTRAÇÃO" : "");
+  aba.getRange(livre, 1, 1, 6).setValues([[new Date(), limpar(d.meta, 60), "entrada", valor, origem, limpar(d.nota, 200)]]);
+  aba.getRange(livre, 7).setValue(false);
+  return ContentService.createTextOutput("ok");
 }
 
 // Correr UMA vez no editor (▶ criarFolhasMetas) para criar as folhas "metas" e "doacoes_metas" com os dados iniciais.

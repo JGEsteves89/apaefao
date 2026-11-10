@@ -56,12 +56,21 @@ function galerias(raiz) {
   });
 }
 
+// A parte que esta pessoa deu (guardada só neste browser; em modo privado não aparece).
+function minhas() { try { return JSON.parse(localStorage.getItem("metas-minhas") || "{}"); } catch (e) { return {}; } }
+function guardarMinha(id, v) {
+  const t = minhas(); t[id] = (t[id] || 0) + v;
+  try { localStorage.setItem("metas-minhas", JSON.stringify(t)); } catch (e) {}
+}
+
 function barra(m) {
-  const p = pct(m);
+  const meu = m.meu || 0, total = m.angariado + meu;
+  const p = Math.min(100, Math.round(total / m.custo * 100)) || 0;
+  const pBase = Math.min(100, m.angariado / m.custo * 100) || 0, pMeu = Math.max(0, Math.min(100, total / m.custo * 100) - pBase);
   const valores = EUROS
-    ? `<b><span class="m-num" data-ate="${m.angariado}">0</span> €</b> de ${euros(m.custo)}`
+    ? `<b><span class="m-num" data-ate="${total}">0</span> €</b> de ${euros(m.custo)}`
     : `<b><span class="m-num" data-ate="${p}">0</span>%</b> da meta`;
-  const falta = m.custo - m.angariado;
+  const falta = m.custo - total;
   const resto = [];
   if (m.estado === "a angariar") {
     if (EUROS && falta > 0) resto.push(`Faltam ${euros(falta)}`);
@@ -69,10 +78,11 @@ function barra(m) {
   }
   return `
     <div class="m-barra${p >= 80 && p < 100 ? " brilho" : ""}" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${p}" aria-label="${p}% da meta">
-      <i style="--p:${p}%"></i>
+      <i style="--p:${pBase}%"></i><i class="meu" style="--l:${pBase}%;--p:${pMeu}%"></i>
       <span class="marco" style="left:25%"></span><span class="marco" style="left:50%"></span><span class="marco" style="left:75%"></span>
     </div>
     <p class="m-valores-linha">${valores}${m.apoiantes ? ` · ${m.apoiantes} ${m.apoiantes === 1 ? "apoiante" : "apoiantes"}` : ""}</p>
+    ${meu ? `<p class="m-meu">💛 ${EUROS ? euros(meu) + " são teus" : "Uma parte é tua"}. Obrigado!</p>` : ""}
     ${resto.length ? `<p class="m-falta">${resto.join(" · ")}</p>` : ""}
     ${EUROS && m.do_fundo > 0 && m.estado === "a angariar" ? `<p class="m-fundo">Inclui ${euros(m.do_fundo)} do fundo geral da APAEF</p>` : ""}`;
 }
@@ -275,21 +285,58 @@ async function pagar(tipo) {
   resp.textContent = "A preparar…";
   let r;
   try {
-    if (DEMO) { await espera(800); r = tipo === "mbway" ? { ok: true } : { ok: true, entidade: "00000", referencia: "000 000 000", valor: v }; }
+    if (DEMO) { await espera(700); r = tipo === "mbway" ? { ok: true } : { ok: true, entidade: "21 312", referencia: "123 456 789", valor: v }; }
     else {
       const q = new URLSearchParams({ acao: "pagamento", tipo, meta: m.id, valor: v, telemovel: tel });
       r = await (await fetch(ENDPOINT + "?" + q, { signal: AbortSignal.timeout(15000) })).json();
     }
   } catch (e) { r = { ok: false }; }
   if (!r || !r.ok) { resp.textContent = "Não foi possível agora. Experimenta a transferência, por favor."; return; }
-  if (tipo === "mbway") resp.textContent = (DEMO ? "[Demonstração] " : "") + `📱 Abre a app MB WAY e aceita o pedido de ${v} € (tens 4 minutos). Obrigado! 💛`;
-  else {
+  if (tipo === "mbway") {
+    resp.innerHTML = `📱 Enviámos um pedido de <b>${v} €</b> para o teu MB WAY. Abre a app e aceita (tens 4 minutos).`;
+    if (DEMO) { await espera(2500); pago(m, v, tipo, resp); }
+  } else {
     document.getElementById("m-ent").textContent = r.entidade;
     document.getElementById("m-refn").textContent = r.referencia;
     document.getElementById("m-refv").textContent = r.valor + " €";
     document.getElementById("m-refmb").hidden = false;
-    resp.textContent = (DEMO ? "[Demonstração — não pagar] " : "") + "Paga no multibanco ou no homebanking, em Pagamentos de Serviços.";
+    resp.innerHTML = "Paga no multibanco ou no homebanking, em <b>Pagamentos de Serviços</b>."
+      + (DEMO ? ' <button type="button" class="m-simular" data-simular>Simular o pagamento</button>' : "");
   }
+}
+
+// Pagamento recebido: mensagem, linha na Sheet (por confirmar), barra avança só neste browser.
+async function pago(m, v, tipo, resp) {
+  resp.innerHTML = `✅ <b>Recebemos os teus ${v} €.</b> Obrigado! 💛`;
+  enviar("doacao_meta", { meta: m.id, valor: v, metodo: tipo, demo: DEMO, nota: DEMO ? "Demonstração (não é dinheiro real)" : "" });
+  guardarMinha(m.id, v);
+  m.meu = (m.meu || 0) + v;
+  await espera(1400);
+  const d = document.getElementById("m-dialogo");
+  if (d.close) d.close(); else d.removeAttribute("open");
+  const c = document.getElementById("meta-" + m.id);
+  if (!c) return;
+  c.scrollIntoView({ block: "center", behavior: MOVIMENTO ? "smooth" : "auto" });
+  await espera(MOVIMENTO ? 500 : 0);
+  const velho = c.querySelector(".m-barra").closest(".m-corpo");
+  const novo = document.createElement("div");
+  novo.innerHTML = barra(m);
+  const antes = c.querySelector(".m-barra");
+  antes.parentElement.querySelectorAll(".m-barra, .m-valores-linha, .m-meu, .m-falta, .m-fundo").forEach(e => e.remove());
+  const custo = velho.querySelector(".m-custos") || velho.querySelector(".m-acoes");
+  [...novo.children].forEach(e => velho.insertBefore(e, custo));
+  // Só a parte nova avança; o resto da barra fica onde estava.
+  const base = c.querySelector(".m-barra i:not(.meu)"), meu = c.querySelector(".m-barra i.meu"), num = c.querySelector(".m-num");
+  base.style.transition = "none";
+  meu.style.width = "0"; meu.style.transitionDelay = ".15s";
+  const de = Number(num.dataset.ate) - v, ate = Number(num.dataset.ate);
+  num.textContent = Math.round(de).toLocaleString("pt-PT");
+  requestAnimationFrame(() => requestAnimationFrame(() => { meu.style.width = ""; }));
+  const t0 = performance.now();
+  const passo = t => { const k = Math.min(1, (t - t0) / 1200); num.textContent = Math.round(de + (ate - de) * (1 - Math.pow(1 - k, 3))).toLocaleString("pt-PT"); if (k < 1) requestAnimationFrame(passo); };
+  requestAnimationFrame(passo);
+  c.classList.add("m-festa");
+  confetti();
 }
 
 // Filtros: esconde cartões, passos e secções que ficam vazias.
@@ -306,6 +353,14 @@ function filtrar(grupo) {
   const lista = await carregarMetas();
   if (!lista) return;
   const publicas = lista.filter(m => m.publicar).sort((a, b) => (a.ordem || 99) - (b.ordem || 99));
+  const meus = minhas();
+  publicas.forEach(m => { if (m.estado === "a angariar") m.meu = meus[m.id] || 0; });
+  if (DEMO) {
+    const aviso = document.createElement("p");
+    aviso.className = "m-demo";
+    aviso.textContent = "Modo demonstração: MB WAY e Multibanco são simulados. Nenhum pagamento é feito.";
+    document.querySelector(".metas-pagina").prepend(aviso);
+  }
   const porPrio = (a, b) => (a.prioridade || 99) - (b.prioridade || 99);
   const ativas = publicas.filter(m => m.estado === "a angariar").sort(porPrio);
   const seguir = publicas.filter(m => m.estado === "a seguir").sort(porPrio);
@@ -340,6 +395,7 @@ function filtrar(grupo) {
     }
     const p = e.target.closest("[data-pagar]");
     if (p) pagar(p.dataset.pagar);
+    if (e.target.closest("[data-simular]")) pago(metaAberta, valorEscolhido, "ref", document.getElementById("m-resp-ref"));
     const s = e.target.closest("[data-partilhar]");
     if (s) partilhar(publicas.find(m => m.id === s.dataset.partilhar));
   });
