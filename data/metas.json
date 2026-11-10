@@ -20,8 +20,12 @@
   "motivo": "É o próximo (festa a 12/12)",
   "imagens": [
    {
-    "src": "img/metas/presentes-1.jpg",
+    "src": "img/metas/presentes-entrega.jpg",
     "legenda": "Ilustração"
+   },
+   {
+    "src": "img/metas/presentes-ioio.jpg",
+    "legenda": "Ilustração do ioiô da Lumi"
    },
    {
     "src": "img/metas/presentes-2.jpg",
@@ -86,7 +90,13 @@
   ],
   "estado": "a seguir",
   "ordem": 4,
-  "prioridade": 4
+  "prioridade": 4,
+  "imagens": [
+   {
+    "src": "img/metas/areia-1.jpg",
+    "legenda": "Ilustração"
+   }
+  ]
  },
  {
   "id": "baloico-pre",
@@ -159,7 +169,17 @@
   ],
   "estado": "a seguir",
   "ordem": 7,
-  "prioridade": 6
+  "prioridade": 6,
+  "imagens": [
+   {
+    "src": "img/metas/arvores-simulacao.jpg",
+    "legenda": "Simulação"
+   },
+   {
+    "src": "img/metas/arvores-plantacao.jpg",
+    "legenda": "Ilustração"
+   }
+  ]
  },
  {
   "id": "insuflaveis-2027",
