@@ -264,5 +264,13 @@
   "maps_url": "https://www.google.com/maps/search/?api=1&query=Cavaquinha%2C%20F%C3%A3o",
   "publicar": true,
   "tamanho": "pequeno"
+ },
+ {
+  "nome": "Serralharia Vianense",
+  "logo": "img/apoiantes/serralharia-vianense.jpg",
+  "tipo": "serralharia",
+  "maps_url": "https://www.google.com/maps/search/?api=1&query=Serralharia%20Vianense%2C%20F%C3%A3o",
+  "publicar": true,
+  "tamanho": "grande"
  }
 ]
