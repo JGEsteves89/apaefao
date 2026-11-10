@@ -248,5 +248,13 @@
   "maps_url": "https://casadostravesseiros.pt/",
   "publicar": true,
   "tamanho": "pequeno"
+ },
+ {
+  "nome": "DFB Construções",
+  "logo": "img/apoiantes/dfb-construcoes.jpg",
+  "tipo": "construcao",
+  "maps_url": "https://www.google.com/maps/search/?api=1&query=DFB%20Constru%C3%A7%C3%B5es%2C%20Esposende",
+  "publicar": true,
+  "tamanho": "grande"
  }
 ]

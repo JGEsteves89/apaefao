@@ -8,7 +8,7 @@
 const ICONES = {
   florista: "🌸", restaurante: "🍽️", cafe: "☕", pastelaria: "🍰", dentista: "🦷", beleza: "💆",
   supermercado: "🛒", loja: "🧴", roupa: "👕", particular: "💛",
-  desporto: "🏋️", barbearia: "💈", cabeleireiro: "💇", diversao: "🐒", musica: "🎵", grafica: "🖨️", tecnologia: "📱", lavandaria: "🧺", talho: "🥩", farmacia: "💊", otica: "👓",
+  desporto: "🏋️", barbearia: "💈", cabeleireiro: "💇", diversao: "🐒", musica: "🎵", construcao: "🏗️", grafica: "🖨️", tecnologia: "📱", lavandaria: "🧺", talho: "🥩", farmacia: "💊", otica: "👓",
 };
 
 // O texto do link diz para onde vai: mapa, Instagram, Facebook ou website.
