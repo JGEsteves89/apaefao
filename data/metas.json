@@ -2,7 +2,7 @@
  "metas": [
   {
    "id": "castanhas-2026",
-   "estado": "garantido",
+   "estado": "feito",
    "prioridade": 99,
    "emoji": "🌰",
    "titulo": "Castanhas assadas no Magusto",
@@ -10,14 +10,18 @@
    "grupo": "Atividades",
    "custo": 50,
    "data_limite": "",
-   "feito_em": "",
+   "feito_em": "2026-11-12",
    "nota": "Obrigado a todos! 💛",
    "unidade": "",
    "preco_unidade": 0,
    "imagens": [
     {
-     "src": "img/magusto-castanhas.jpg",
-     "legenda": ""
+     "src": "img/magusto-escola-castanhas.jpg",
+     "legenda": "As castanhas do Magusto"
+    },
+    {
+     "src": "img/magusto-escola-assadores.jpg",
+     "legenda": "Os assadores, a 12/11"
     }
    ],
    "custos_detalhe": [
@@ -26,8 +30,8 @@
    ],
    "fatura": "",
    "publicar": true,
-   "angariado": 120,
-   "gasto": 0,
+   "angariado": 0,
+   "gasto": 120,
    "apoiantes": 0
   },
   {
