@@ -204,3 +204,15 @@ function ativarGalerias(raiz) {
     g.querySelector(".seg").addEventListener("click", () => ir((atual() + 1) % pontos.length));
   });
 }
+
+// Fundo desfocado nas galerias (metas, notícias, agenda): cada .m-slide recebe a sua foto em --bg (ver style.css).
+// Assim as fotos ao alto ou muito largas aparecem inteiras, com a mesma foto desfocada a preencher o espaço.
+(function () {
+  const marcar = raiz => raiz.querySelectorAll && raiz.querySelectorAll(".m-slide img").forEach(img => {
+    const f = img.closest(".m-slide");
+    if (f && !f.style.getPropertyValue("--bg")) f.style.setProperty("--bg", `url("${img.getAttribute("src")}")`);
+  });
+  new MutationObserver(ms => ms.forEach(m => m.addedNodes.forEach(n => n.nodeType === 1 && marcar(n))))
+    .observe(document.documentElement, { childList: true, subtree: true });
+  document.addEventListener("DOMContentLoaded", () => marcar(document));
+})();

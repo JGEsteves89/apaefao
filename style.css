@@ -842,3 +842,8 @@ section[hidden] { display: none; }
 .noticia .galeria-foto img { margin: 0; border-radius: 0; }
 .evento-fotos { margin: 10px 0 0; }
 .evento-fotos .galeria-foto { max-width: 520px; }
+/* Fundo desfocado: a foto aparece inteira (contain) e a mesma foto, desfocada, preenche o resto. */
+.m-img .m-slide { overflow: hidden; background: var(--tinta); }
+.m-img .m-slide::before { content: ""; position: absolute; inset: -12%; background: var(--bg) center / cover no-repeat; filter: blur(20px) brightness(.8) saturate(1.15); }
+.m-img .m-slide img { object-fit: contain; z-index: 1; }
+.m-img .m-slide figcaption { z-index: 2; }
