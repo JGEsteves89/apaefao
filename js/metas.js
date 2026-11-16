@@ -113,7 +113,10 @@ function cartao(m, lista) {
   el.id = "meta-" + m.id;
   el.dataset.grupo = m.grupo || "";
   let fundo = "";
-  if (m.estado === "a angariar") {
+  const semOrcamento = m.estado === "a angariar" && !m.custo;   // custo vazio na Sheet: ainda sem orçamento
+  if (semOrcamento) {
+    fundo = `<p class="m-feito">⏳ ${escapar(m.nota || "Orçamento a caminho")}</p>`;
+  } else if (m.estado === "a angariar") {
     fundo = `<div class="m-acoes"><button class="botao m-ajudar" type="button" data-meta="${escapar(m.id)}">Quero ajudar esta meta</button>`
       + "</div>";
   } else if (m.estado === "feito") {
@@ -126,7 +129,7 @@ function cartao(m, lista) {
     <div class="m-corpo">
       <h3>${escapar(m.emoji)} ${escapar(m.titulo)}</h3>
       <p class="m-frase">${escapar(m.frase)}</p>
-      ${m.estado === "a seguir" ? "" : barra(m)}
+      ${m.estado === "a seguir" || semOrcamento ? "" : barra(m)}
       ${custos(m)}
       ${fundo}
     </div>`;
@@ -443,7 +446,7 @@ function desenharMetas() {
     document.querySelector(".metas-pagina").prepend(aviso);
   }
   // Se sobrar dinheiro, vai para a meta seguinte por prioridade (salvo "proxima" na Sheet).
-  const fila = publicas.filter(m => m.estado === "a angariar").sort(porPrio).concat(publicas.filter(m => m.estado === "a seguir").sort(porPrio));
+  const fila = publicas.filter(m => m.estado === "a angariar" && m.custo).sort(porPrio).concat(publicas.filter(m => m.estado === "a seguir").sort(porPrio));
   fila.forEach((m, i) => { if (!m.proxima && fila[i + 1]) m.proxima = fila[i + 1].id; });
 
   desenharMetas();
