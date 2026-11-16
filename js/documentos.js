@@ -1,5 +1,5 @@
 // Documentos: a próxima convocatória em destaque (dia, hora e local em texto) e o arquivo por tipo.
-// Dados em data/documentos.json. "rascunho": true esconde um documento.
+// Dados na Google Sheet, folha documentos.json. "rascunho": true esconde um documento.
 
 const TIPOS = {
   convocatoria: "Convocatórias",
@@ -105,7 +105,7 @@ function cartaoDoc(d) {
 (async function () {
   const destaque = document.getElementById("destaque");
   const arquivo = document.getElementById("arquivo");
-  const lista = await carregarJSON("data/documentos.json", arquivo);
+  const lista = await carregarDados("documentos", arquivo);
   if (!lista) return;
   const visiveis = lista.filter(d => !d.rascunho);
 

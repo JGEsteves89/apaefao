@@ -1,9 +1,9 @@
-// Notícias: linha do tempo, a mais recente em cima. Dados em data/noticias.json.
+// Notícias: linha do tempo, a mais recente em cima. Dados na Google Sheet, folha noticias.json.
 // Imagens: só decorações, espaços ou mãos. Nunca caras de crianças.
 // "imagem" = foto principal; "imagens" (opcional) = galeria com setas (a 1.ª é a principal).
 (async function () {
   const el = document.getElementById("noticias");
-  const lista = await carregarJSON("data/noticias.json", el);
+  const lista = await carregarDados("noticias", el);
   if (!lista) return;
 
   el.innerHTML = lista.filter(n => n.data <= hojeISO()).sort((a, b) => a.data < b.data ? 1 : -1).map(n => `

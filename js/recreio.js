@@ -1,5 +1,5 @@
 // O novo recreio (recreio.html): o que queremos mudar na escola. Só mostra, não pede dinheiro.
-// Dados em data/recreio.json: "areas" (carrossel antes/depois) e "zonas" (o mapa).
+// Dados na Google Sheet, folha recreio.json: "areas" (carrossel antes/depois) e "zonas" (o mapa).
 
 // Antes/depois das zonas da escola, num só cartão: setas e pontos mudam de zona; dentro, arrasta-se para comparar
 // (a foto de hoje fica por cima, cortada até à pega; rato, dedo e setas do teclado, porque é um input range).
@@ -42,7 +42,7 @@ function carrossel(el, areas) {
 
 // Mapa do recreio: desenho nosso da escola, com a forma da planta geral da Greenplay (não é a planta, que não pode ser copiada).
 // Um número por zona; tocar num número mostra a zona: hoje e o projeto, o que vamos fazer
-// e "Quero apadrinhar esta parte". Zonas e posições (x, y em % do mapa) em data/recreio.json, "zonas".
+// e "Quero apadrinhar esta parte". Zonas e posições (x, y em % do mapa) em Google Sheet, folha recreio_zonas.
 const MAPA_SVG = `<svg viewBox="125 38 1415 1340" role="img" aria-label="Mapa da escola, com o pré-escolar à esquerda e o 1.º ciclo à direita">
   <rect x="129" y="42" width="1407" height="1332" rx="36" fill="#d4e6a6" stroke="#1f1a14" stroke-width="7"/>
   <g fill="#9cc77a" stroke="#6e9a4f" stroke-width="4">
@@ -116,7 +116,7 @@ function mapa(el, zonas, painel) {
 }
 
 (async function () {
-  const plano = await carregarJSON("data/recreio.json", document.getElementById("r-areas"));
+  const plano = await carregarDados("recreio", document.getElementById("r-areas"));
   if (!plano) return;
   carrossel(document.getElementById("r-areas"), plano.areas);
   mapa(document.getElementById("r-mapa"), plano.zonas, document.getElementById("r-zona"));

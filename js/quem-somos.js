@@ -2,7 +2,7 @@
 (async function () {
   const flores = document.getElementById("flores");
   const turmas = document.getElementById("turmas");
-  const d = await carregarJSON("data/orgaos.json", flores);
+  const d = await carregarDados("orgaos", flores);
   if (!d) return;
 
   const nomeDe = p => p.publicar && p.nome ? p.nome : "";

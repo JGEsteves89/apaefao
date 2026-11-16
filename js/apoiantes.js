@@ -1,6 +1,6 @@
 // Apoiantes: faixa contínua na página inicial e grelha em apoiantes.html.
 // Dados na Google Sheet (folha "apoiantes", lida pelo Apps Script). Só aparecem os que têm "publicar" marcado.
-// Se a Sheet não responder, usa a cópia em data/apoiantes.json.
+// Só a Google Sheet: se não responder, aparece um aviso.
 // "logo" = imagem enviada pelo apoiante. Sem logo, aparece um ícone do tipo de negócio.
 // "tamanho" do cartão na página dos apoiantes (quem ofereceu mais, maior):
 //   "grande" (2×2), "alto" (1×2), "largo" (2×1) ou "pequeno".
@@ -43,16 +43,14 @@ function cartaoApoiante(a, i) {
   return el;
 }
 
-// Lista da Sheet (espera até 6 s); se falhar, a cópia guardada no site.
+// Lista da Google Sheet (folha "apoiantes"). Se falhar, aviso de erro (não há cópia no site).
 async function carregarApoiantes(el) {
-  if (ENDPOINT) {
-    try {
-      const r = await fetch(ENDPOINT + "?acao=apoiantes", { signal: AbortSignal.timeout(6000) });
-      const lista = await r.json();
-      if (Array.isArray(lista) && lista.length) return lista;
-    } catch (e) {}
-  }
-  return carregarJSON("data/apoiantes.json", el);
+  return carregarDados("apoiantes", el, async () => {
+    const r = await fetch(ENDPOINT + "?acao=apoiantes", { signal: AbortSignal.timeout(20000) });
+    const lista = await r.json();
+    if (!Array.isArray(lista)) throw new Error("apoiantes");
+    return lista;
+  });
 }
 
 // Página inicial: faixa lenta sem fim. Para com o rato em cima, ou com um toque.

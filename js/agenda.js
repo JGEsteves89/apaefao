@@ -1,4 +1,4 @@
-// Agenda do ano: dados em data/agenda.json.
+// Agenda do ano: dados na Google Sheet, folha agenda.
 // "fim" = último dia da atividade. Depois desse dia fica esbatida (e sai da página inicial).
 // Na página inicial, data-limite="3" mostra só as próximas 3.
 // Sem "imagem", aparece o "emoji" num quadrado.
@@ -23,7 +23,7 @@ function cartaoEvento(e, classe) {
 }
 
 document.querySelectorAll("[data-agenda]").forEach(async el => {
-  const lista = await carregarJSON("data/agenda.json", el);
+  const lista = await carregarDados("agenda", el);
   if (!lista) return;
   const hoje = new Date(); hoje.setHours(0, 0, 0, 0);
   const limite = Number(el.dataset.limite) || 0;

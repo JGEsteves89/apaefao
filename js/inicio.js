@@ -1,7 +1,7 @@
 // Página inicial: próxima convocatória e últimas notícias.
 (async function () {
-  // Convocatória futura em destaque (dados em data/documentos.json).
-  const docs = await carregarJSON("data/documentos.json");
+  // Convocatória futura em destaque (dados na Google Sheet).
+  const docs = await carregarDados("documentos");
   const hoje = new Date(); hoje.setHours(0, 0, 0, 0);
   const conv = (docs || [])
     .filter(d => !d.rascunho && d.tipo === "convocatoria" && d.destaque && d.data && new Date(d.data + "T00:00:00") >= hoje)
@@ -23,7 +23,7 @@
 
   // As 2 notícias mais recentes.
   const el = document.getElementById("ultimas-noticias");
-  const noticias = await carregarJSON("data/noticias.json", el);
+  const noticias = await carregarDados("noticias", el);
   if (!noticias) return;
   el.innerHTML = noticias.filter(n => n.data <= hojeISO()).sort((a, b) => a.data < b.data ? 1 : -1).slice(0, 2).map(n => `
     <article class="cartao noticia-mini">

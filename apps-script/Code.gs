@@ -66,7 +66,7 @@ function guardarFormulario(dados) {
 // "foto": caminho no site (img/apoiantes/x.jpg) ou link https. Sem foto → ícone do tipo de negócio.
 const COLUNAS_APOIANTES = ["publicar", "nome", "tipo de negócio", "foto", "link", "oferta", "tipo de oferta",
   "valor estimado €", "para", "validade", "quem faz o voucher", "empresa ou particular", "onde",
-  "contacto", "nif", "quem preencheu", "quem conseguiu", "aceita aparecer", "data", "prémio usado"];
+  "contacto", "nif", "quem preencheu", "quem conseguiu", "aceita aparecer", "data"];
 
 function abaApoiantes() {
   const folha = SpreadsheetApp.getActiveSpreadsheet();
@@ -103,6 +103,25 @@ function linhaDoFormulario(d, data) {
 function novoApoiante(d) {
   juntarLinha(abaApoiantes(), linhaDoFormulario(d));
   CacheService.getScriptCache().remove("apoiantes");
+}
+
+// Donativo para uma meta vindo do site (MB WAY / Multibanco). Entra sempre por confirmar: só conta na barra
+// depois de a tesoureira marcar "confirmado". Não guarda o telemóvel de quem paga.
+function guardarDoacaoMeta(d) {
+  const aba = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("doacoes_metas");
+  const valor = Math.round(numero(d.valor) * 100) / 100;
+  if (!aba || !(valor > 0 && valor <= 5000)) return ContentService.createTextOutput("erro");
+  const ab = aba.getRange(2, 1, Math.max(1, aba.getLastRow() - 1), 2).getValues();
+  let livre = ab.findIndex(r => !String(r[0]).trim() && !String(r[1]).trim());
+  livre = livre === -1 ? aba.getLastRow() + 1 : livre + 2;
+  const via = "Site · " + ({ ref: "Multibanco", transf: "Transferência" }[d.metodo] || "MB WAY") + (d.demo ? " · DEMONSTRAÇÃO" : "");
+  const nome = limpar(d.nome, 80);
+  const origem = (nome || "Anónimo") + " (" + via + ")";
+  if (!String(aba.getRange(1, 8).getValue()).trim()) aba.getRange(1, 8, 1, 2).setValues([["contacto", "agradecer em público"]]).setFontWeight("bold");
+  aba.getRange(livre, 1, 1, 6).setValues([[new Date(), limpar(d.meta, 60), "entrada", valor, origem, limpar(d.nota, 200)]]);
+  aba.getRange(livre, 7).setValue(false);
+  aba.getRange(livre, 8, 1, 2).setValues([[limpar(d.contacto, 80), d.publico ? "sim" : "não"]]);
+  return ContentService.createTextOutput("ok");
 }
 
 // Correr UMA vez no editor do Apps Script (escolher "juntarDonativos" → Executar):
@@ -191,6 +210,7 @@ function doGet(e) {
   if (e && e.parameter && e.parameter.acao === "responsaveis") return json(responsaveis());
   if (e && e.parameter && e.parameter.acao === "apoiantes") return json(apoiantes());
   if (e && e.parameter && e.parameter.acao === "metas") return json(metas());
+  if (e && e.parameter && e.parameter.acao === "site") return json(site());
   return json({ ok: true });
 }
 
@@ -333,15 +353,11 @@ function responsaveis() {
   return r;
 }
 
-
 // ---------- Metas (página metas.html) ----------
 // Folha "metas": uma linha por meta (o que aparece no site).
 //   estado: "a angariar" (barra), "a seguir" (fechada), "garantido" (já há dinheiro), "feito" (com foto e fatura).
 //   prioridade: só interna (ordem e para onde vai o que sobra). imagens: "caminho | legenda ; caminho | legenda".
 //   custos_detalhe: linhas separadas por ";". unidade ("ioiô|ioiôs": singular|plural) + preco_unidade: para o impacto ("10 € = 14 ioiôs").
-//   Recreio: as fases e as fotos estão no site (data/recreio.json); aqui só o dinheiro e o estado de cada meta.
-//   peça + peças (opcional): "Canteiro de horta" + 5 → aparece em "Apadrinha uma peça"; cada peça custa custo ÷ peças.
-//     As peças pagas e os padrinhos saem da folha "movimentos" (não se escrevem à mão).
 // Folha "movimentos": o ÚNICO sítio com valores. Uma linha por movimento de dinheiro. Só contam as linhas com confirmado = sim.
 //   tipo "entrada"  → entra dinheiro. destino "geral" (Halloween, quotas…) ou o id de uma meta (donativo com destino).
 //   tipo "saída"    → sai dinheiro. destino = a meta onde foi gasto (ex.: bilhetes do cinema) ou "geral" (outras despesas).
@@ -350,7 +366,7 @@ function responsaveis() {
 //   barra de uma meta = entradas + passagens dessa meta.   custo real de uma meta feita = saídas dessa meta.
 //   fundo geral livre = (todas as entradas − todas as saídas) − o que está guardado nas metas ainda não feitas.
 //   O que uma meta não juntou sozinha sai do fundo geral. O que sobra de uma meta feita volta ao fundo geral.
-const META_COLS = ["id", "publicar", "prioridade", "estado", "emoji", "titulo", "frase", "grupo", "custo", "data_limite", "feito_em", "nota", "unidade", "preco_unidade", "imagens", "custos_detalhe", "fatura", "peça", "peças"];
+const META_COLS = ["id", "publicar", "prioridade", "estado", "emoji", "titulo", "frase", "grupo", "custo", "data_limite", "feito_em", "nota", "unidade", "preco_unidade", "imagens", "custos_detalhe", "fatura"];
 const MOV_COLS = ["data", "tipo", "valor", "destino", "descrição", "como", "quem tratou", "comprovativo", "confirmado", "doador", "contacto", "agradecer em público", "nota"];
 
 function numero(v) { return parseFloat(String(v).replace(/\s/g, "").replace(",", ".")) || 0; }
@@ -377,7 +393,7 @@ function metas() {
   const guardado = cache.get("metas");
   if (guardado) return JSON.parse(guardado);
   const lista = linhasDe("metas").filter(m => String(m.id).trim() && sim(m.publicar)).map(m => ({
-    id: limpar(m.id, 60), estado: limpar(m.estado, 20).toLowerCase(), prioridade: String(m.prioridade).trim() === "" ? 99 : numero(m.prioridade),
+    id: limpar(m.id, 60), estado: limpar(m.estado, 20).toLowerCase(), prioridade: numero(m.prioridade) || 99,
     emoji: limpar(m.emoji, 8), titulo: limpar(m.titulo, 120), frase: limpar(m.frase, 300), grupo: limpar(m.grupo, 30),
     custo: numero(m.custo), data_limite: dataISO(m.data_limite), feito_em: dataISO(m.feito_em), nota: limpar(m.nota, 200),
     unidade: limpar(m.unidade, 40), preco_unidade: numero(m.preco_unidade),
@@ -387,7 +403,6 @@ function metas() {
     }).filter(i => /^(img\/|https:\/\/)/.test(i.src)),
     custos_detalhe: String(m.custos_detalhe || "").split(";").map(s => s.trim()).filter(Boolean),
     fatura: /^https:\/\//.test(String(m.fatura || "")) ? String(m.fatura).trim() : "",
-    peca: limpar(m["peça"], 60), pecas: Math.max(0, Math.floor(numero(m["peças"]))),
     publicar: true,
   }));
   const resultado = calcularMetas(lista, linhasDe("movimentos"));
@@ -395,16 +410,9 @@ function metas() {
   return resultado;
 }
 
-// Níveis da parede "Os nossos padrinhos" (recreio), pelo total que cada pessoa deu. ⚠️ PROPOSTA: a Direção confirma.
-// "Padrinho de uma peça" = pagou sozinho uma peça inteira (ex.: um canteiro de horta).
-const NIVEIS_PADRINHOS = [["Girassol", 100], ["Flor", 50], ["Semente", 0]];
-
 // Lê os movimentos confirmados e diz, para cada meta, quanto juntou e quanto custou. Não divide nada sozinho.
-// Padrinhos: só quem marcou "agradecer em público". O site recebe o nome e o nível, nunca o valor.
 function calcularMetas(lista, movimentos) {
   const ent = {}, pas = {}, sai = {}, doadores = {};
-  const recreio = {}, padrinhos = {};
-  lista.forEach(m => { if (m.grupo.toLowerCase() === "recreio") recreio[m.id.toLowerCase()] = m; });
   let saldo = 0;
   movimentos.filter(d => sim(d.confirmado) && numero(d.valor) > 0).forEach(d => {
     const t = tipoMov(d.tipo), v = numero(d.valor);
@@ -412,15 +420,6 @@ function calcularMetas(lista, movimentos) {
     if (t === "entrada") {
       saldo += v; ent[dest] = (ent[dest] || 0) + v;
       if (dest !== "geral") (doadores[dest] = doadores[dest] || new Set()).add((String(d.doador || d["descrição"] || "anónimo").trim() + "|" + dataISO(d.data)).toLowerCase());
-      const nome = limpar(d.doador, 80), m = recreio[dest];
-      if (m && nome && !/^an[oó]nimo$/i.test(nome) && sim(d["agradecer em público"])) {
-        const p = padrinhos[nome.toLowerCase()] = padrinhos[nome.toLowerCase()] || { nome: nome, total: 0, peca: false };
-        p.total += v;
-        if (m.pecas && v >= m.custo / m.pecas) {
-          p.peca = true;
-          (m.padrinhos_peca = m.padrinhos_peca || []).push(nome);
-        }
-      }
     } else if (t === "saida") { saldo -= v; sai[dest] = (sai[dest] || 0) + v; }
     else pas[dest] = (pas[dest] || 0) + v;
   });
@@ -430,18 +429,13 @@ function calcularMetas(lista, movimentos) {
     m.angariado = r2((ent[id] || 0) + (pas[id] || 0));
     m.gasto = r2(sai[id] || 0);
     m.apoiantes = doadores[id] ? doadores[id].size : 0;
-    if (m.pecas) m.pecas_pagas = Math.min(m.pecas, Math.floor(m.angariado / (m.custo / m.pecas) + 1e-9));
     if (m.estado !== "feito") guardado += Math.max(0, m.angariado - m.gasto);
   });
-  const parede = Object.values(padrinhos).map(p => ({
-    nome: p.nome, nivel: p.peca ? "Padrinho de uma peça" : NIVEIS_PADRINHOS.find(n => p.total >= n[1])[0],
-  }));
-  return { metas: lista, fundo_livre: r2(Math.max(0, saldo - guardado)), padrinhos: parede };
+  return { metas: lista, fundo_livre: r2(Math.max(0, saldo - guardado)) };
 }
 
 // Donativo para uma meta vindo do site. Entra sempre por confirmar: só conta para todos
 // depois de a tesoureira marcar "confirmado" (quem pagou já vê a sua parte no próprio browser).
-// metodo "levantar": a empresa pede para irmos buscar o donativo (ainda não pagou).
 function guardarDoacaoMeta(d) {
   const aba = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("movimentos");
   const valor = r2(numero(d.valor));
@@ -449,32 +443,10 @@ function guardarDoacaoMeta(d) {
   const abc = aba.getRange(2, 1, Math.max(1, aba.getLastRow() - 1), 3).getValues();
   let livre = abc.findIndex(r => r.every(c => !String(c).trim()));
   livre = livre === -1 ? aba.getLastRow() + 1 : livre + 2;
-  const como = ({ ref: "Multibanco", transf: "Transferência", levantar: "Vamos levantar" }[d.metodo] || "MB WAY") + " (site)" + (d.demo ? " · DEMONSTRAÇÃO" : "");
+  const como = ({ ref: "Multibanco", transf: "Transferência" }[d.metodo] || "MB WAY") + " (site)" + (d.demo ? " · DEMONSTRAÇÃO" : "");
   aba.getRange(livre, 1, 1, MOV_COLS.length).setValues([[new Date(), "entrada", valor, limpar(d.meta, 60), "Donativo pelo site", como, "", "", false,
     limpar(d.nome, 80) || "Anónimo", limpar(d.contacto, 80), d.publico ? "sim" : "não", limpar(d.nota, 200)]]);
-  if (d.recibo || d.metodo === "levantar") guardarPedidoRecibo(d, valor, como);
   return ContentService.createTextOutput("ok");
-}
-
-// Pedidos de recibo (documento para as Finanças) e de levantamento: uma linha na folha "recibos" + email ao Jose e à APAEF.
-// A Direção marca "enviado" quando mandar o recibo.
-const RECIBO_COLS = ["data", "meta", "valor", "como", "nome / empresa", "nif", "email", "morada", "quer recibo", "levantar", "telefone", "enviado", "demonstração"];
-function guardarPedidoRecibo(d, valor, como) {
-  const folha = SpreadsheetApp.getActiveSpreadsheet();
-  let aba = folha.getSheetByName("recibos");
-  if (!aba) {
-    aba = folha.insertSheet("recibos");
-    aba.getRange(1, 1, 1, RECIBO_COLS.length).setValues([RECIBO_COLS]).setFontWeight("bold").setBackground("#ebce58");
-    aba.setFrozenRows(1);
-  }
-  const nif = String(d.nif || "").replace(/\D/g, "").slice(0, 9);
-  const linha = [new Date(), limpar(d.meta, 60), valor, como, limpar(d.recibo_nome || d.nome, 120), nif, limpar(d.email, 120),
-    limpar(d.morada, 200), d.recibo ? "sim" : "não", d.metodo === "levantar" ? "sim" : "não", limpar(d.telefone, 30), false, d.demo ? "sim" : ""];
-  aba.appendRow(linha);
-  aba.getRange(aba.getLastRow(), RECIBO_COLS.indexOf("enviado") + 1).insertCheckboxes();
-  const assunto = (d.metodo === "levantar" ? "Pedido para levantar donativo" : "Pedido de recibo") + ": " + linha[4] + " — " + valor + " €";
-  MailApp.sendEmail(EMAIL_AVISOS + ",apaefao@gmail.com", "[APAEF site] " + assunto + (d.demo ? " (DEMONSTRAÇÃO)" : ""),
-    RECIBO_COLS.slice(0, 11).map((c, i) => c + ": " + linha[i]).join("\n") + "\n\nFolha \"recibos\": marcar \"enviado\" quando o recibo seguir.");
 }
 
 // Correr UMA vez no editor (▶ criarMovimentos): cria a folha "movimentos" com o que estava em "doacoes_metas"
@@ -509,27 +481,351 @@ function criarMovimentos() {
   CacheService.getScriptCache().remove("metas");
 }
 
-// Correr UMA vez no editor (▶ juntarFases), no dia em que a página nova do recreio for publicada:
-// junta as colunas "peça" e "peças" e as metas novas do recreio (escorrega formiga, pátio, jardim, hortas),
-// para os donativos para elas contarem. O plano (fases, fotos) está no site, em data/recreio.json.
-// ⚠️ Valores e quantidades são uma PROPOSTA: a Direção confirma antes de publicar.
-function juntarFases() {
-  const aba = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("metas");
-  let cab = aba.getRange(1, 1, 1, aba.getLastColumn()).getValues()[0].map(c => String(c).trim().toLowerCase());
-  ["peça", "peças"].forEach(c => {
-    if (cab.includes(c)) return;
-    aba.getRange(1, cab.length + 1).setValue(c);
-    cab.push(c);
+// ===== Site: todos os dados do site vêm desta Google Sheet (16/11/2026). =====
+// O site pede ?acao=site e recebe: agenda, noticias, documentos, links, orgaos, recreio.
+// Cada parte é uma folha: uma linha por item, a 1.ª linha tem os nomes das colunas.
+// Regras para quem edita a Sheet:
+//  - sim/não: escrever "sim" (ou deixar vazio).
+//  - Listas (fotos, ordem de trabalhos, projetos): um item por linha dentro da célula (Alt+Enter);
+//    partes de cada item separadas por " | ". Ex. fotos: img/foto.jpg | Legenda da foto
+//  - Linha com "publicar" = não → não aparece.
+
+const SITE_FOLHAS = {
+  agenda: "agenda", noticias: "noticias", documentos: "documentos", links: "links",
+  orgaos: "orgaos", representantes: "representantes",
+  recreio_areas: "recreio_areas", recreio_fases: "recreio_fases", recreio_zonas: "recreio_zonas"
+};
+const SITE_LISTAS = { imagens: ["src", "legenda"], ordem: null, linhas: null, projetos: ["id", "emoji", "titulo", "custo", "peca", "pecas", "imagem"] };
+const SITE_SIM_NAO = ["confirmar", "destaque", "publicar", "rascunho", "largo"];
+const SITE_NUMEROS = ["duracao", "num", "x", "y", "custo", "pecas"];
+
+function site() {
+  const cache = CacheService.getScriptCache();
+  const guardado = cache.get("site");
+  if (guardado) return JSON.parse(guardado);
+  const ler = nome => siteLinhas(SITE_FOLHAS[nome]);
+  const orgaos = [];
+  ler("orgaos").forEach(l => {
+    let o = orgaos.find(x => x.nome === l.orgao);
+    if (!o) orgaos.push(o = { nome: l.orgao, membros: [] });
+    o.membros.push({ cargo: l.cargo || "", nome: l.nome || "", publicar: l.publicar !== false });
   });
-  const ids = aba.getRange(2, cab.indexOf("id") + 1, Math.max(1, aba.getLastRow() - 1), 1).getValues().map(r => String(r[0]).trim());
-  const novas = [
-    { id: "escorrega-formiga", prioridade: 8, emoji: "🐜", titulo: "Escorrega formiga", frase: "Um escorrega em forma de formiga para os mais pequenos.", custo: 2500 },
-    { id: "patio-chao", prioridade: 9, emoji: "🎨", titulo: "Pátio e chão colorido", frase: "Chão novo e colorido no pátio, com pista e campo para jogar.", custo: "" },
-    { id: "jardim-sentidos", prioridade: 10, emoji: "🌼", titulo: "Jardim dos sentidos", frase: "Painéis para tocar, ouvir e descobrir, junto aos canteiros de flores.", custo: 3200, "peça": "Painel do jardim dos sentidos", "peças": 8 },
-    { id: "hortas", prioridade: 11, emoji: "🥕", titulo: "Canteiros de horta", frase: "Canteiros de madeira para cada turma cuidar da sua horta.", custo: 750, "peça": "Canteiro de horta", "peças": 5 },
-  ];
-  novas.filter(m => !ids.includes(m.id)).forEach(m => {
-    aba.appendRow(cab.map(c => c in m ? m[c] : ({ publicar: true, estado: "a seguir", grupo: "Recreio" }[c] ?? "")));
+  const dados = {
+    agenda: ler("agenda"),
+    noticias: ler("noticias"),
+    documentos: ler("documentos"),
+    links: ler("links"),
+    orgaos: { orgaos: orgaos, representantes: ler("representantes").map(l => ({ turma: l.turma || "", nome: l.nome || "", publicar: l.publicar !== false })) },
+    recreio: { areas: ler("recreio_areas"), fases: ler("recreio_fases"), zonas: ler("recreio_zonas") }
+  };
+  cache.put("site", JSON.stringify(dados), 60);
+  return dados;
+}
+
+function siteLinhas(nome) {
+  const aba = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(nome);
+  if (!aba || aba.getLastRow() < 2) return [];
+  const valores = aba.getDataRange().getValues();
+  const cab = valores[0].map(c => String(c).trim());
+  return valores.slice(1).filter(l => l.some(v => v !== "")).map(l => {
+    const o = {};
+    cab.forEach((c, i) => {
+      if (!c) return;
+      let v = l[i];
+      if (v instanceof Date) v = Utilities.formatDate(v, "Europe/Lisbon", "yyyy-MM-dd");
+      if (SITE_SIM_NAO.indexOf(c) >= 0) { if (v !== "") o[c] = sim(v); return; }
+      if (v === "" || v === null) return;
+      if (SITE_NUMEROS.indexOf(c) >= 0) { o[c] = numero(v); return; }
+      if (c in SITE_LISTAS) {
+        const partes = SITE_LISTAS[c];
+        o[c] = String(v).split("\n").map(s => s.trim()).filter(Boolean).map(s => {
+          if (!partes) return s;
+          const p = s.split("|").map(x => x.trim()), item = {};
+          partes.forEach((k, n) => { if (p[n]) item[k] = SITE_NUMEROS.indexOf(k) >= 0 ? numero(p[n]) : p[n]; });
+          return item;
+        });
+        return;
+      }
+      o[c] = String(v);
+    });
+    if (o.publicar === false) return null;
+    return o;
+  }).filter(Boolean);
+}
+
+// Só uma vez: copiar os dados que estavam no site (data/*.json) para folhas novas. Não apaga nada.
+function importarSite() {
+  const url = n => JSON.parse(UrlFetchApp.fetch("https://apaefao.pt/data/" + n + ".json?x=" + Date.now()).getContentText());
+  const rec = url("recreio"), org = url("orgaos");
+  const orgLinhas = [];
+  org.orgaos.forEach(o => o.membros.forEach(m => orgLinhas.push({ orgao: o.nome, cargo: m.cargo, nome: m.nome, publicar: m.publicar })));
+  const partes = {
+    agenda: url("agenda"), noticias: url("noticias"), documentos: url("documentos"), links: url("links"),
+    orgaos: orgLinhas, representantes: org.representantes,
+    recreio_areas: rec.areas, recreio_fases: rec.fases, recreio_zonas: rec.zonas
+  };
+  const livro = SpreadsheetApp.getActiveSpreadsheet(), feito = [];
+  Object.keys(partes).forEach(nome => {
+    if (livro.getSheetByName(nome)) { feito.push(nome + ": já existia, saltei"); return; }
+    const lista = partes[nome], cab = [];
+    lista.forEach(o => Object.keys(o).forEach(k => { if (cab.indexOf(k) < 0) cab.push(k); }));
+    const linhas = lista.map(o => cab.map(k => siteCelula(k, o[k])));
+    const aba = livro.insertSheet(nome);
+    aba.getRange(1, 1, 1, cab.length).setValues([cab]).setFontWeight("bold");
+    if (linhas.length) aba.getRange(2, 1, linhas.length, cab.length).setNumberFormat("@").setValues(linhas);
+    aba.setFrozenRows(1);
+    feito.push(nome + ": " + linhas.length + " linhas");
   });
-  CacheService.getScriptCache().remove("metas");
+  CacheService.getScriptCache().remove("site");
+  Logger.log(feito.join("\n"));
+}
+
+function siteCelula(k, v) {
+  if (v === undefined || v === null) return "";
+  if (typeof v === "boolean") return v ? "sim" : "não";
+  if (Array.isArray(v)) {
+    const partes = SITE_LISTAS[k];
+    return v.map(i => typeof i === "object" ? (partes || Object.keys(i)).map(p => i[p] === undefined ? "" : i[p]).join(" | ") : String(i)).join("\n");
+  }
+  return String(v);
+}
+
+// Ajuda: lista as folhas (nome, linhas, colunas e cabeçalho).
+function listarFolhas() {
+  SpreadsheetApp.getActiveSpreadsheet().getSheets().forEach(a => {
+    const c = a.getLastColumn();
+    const cab = c ? a.getRange(1, 1, 1, c).getValues()[0].join(", ") : "";
+    const ult = a.getLastRow() > 1 ? a.getRange(a.getLastRow(), 1, 1, Math.min(c, 4)).getDisplayValues()[0].join(" ; ") : "";
+    Logger.log(a.getName() + " [" + (a.getLastRow() - 1) + " linhas" + (a.isSheetHidden() ? ", escondida" : "") + "] " + cab + "  ||  última: " + ult.slice(0, 120));
+  });
+}
+
+
+// ===== Arrumar a Sheet (16/11/2026): página "Início", estilo das tabelas e notas em cada coluna. =====
+// Correr "arrumarSheet" sempre que se junta uma folha ou coluna nova (não mexe nos dados).
+// As notas aparecem ao passar o rato pelo cabeçalho (triângulo preto no canto da célula).
+
+const FOLHAS_INFO = [
+  ["agenda", "Site", "Atividades do ano. Página Agenda e 'A seguir' na página inicial.", "Direção (à mão)"],
+  ["noticias", "Site", "Notícias do site, com fotos.", "Direção (à mão)"],
+  ["documentos", "Site", "Convocatórias, atas, estatutos e documentos do Agrupamento.", "Direção (à mão)"],
+  ["links", "Site", "Página 'Links úteis' (portais da escola, contactos).", "Direção (à mão)"],
+  ["orgaos", "Site", "Órgãos sociais (Direção, AG, Conselho Fiscal). Página Quem somos.", "Direção (à mão)"],
+  ["representantes", "Site", "Representantes de cada turma. Página Quem somos.", "Direção (à mão)"],
+  ["recreio_areas", "Recreio", "Comparação 'Hoje / O projeto' no topo da página do recreio.", "Direção (à mão)"],
+  ["recreio_zonas", "Recreio", "Os números do mapa do recreio (uma linha por zona).", "Direção (à mão)"],
+  ["recreio_fases", "Recreio", "As fases do projeto do recreio e o que entra em cada uma.", "Direção (à mão)"],
+  ["metas", "Dinheiro", "Metas de angariação (página Metas). O valor angariado vem de 'movimentos'.", "Direção (à mão)"],
+  ["movimentos", "Dinheiro", "Todo o dinheiro que entra e sai. É a base das metas e da transparência.", "Tesoureira + site (donativos)"],
+  ["apoiantes", "Pessoas", "Empresas e amigos que apoiam. Página Apoiantes e formulário 'Quero oferecer algo'.", "Direção + formulário do site"],
+  ["socios", "Pessoas", "Fichas de sócio enviadas pelo site. DADOS PESSOAIS: não partilhar.", "Formulário do site"],
+  ["sugestoes", "Pessoas", "Sugestões e reclamações enviadas pelo site.", "Formulário do site"]
+];
+
+const NOTAS = {
+  agenda: {
+    fim: "Último dia da atividade (AAAA-MM-DD). Depois deste dia fica esbatida no site.",
+    quando: "Texto da data como aparece no site. Ex.: Sábado, 14 nov · 15h",
+    etiqueta: "Pequena etiqueta ao lado da data. Ex.: novo!, adiado",
+    confirmar: "sim = a etiqueta fica em amarelo (data ainda por confirmar).",
+    titulo: "Nome da atividade.",
+    texto: "Uma ou duas frases sobre a atividade.",
+    imagem: "Foto principal (ficheiro na pasta img/ do site). Ex.: img/magusto.jpg",
+    alt: "Descrição da foto, para quem não vê (leitores de ecrã).",
+    emoji: "Emoji mostrado quando não há foto.",
+    imagens: "Fotos depois da atividade (galeria). Uma por linha (Alt+Enter): img/foto.jpg | Legenda"
+  },
+  noticias: {
+    titulo: "Título da notícia.",
+    data: "Data da notícia (AAAA-MM-DD). As mais recentes aparecem primeiro.",
+    texto: "Texto da notícia. Sem valores em dinheiro.",
+    imagem: "Foto principal (img/…). Sem caras de crianças.",
+    alt: "Descrição da foto principal.",
+    imagens: "Galeria. Uma foto por linha (Alt+Enter): img/foto.jpg | Legenda",
+    id: "Identificador curto e único (sem espaços). Ex.: halloween-2026",
+    link: "Link extra no fim da notícia (opcional).",
+    link_texto: "Texto do botão do link. Ex.: Ver o vídeo"
+  },
+  documentos: {
+    id: "Identificador curto e único (sem espaços).",
+    titulo: "Nome do documento.",
+    tipo: "convocatoria, ata, estatutos, agrupamento…",
+    data: "Data (AAAA-MM-DD).",
+    hora: "Hora da reunião (só convocatórias). Ex.: 21h00",
+    duracao: "Duração em minutos (só convocatórias).",
+    local: "Local da reunião.",
+    resumo: "Uma frase sobre o documento.",
+    ordem: "Ordem de trabalhos: um ponto por linha (Alt+Enter).",
+    nota: "Nota extra (opcional).",
+    ficheiro: "Ficheiro (docs/…) ou link para o documento.",
+    destaque: "sim = aparece em destaque na página inicial.",
+    rascunho: "sim = ainda não é a versão final."
+  },
+  links: {
+    titulo: "Nome do link.",
+    descricao: "Uma frase sobre para que serve.",
+    url: "Endereço completo (https://… ou mailto:…).",
+    icone: "Emoji do link.",
+    categoria: "Grupo onde aparece na página Links.",
+    linhas: "Texto extra: uma linha por parágrafo (Alt+Enter).",
+    largo: "sim = o cartão ocupa a largura toda."
+  },
+  orgaos: {
+    orgao: "Direção, Assembleia Geral ou Conselho Fiscal.",
+    cargo: "Cargo da pessoa.",
+    nome: "Nome como aparece no site.",
+    publicar: "não = não aparece no site."
+  },
+  representantes: {
+    turma: "Turma ou sala. Ex.: 1.º A, Pré Sala D",
+    nome: "Nome do representante.",
+    publicar: "não = não aparece no site."
+  },
+  recreio_areas: {
+    titulo: "Nome da zona. Ex.: Recreio da pré",
+    frase: "Uma frase sobre o que muda.",
+    hoje: "Foto de hoje (img/metas/recreio/…).",
+    projeto: "Imagem da simulação do projeto (mesmo ângulo da foto de hoje)."
+  },
+  recreio_zonas: {
+    num: "Número no mapa (1, 2, 3…).",
+    grupo: "Pré-escolar ou 1.º ciclo.",
+    titulo: "Nome da zona.",
+    frase: "O que vamos fazer nesta zona.",
+    nota: "Nota curta por cima do texto (opcional).",
+    projeto: "Imagem da simulação.",
+    x: "Posição do número no mapa, da esquerda (0 a 100 %).",
+    y: "Posição do número no mapa, de cima (0 a 100 %).",
+    hoje: "Foto de hoje desta zona."
+  },
+  recreio_fases: {
+    titulo: "Nome da fase. Ex.: Fase 1 · Pré-escolar",
+    hoje: "Foto de hoje.",
+    projeto: "Imagem do projeto.",
+    projetos: "O que entra nesta fase, um por linha: id | emoji | título | custo | peça | n.º de peças | imagem da peça"
+  },
+  metas: {
+    id: "Identificador único (sem espaços). Liga a meta aos movimentos (coluna destino).",
+    publicar: "Desmarcar = a meta não aparece no site.",
+    prioridade: "Ordem no site: 1 aparece primeiro.",
+    estado: "a angariar · a seguir · garantido · feito",
+    emoji: "Emoji da meta.",
+    titulo: "Nome da meta.",
+    frase: "Uma frase sobre a meta.",
+    grupo: "Atividades, Recreio ou Natal (filtros da página).",
+    custo: "Custo total em euros (só o número).",
+    data_limite: "Data limite (AAAA-MM-DD), se houver.",
+    feito_em: "Data em que foi feito (para metas 'feito').",
+    nota: "Nota mostrada quando está feita. Ex.: Obrigado a todos!",
+    unidade: "Nome de cada parte: singular|plural. Ex.: lugar no passeio|lugares no passeio",
+    preco_unidade: "Preço de cada parte, em euros.",
+    imagens: "Fotos (JSON ou uma por linha).",
+    custos_detalhe: "Lista de custos que aparece em 'Ver custos'.",
+    fatura: "Link para a fatura (quando está feito)."
+  },
+  movimentos: {
+    data: "Data do movimento.",
+    tipo: "entrada · saída · passagem",
+    valor: "Valor em euros (sempre positivo).",
+    destino: "id da meta (ver folha metas) ou vazio = fundo geral.",
+    "descrição": "O que foi.",
+    como: "MB WAY, transferência, dinheiro…",
+    "quem tratou": "Quem da APAEF tratou.",
+    comprovativo: "Link para o comprovativo/fatura.",
+    confirmado: "Marcar quando a tesoureira confirmou o valor.",
+    doador: "Quem deu (se for um donativo).",
+    contacto: "Contacto do doador (privado).",
+    "agradecer em público": "sim = pode aparecer o nome no site.",
+    nota: "Nota interna."
+  },
+  apoiantes: {
+    publicar: "Marcar = aparece no site.",
+    nome: "Nome da empresa ou pessoa.",
+    "tipo de negócio": "Ex.: café, farmácia, ginásio.",
+    foto: "Logótipo/foto (img/apoiantes/…).",
+    link: "Site, Facebook ou Google Maps.",
+    oferta: "O que ofereceu.",
+    "tipo de oferta": "produto, serviço, dinheiro, voucher…",
+    "valor estimado €": "Valor aproximado. Define o tamanho do cartão no site (não aparece o valor).",
+    para: "Para que atividade (rifas, cabaz, magusto…).",
+    validade: "Validade do voucher, se houver.",
+    "quem faz o voucher": "APAEF ou a empresa.",
+    "empresa ou particular": "empresa · particular",
+    onde: "Morada ou localidade.",
+    contacto: "Contacto (privado, não vai para o site).",
+    nif: "NIF, para a fatura/recibo (privado).",
+    "quem preencheu": "Quem preencheu o formulário.",
+    "quem conseguiu": "Quem da APAEF conseguiu o apoio.",
+    "aceita aparecer": "não = não aparece no site.",
+    data: "Data em que entrou.",
+    "prémio usado": "Para onde foi o prémio (rifas, cabaz…)."
+  },
+  socios: {
+    timestamp: "Quando a ficha foi enviada (automático).",
+    aluno: "Nome do aluno.", turma: "Turma ou sala.", encarregado: "Encarregado de educação.",
+    telefone: "Telefone (privado).", email: "Email (privado).", recibo: "Quer recibo?",
+    nif: "NIF para o recibo.", reciboEmail: "Email para o recibo.", imagem: "Autoriza fotos do filho/a?",
+    rgpd: "Aceitou a política de dados (obrigatório)."
+  },
+  sugestoes: {
+    timestamp: "Quando foi enviada (automático).", tema: "Cantina, Recreio, Atividades, Transporte, Outro.",
+    mensagem: "A sugestão ou reclamação.", nome: "Nome (opcional).", email: "Email (opcional).",
+    resposta: "TRUE = a pessoa quer resposta."
+  }
+};
+
+function arrumarSheet() {
+  const livro = SpreadsheetApp.getActiveSpreadsheet();
+  FOLHAS_INFO.forEach(([nome]) => {
+    const aba = livro.getSheetByName(nome);
+    if (!aba || aba.getLastColumn() === 0) return;
+    const nc = aba.getLastColumn(), nl = Math.max(aba.getLastRow(), 2);
+    const cab = aba.getRange(1, 1, 1, nc);
+    aba.getBandings().forEach(b => b.remove());
+    aba.getRange(1, 1, nl, nc).applyRowBanding(SpreadsheetApp.BandingTheme.YELLOW, true, false);
+    cab.setFontWeight("bold").setBackground("#f6d55c").setFontColor("#1f1a14").setVerticalAlignment("middle").setWrap(true);
+    aba.setRowHeight(1, 34);
+    aba.setFrozenRows(1);
+    aba.getRange(2, 1, nl - 1, nc).setVerticalAlignment("top").setWrap(true);
+    const notas = NOTAS[nome] || {};
+    cab.getValues()[0].forEach((c, i) => {
+      const n = notas[String(c).trim()];
+      aba.getRange(1, i + 1).setNote(n || "");
+      aba.setColumnWidth(i + 1, /texto|frase|resumo|descri|mensagem|oferta|projetos|imagens/.test(c) ? 320 : 150);
+    });
+  });
+  inicio(livro);
+  CacheService.getScriptCache().remove("site");
+}
+
+function inicio(livro) {
+  const aba = livro.getSheetByName("Início") || livro.insertSheet("Início", 0);
+  livro.setActiveSheet(aba); livro.moveActiveSheet(1);
+  aba.getBandings().forEach(b => b.remove());
+  aba.clear();
+  aba.getRange("A1").setValue("APAEF — dados do site").setFontSize(18).setFontWeight("bold");
+  aba.getRange("A2:E2").merge().setValue("Esta Sheet é a ÚNICA fonte de dados do site apaefao.pt. Muda aqui e o site atualiza em ~1 minuto. Passa o rato pelo cabeçalho de cada folha para ver o que vai em cada coluna.").setWrap(true);
+  aba.setRowHeight(2, 44);
+  const linhas = [["Folha", "Grupo", "Para quê", "Quem escreve", "Linhas"]];
+  FOLHAS_INFO.forEach(([nome, grupo, para, quem]) => {
+    const f = livro.getSheetByName(nome);
+    if (!f) return;
+    linhas.push(['=HYPERLINK("#gid=' + f.getSheetId() + '","' + nome + '")', grupo, para, quem, Math.max(0, f.getLastRow() - 1)]);
+  });
+  aba.getRange(4, 1, linhas.length, 5).setValues(linhas).setVerticalAlignment("middle").setWrap(true);
+  aba.getRange(4, 1, linhas.length, 5).applyRowBanding(SpreadsheetApp.BandingTheme.YELLOW, true, false);
+  aba.getRange(4, 1, 1, 5).setFontWeight("bold").setBackground("#f6d55c");
+  aba.getRange(5, 1, linhas.length - 1, 1).setFontWeight("bold");
+  [160, 100, 460, 200, 70].forEach((w, i) => aba.setColumnWidth(i + 1, w));
+  const r = 6 + linhas.length;
+  aba.getRange(r, 1, 4, 1).setValues([["Regras"], ["• sim/não: escrever sim (ou deixar vazio)."], ["• Listas numa célula (fotos, pontos): um item por linha com Alt+Enter; partes separadas por | (ex.: img/foto.jpg | Legenda)."], ["• Fotos: o ficheiro tem de estar na pasta img/ do site. Sem caras de crianças."]]);
+  aba.getRange(r, 1).setFontWeight("bold");
+}
+
+// Volta a copiar só a folha recreio_fases (faltavam as peças). Só uma vez.
+function corrigirFases() {
+  const livro = SpreadsheetApp.getActiveSpreadsheet();
+  const f = livro.getSheetByName("recreio_fases");
+  if (f) livro.deleteSheet(f);
+  importarSite();
 }

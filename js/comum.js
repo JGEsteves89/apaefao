@@ -33,7 +33,22 @@ const espera = ms => new Promise(r => setTimeout(r, ms));
 })();
 
 // Lê um ficheiro de data/. Se falhar, deixa uma mensagem simpática no sítio.
-async function carregarJSON(url, el) {
+// Todos os dados do site vêm da Google Sheet (Apps Script, ?acao=site). Um só pedido por página.
+// nome: agenda, noticias, documentos, links, orgaos, recreio. el: onde mostrar "A procurar…" e o erro.
+let pedidoSite = null;
+function dadosSite() {
+  if (!pedidoSite) pedidoSite = fetch(ENDPOINT + "?acao=site", { signal: AbortSignal.timeout(20000) })
+    .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+    .catch(e => { pedidoSite = null; throw e; });
+  return pedidoSite;
+}
+
+function semDados(el) {
+  if (el) el.innerHTML = '<p class="vazio"><img class="mascote-mini" src="img/mascote/pensa.webp" alt="" width="70" height="89">Não foi possível carregar. Tenta daqui a pouco 🙂</p>';
+  return null;
+}
+
+async function carregarDados(nome, el, buscar) {
   let aCarregar = null;
   const t = el && setTimeout(() => {
     if (el.children.length) return;               // já tem conteúdo (ex.: esqueletos)
@@ -43,13 +58,12 @@ async function carregarJSON(url, el) {
     el.appendChild(aCarregar);
   }, 300);
   try {
-    const r = await fetch(url, { cache: "no-cache" });
-    if (!r.ok) throw new Error(r.status);
-    return await r.json();
+    const d = buscar ? await buscar() : (await dadosSite())[nome];
+    if (d === undefined || d === null) throw new Error("sem " + nome);
+    return d;
   } catch (e) {
     if (aCarregar) aCarregar.remove(), aCarregar = null;
-    if (el) el.innerHTML = '<p class="vazio"><img class="mascote-mini" src="img/mascote/pensa.webp" alt="" width="70" height="89">Ainda não há nada aqui 🙂 Volta daqui a uns dias.</p>';
-    return null;
+    return semDados(el);
   } finally {
     clearTimeout(t);
     if (aCarregar) aCarregar.remove();

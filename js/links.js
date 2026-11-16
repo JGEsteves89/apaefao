@@ -1,8 +1,8 @@
-// Ajuda e links úteis: um mosaico por link, agrupados por categoria. Dados em data/links.json.
+// Ajuda e links úteis: um mosaico por link, agrupados por categoria. Dados na Google Sheet, folha links.json.
 // Com "linhas" ou "largo": true, o mosaico ocupa a largura toda.
 (async function () {
   const el = document.getElementById("links");
-  const lista = await carregarJSON("data/links.json", el);
+  const lista = await carregarDados("links", el);
   if (!lista) return;
 
   const categorias = [...new Set(lista.map(l => l.categoria || "Outros"))];
