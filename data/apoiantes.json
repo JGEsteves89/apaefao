@@ -272,5 +272,13 @@
   "maps_url": "https://www.google.com/maps/search/?api=1&query=Serralharia%20Vianense%2C%20F%C3%A3o",
   "publicar": true,
   "tamanho": "grande"
+ },
+ {
+  "nome": "Mercatlas",
+  "logo": "img/apoiantes/mercatlas.jpg",
+  "tipo": "supermercado",
+  "maps_url": "https://www.google.com/maps/search/?api=1&query=Mercatlas%2C%20Esposende",
+  "publicar": true,
+  "tamanho": "pequeno"
  }
 ]
