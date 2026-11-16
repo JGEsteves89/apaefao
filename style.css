@@ -851,3 +851,4 @@ section[hidden] { display: none; }
 .m-img .m-slide::before { content: ""; position: absolute; inset: -12%; background: var(--bg) center / cover no-repeat; filter: blur(20px) brightness(.8) saturate(1.15); }
 .m-img .m-slide img { object-fit: contain; z-index: 1; }
 .m-img .m-slide figcaption { z-index: 2; }
+.m-img .m-seta, .m-img .m-pontos { z-index: 3; }
