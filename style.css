@@ -1028,3 +1028,10 @@ header.topo .menu { order: 2; margin-left: auto; align-items: center; }
 .m-mini .m-corpo { padding: 10px 12px 12px; }
 .m-mini h3 { font-size: 16px; margin: 0 0 4px; }
 .m-mini .m-linha-estado { font-size: 13px; color: var(--suave); margin: 0; }
+
+/* Interruptor "Hoje | Projeto" no canto da foto (16/11): pequeno, não tapa a imagem */
+.r-v-botao { top: 10px; left: 10px; bottom: auto; transform: none; min-height: 0; padding: 3px; display: inline-flex; gap: 0;
+  font: 800 13px/1 "Nunito", sans-serif; background: rgba(255,255,255,.92); border: 2px solid var(--tinta); box-shadow: 2px 2px 0 var(--tinta); }
+.r-v-botao span { padding: 7px 11px; border-radius: 999px; color: var(--tinta); }
+.r-vistas[data-vista="hoje"] .r-v-botao [data-v="hoje"], .r-vistas[data-vista="projeto"] .r-v-botao [data-v="projeto"] { background: var(--sol); }
+.r-v-botao::after { content: ""; position: absolute; inset: -8px; }   /* área de toque maior (≥ 44 px) */

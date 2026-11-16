@@ -248,15 +248,17 @@ function ativarGalerias(raiz) {
   document.addEventListener("DOMContentLoaded", () => marcar(document));
 })();
 
-// Metas e recreio: botão "Ver como está hoje" / "Ver o projeto" numa foto com as duas vistas.
+// Metas e recreio: foto com duas vistas. Um interruptor pequeno no canto de cima ("Hoje | Projeto")
+// troca a foto; não tapa a imagem e mostra sempre qual está à vista (16/11).
 function vistas(caixa) {
   const botao = caixa.querySelector(".r-v-botao"), rot = caixa.querySelector(".r-v-rot");
+  if (rot) rot.hidden = true;
+  botao.innerHTML = '<span data-v="hoje">Hoje</span><span data-v="projeto">Projeto</span>';
   const pinta = () => {
     const hoje = caixa.dataset.vista === "hoje";
-    rot.textContent = hoje ? "Hoje" : "Simulação";
-    botao.textContent = hoje ? "Ver o projeto ›" : "‹ Ver como está hoje";
+    botao.setAttribute("aria-label", hoje ? "A ver: como está hoje. Tocar para ver o projeto" : "A ver: o projeto (simulação). Tocar para ver como está hoje");
     botao.setAttribute("aria-pressed", hoje);
   };
-  botao.addEventListener("click", () => { caixa.dataset.vista = caixa.dataset.vista === "hoje" ? "projeto" : "hoje"; pinta(); });
+  botao.addEventListener("click", e => { e.stopPropagation(); caixa.dataset.vista = caixa.dataset.vista === "hoje" ? "projeto" : "hoje"; pinta(); });
   pinta();
 }
