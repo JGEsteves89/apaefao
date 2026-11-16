@@ -2,14 +2,15 @@
 // "fim" = último dia da atividade. Depois desse dia fica esbatida (e sai da página inicial).
 // Na página inicial, data-limite="3" mostra só as próximas 3.
 // Sem "imagem", aparece o "emoji" num quadrado.
-// Atividades que já passaram com "imagens" (2 ou mais): galeria de fotos com setas por baixo do cartão.
+// Atividades que já passaram com "imagens" (2 ou mais): galeria de fotos com setas dentro do cartão, no lugar da imagem.
 
 function cartaoEvento(e, classe) {
+  const fotos = classe.includes("passou") && e.imagens && e.imagens.length > 1;
   const etiqueta = e.etiqueta ? ` <span class="etiqueta${e.confirmar ? " confirmar" : ""}">${escapar(e.etiqueta)}</span>` : "";
   return `
     <li class="evento${classe}">
-      <div class="evento-cartao">
-        ${e.imagem ? `<img src="${escapar(e.imagem)}" alt="${escapar(e.alt)}" loading="lazy">` : `<span class="evento-emoji" aria-hidden="true">${escapar(e.emoji || "⭐")}</span>`}
+      <div class="evento-cartao${fotos ? " com-fotos" : ""}">
+        ${fotos ? `<div class="evento-galeria">${galeriaHTML(e.imagens, e.alt)}</div>` : e.imagem ? `<img src="${escapar(e.imagem)}" alt="${escapar(e.alt)}" loading="lazy">` : `<span class="evento-emoji" aria-hidden="true">${escapar(e.emoji || "⭐")}</span>`}
         <div class="evento-texto">
           <span class="selo-proxima">⭐ Próxima atividade</span><br>
           <span class="quando">${escapar(e.quando)}${etiqueta}</span>
@@ -17,7 +18,6 @@ function cartaoEvento(e, classe) {
           <p>${escapar(e.texto)}</p>
         </div>
       </div>
-      ${classe.includes("passou") && e.imagens && e.imagens.length > 1 ? `<div class="evento-fotos">${galeriaHTML(e.imagens, e.alt)}</div>` : ""}
     </li>`;
 }
 

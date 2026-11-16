@@ -840,8 +840,12 @@ section[hidden] { display: none; }
 /* ===== Galeria de fotos (notícias e agenda): o mesmo componente das metas ===== */
 .galeria-foto { margin-top: 12px; border: 2px solid var(--tinta); border-radius: 12px; }
 .noticia .galeria-foto img { margin: 0; border-radius: 0; }
-.evento-fotos { margin: 10px 0 0; }
-.evento-fotos .galeria-foto { max-width: 520px; }
+.evento-galeria { flex: none; width: 260px; }
+.evento-galeria .galeria-foto { margin: 0; aspect-ratio: 4 / 3; border: 1px solid var(--linha); }
+.evento-galeria .m-img img { width: 100%; height: 100%; border: 0; border-radius: 0; }
+.evento.passou .evento-cartao.com-fotos { opacity: 1; }
+.evento.passou .com-fotos .evento-texto { opacity: .55; }
+@media (max-width: 640px) { .evento-cartao.com-fotos { flex-direction: column; } .evento-galeria { width: 100%; } }
 /* Fundo desfocado: a foto aparece inteira (contain) e a mesma foto, desfocada, preenche o resto. */
 .m-img .m-slide { overflow: hidden; background: var(--tinta); }
 .m-img .m-slide::before { content: ""; position: absolute; inset: -12%; background: var(--bg) center / cover no-repeat; filter: blur(20px) brightness(.8) saturate(1.15); }
