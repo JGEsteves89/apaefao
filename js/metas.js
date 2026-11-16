@@ -415,12 +415,11 @@ function cartaoFase(f) {
 
 // Metas a angariar agora: as metas normais "a angariar" e as fases do recreio abertas, por prioridade.
 function desenharMetas() {
-  const doPlano = new Set(PLANO && PLANO.fases ? PLANO.fases.flatMap(f => f.projetos.map(p => p.id)) : []);
+  // Cada meta tem o seu cartão (também as do recreio): os pais escolhem o baloiço OU a estrutura (16/11, Jose).
   const meus = minhas();
-  const normais = PUBLICAS.filter(m => m.estado === "a angariar" && !doPlano.has(m.id));
+  const normais = PUBLICAS.filter(m => m.estado === "a angariar");
   normais.forEach(m => { m.meu = meus[m.id] || 0; });
   const lista = normais.map(m => ({ m, prioridade: m.prioridade ?? 99 }))
-    .concat(fasesDoRecreio().filter(f => f.aberta).map(f => ({ f, prioridade: f.prioridade })))
     .sort((a, b) => a.prioridade - b.prioridade);
   const grelha = document.getElementById("m-ativas");
   grelha.innerHTML = "";
