@@ -1009,3 +1009,14 @@ header.topo .menu { order: 2; margin-left: auto; align-items: center; }
 /* Agenda: atividade passada com fotos fica esbatida como as outras; ao abrir a galeria, as fotos ficam nítidas */
 .evento.passou .evento-cartao.com-fotos:not(.aberto) { opacity: .55; }
 .evento.passou .evento-cartao.com-fotos:not(.aberto) .evento-texto { opacity: 1; }
+
+/* Menu opção A: 3 listas ("O que há", "Ajudar a escola", "A APAEF") */
+.menu-mais summary span { display: none; }
+.menu-mais summary .seta { font-style: normal; }
+@media (max-width: 959px) {
+  .menu-mais { border-top: 0; margin-top: 0; }
+  .menu-mais + .menu-mais { border-top: 1px dashed var(--linha); }
+  .menu-mais summary { color: var(--tinta); }
+  .menu-mais summary span { display: inline; width: 24px; font-size: 18px; }
+}
+@media (max-width: 959px) { .menu-mais summary { justify-content: flex-start; gap: 8px; } .menu-mais summary .seta { margin-left: auto; } }

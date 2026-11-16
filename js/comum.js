@@ -19,7 +19,9 @@ const espera = ms => new Promise(r => setTimeout(r, ms));
     if (nome(a.pathname) === pagina && !a.hash) { a.setAttribute("aria-current", "page"); const d = a.closest("details"); if (d && innerWidth < 960) d.open = true; }
   });
   // "Mais ▾" no computador: fecha ao clicar fora
-  document.addEventListener("click", e => { const d = menu.querySelector(".menu-mais"); if (d && d.open && !d.contains(e.target) && innerWidth >= 960) d.open = false; });
+  const listas = [...menu.querySelectorAll(".menu-mais")];
+  document.addEventListener("click", e => { if (innerWidth >= 960) listas.forEach(d => { if (d.open && !d.contains(e.target)) d.open = false; }); });
+  listas.forEach(d => d.addEventListener("toggle", () => { if (d.open && innerWidth >= 960) listas.forEach(o => { if (o !== d) o.open = false; }); }));
   if (!botao) return;
   const abrir = sim => {
     botao.setAttribute("aria-expanded", sim);
