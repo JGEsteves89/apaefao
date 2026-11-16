@@ -1020,3 +1020,11 @@ header.topo .menu { order: 2; margin-left: auto; align-items: center; }
   .menu-mais summary span { display: inline; width: 24px; font-size: 18px; }
 }
 @media (max-width: 959px) { .menu-mais summary { justify-content: flex-start; gap: 8px; } .menu-mais summary .seta { margin-left: auto; } }
+
+/* Metas "a seguir": cartões pequenos (16/11) */
+.metas-seguir { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 14px; }
+.m-mini { box-shadow: 2px 2px 0 var(--tinta); border-width: 2px; }
+.m-mini .m-img { aspect-ratio: 16 / 10; }
+.m-mini .m-corpo { padding: 10px 12px 12px; }
+.m-mini h3 { font-size: 16px; margin: 0 0 4px; }
+.m-mini .m-linha-estado { font-size: 13px; color: var(--suave); margin: 0; }

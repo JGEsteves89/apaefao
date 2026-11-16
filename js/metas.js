@@ -92,6 +92,16 @@ function custos(m) {
   return `<details class="m-custos"><summary>Ver custos</summary><ul>${linhas}</ul></details>`;
 }
 
+// Metas "a seguir": cartões pequenos, sem valores nem botão (16/11).
+function seguinte(m) {
+  const el = document.createElement("article");
+  el.className = "m-cartao m-mini estado-a-seguir";
+  el.id = "meta-" + m.id;
+  el.innerHTML = `${imagem(m)}<div class="m-corpo"><h3>${escapar(m.emoji)} ${escapar(m.titulo)}</h3>
+    <p class="m-linha-estado">🔒 Vem a seguir · ${escapar(m.nota || "à espera de orçamento")}</p></div>`;
+  return el;
+}
+
 // Metas garantidas e feitas: cartão com as fotos de como foi (galeria grande), título e o que se conseguiu.
 function feita(m) {
   const el = document.createElement("article");
@@ -449,6 +459,9 @@ function desenharMetas() {
   fila.forEach((m, i) => { if (!m.proxima && fila[i + 1]) m.proxima = fila[i + 1].id; });
 
   desenharMetas();
+  const seguir = publicas.filter(m => m.estado === "a seguir").sort(porPrio);
+  const sg = document.getElementById("m-seguir");
+  if (sg) { seguir.forEach(m => sg.appendChild(seguinte(m))); document.getElementById("m-seguir-sec").hidden = !seguir.length; galerias(sg); }
   const feitas = publicas.filter(PAGA);
   const el = document.getElementById("m-feitas-lista");
   feitas.forEach(m => el.appendChild(feita(m)));
