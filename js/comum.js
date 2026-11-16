@@ -33,15 +33,28 @@ const espera = ms => new Promise(r => setTimeout(r, ms));
 })();
 
 // Lê um ficheiro de data/. Se falhar, deixa uma mensagem simpática no sítio.
-// Todos os dados do site vêm da Google Sheet (Apps Script, ?acao=site). Um só pedido por página.
-// nome: agenda, noticias, documentos, links, orgaos, recreio. el: onde mostrar "A procurar…" e o erro.
+// Todos os dados do site vêm da Google Sheet (Apps Script, ?acao=site): um só pedido por página,
+// com agenda, noticias, documentos, links, orgaos, recreio, metas e apoiantes.
+// Para ser rápido: guarda a última resposta no telemóvel. Se tiver menos de 5 minutos, usa-a logo;
+// se for mais velha, espera pela Sheet (e só usa a guardada se a Sheet falhar). Atualiza sempre em fundo.
+const CHAVE_SITE = "apaef-site-v1", FRESCO_MS = 5 * 60 * 1000;
 let pedidoSite = null;
-function dadosSite() {
-  if (!pedidoSite) pedidoSite = fetch(ENDPOINT + "?acao=site", { signal: AbortSignal.timeout(20000) })
+function guardado() {
+  try { return JSON.parse(localStorage.getItem(CHAVE_SITE) || "null"); } catch (e) { return null; }
+}
+function pedirSite() {
+  return fetch(ENDPOINT + "?acao=site", { signal: AbortSignal.timeout(20000) })
     .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
-    .catch(e => { pedidoSite = null; throw e; });
+    .then(d => { try { localStorage.setItem(CHAVE_SITE, JSON.stringify({ t: Date.now(), d })); } catch (e) {} return d; });
+}
+function dadosSite() {
+  if (pedidoSite) return pedidoSite;
+  const g = guardado(), rede = pedirSite();
+  if (g && Date.now() - g.t < FRESCO_MS) { rede.catch(() => {}); pedidoSite = Promise.resolve(g.d); }
+  else pedidoSite = rede.catch(e => { pedidoSite = null; if (g) return g.d; throw e; });
   return pedidoSite;
 }
+if (ENDPOINT && document.querySelector("[data-precisa-dados]")) dadosSite();   // começa logo
 
 function semDados(el) {
   if (el) el.innerHTML = '<p class="vazio"><img class="mascote-mini" src="img/mascote/pensa.webp" alt="" width="70" height="89">Não foi possível carregar. Tenta daqui a pouco 🙂</p>';

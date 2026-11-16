@@ -12,6 +12,7 @@
 const VOTACAO_FECHA = new Date("2026-10-26T00:00:00Z");
 
 function doPost(e) {
+  limparCache();
   const dados = JSON.parse(e.postData.contents);
   if (dados.evento === "votacao") return guardarVoto(dados);
   if (dados.evento === "responsavel") return guardarResponsavel(dados);
@@ -201,7 +202,7 @@ function apoiantes() {
   const lista = Object.values(porNome).map(c => ({
     nome: c.nome, tipo: c.tipo, tamanho: tamanhoApoiante(c.valor), logo: c.logo, maps_url: c.maps_url, publicar: true,
   }));
-  cache.put("apoiantes", JSON.stringify(lista), 60);
+  cache.put("apoiantes", JSON.stringify(lista), 21600);
   return lista;
 }
 
@@ -406,7 +407,7 @@ function metas() {
     publicar: true,
   }));
   const resultado = calcularMetas(lista, linhasDe("movimentos"));
-  cache.put("metas", JSON.stringify(resultado), 60);
+  cache.put("metas", JSON.stringify(resultado), 21600);
   return resultado;
 }
 
@@ -518,7 +519,9 @@ function site() {
     orgaos: { orgaos: orgaos, representantes: ler("representantes").map(l => ({ turma: l.turma || "", nome: l.nome || "", publicar: l.publicar !== false })) },
     recreio: { areas: ler("recreio_areas"), fases: ler("recreio_fases"), zonas: ler("recreio_zonas") }
   };
-  cache.put("site", JSON.stringify(dados), 60);
+  dados.metas = metas();
+  dados.apoiantes = apoiantes();
+  cache.put("site", JSON.stringify(dados), 21600);
   return dados;
 }
 
@@ -829,3 +832,9 @@ function corrigirFases() {
   if (f) livro.deleteSheet(f);
   importarSite();
 }
+
+// Cache de 6 horas: limpa-se sempre que alguém edita a Sheet (onEdit) ou o site envia um formulário (doPost).
+function limparCache() {
+  CacheService.getScriptCache().removeAll(["site", "metas", "apoiantes"]);
+}
+function onEdit(e) { limparCache(); }

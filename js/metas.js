@@ -1,5 +1,5 @@
 // Metas: cada pessoa escolhe para que coisa vai a sua ajuda.
-// Dados: Google Sheet (folhas "metas" e "movimentos", lidas pelo Apps Script com ?acao=metas). Não há cópia no site.
+// Dados: Google Sheet (folhas "metas" e "movimentos", vêm no pedido ?acao=site). Não há cópia no site.
 // Valores: barra = entradas + passagens da meta; meta feita = o que custou (saídas). fundo_livre = dinheiro ainda sem destino.
 // Estados: "a angariar" (barra), "garantido" (barra cheia), "feito" (foto + fatura), "a seguir" (fechada).
 // MOSTRAR_EUROS (config.js): enquanto for false, a página mostra só percentagens, sem valores em €.
@@ -15,8 +15,7 @@ const dataCurta = d => new Date(d + "T12:00").toLocaleDateString("pt-PT", { day:
 // Só a Google Sheet (folhas "metas" e "movimentos"). Se falhar, a página mostra o aviso de erro.
 async function carregarMetas() {
   try {
-    const r = await fetch(ENDPOINT + "?acao=metas", { signal: AbortSignal.timeout(20000) });
-    const dados = await r.json();
+    const dados = (await dadosSite()).metas;
     const lista = Array.isArray(dados) ? dados : dados && dados.metas;
     return Array.isArray(lista) ? lista : null;
   } catch (e) { return null; }

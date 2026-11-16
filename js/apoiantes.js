@@ -45,12 +45,7 @@ function cartaoApoiante(a, i) {
 
 // Lista da Google Sheet (folha "apoiantes"). Se falhar, aviso de erro (não há cópia no site).
 async function carregarApoiantes(el) {
-  return carregarDados("apoiantes", el, async () => {
-    const r = await fetch(ENDPOINT + "?acao=apoiantes", { signal: AbortSignal.timeout(20000) });
-    const lista = await r.json();
-    if (!Array.isArray(lista)) throw new Error("apoiantes");
-    return lista;
-  });
+  return carregarDados("apoiantes", el);
 }
 
 // Página inicial: faixa lenta sem fim. Para com o rato em cima, ou com um toque.
