@@ -838,3 +838,45 @@ function limparCache() {
   CacheService.getScriptCache().removeAll(["site", "metas", "apoiantes"]);
 }
 function onEdit(e) { limparCache(); }
+
+// Limpeza de 16/11/2026: verifica e apaga folhas antigas. VERIFICAR=true só mostra o que faria.
+function verificarLimpeza() { limpezaAntiga(true); }
+function fazerLimpeza() { limpezaAntiga(false); }
+function limpezaAntiga(soVer) {
+  const livro = SpreadsheetApp.getActiveSpreadsheet(), log = [];
+  const chave = (n, o) => (String(n || "").trim() + "|" + String(o || "").trim()).toLowerCase();
+  // 1) donativos: só apaga se todas as linhas com nome/oferta já estão em apoiantes
+  const don = livro.getSheetByName("donativos");
+  let donOk = false;
+  if (don) {
+    const ap = abaApoiantes().getDataRange().getValues(); const cabA = ap.shift().map(c => String(c).trim().toLowerCase());
+    const iN = cabA.indexOf("nome"), iO = cabA.indexOf("oferta");
+    const existe = new Set(ap.map(l => chave(l[iN], l[iO])));
+    const nomes = new Set(ap.map(l => String(l[iN]).trim().toLowerCase()));
+    const dl = don.getDataRange().getValues(); const cabD = dl.shift().map(c => String(c).trim());
+    const dN = cabD.indexOf("nome"), dO = cabD.indexOf("oferta");
+    const reais = dl.filter(l => String(l[dN] || l[dO] || "").trim());
+    const falta = reais.filter(l => !existe.has(chave(l[dN], l[dO])) && !nomes.has(String(l[dN]).trim().toLowerCase()));
+    donOk = falta.every(l => !String(l[dN]).trim());   // só linhas sem nome (lixo) em falta
+    log.push("donativos: " + reais.length + " ofertas; em falta nos apoiantes: " + falta.length + (falta.length ? " -> " + falta.map(l => l[dN] + " (" + l[dO] + ")").join("; ") : ""));
+  }
+  // 2) folhas a apagar
+  const apagar = ["antigo_doacoes_metas", "votacao", "ideias", "responsaveis"].concat(donOk ? ["donativos"] : []);
+  apagar.forEach(n => { const f = livro.getSheetByName(n); if (!f) return;
+    const cheias = f.getDataRange().getValues().slice(1).filter(l => l.some(v => v !== "" && v !== false)).length;
+    log.push((soVer ? "apagaria " : "apaguei ") + n + " (" + cheias + " linhas com dados)");
+    if (!soVer) livro.deleteSheet(f); });
+  // 3) sugestoes: linha de teste
+  const sug = livro.getSheetByName("sugestoes");
+  if (sug) { const v = sug.getDataRange().getValues();
+    for (let i = v.length - 1; i >= 1; i--) if (/\(Teste\)/i.test(String(v[i].join(" ")))) { log.push((soVer ? "apagaria" : "apaguei") + " sugestão de teste: " + v[i][2]); if (!soVer) sug.deleteRow(i + 1); } }
+  // 4) movimentos: linhas vazias no fim
+  const mov = livro.getSheetByName("movimentos");
+  if (mov) { const v = mov.getDataRange().getValues(); let ult = 1;
+    v.forEach((l, i) => { if (i && l.some(x => x !== "" && x !== false)) ult = i + 1; });
+    const max = mov.getMaxRows(), vazias = max - Math.max(ult, 1) - 20;
+    log.push("movimentos: " + (ult - 1) + " linhas com dados; " + (soVer ? "apagaria " : "apaguei ") + Math.max(0, vazias) + " linhas vazias (ficam 20 livres)");
+    if (!soVer && vazias > 0) mov.deleteRows(ult + 21, vazias); }
+  if (!soVer) { limparCache(); arrumarSheet(); }
+  Logger.log(log.join("\n"));
+}
