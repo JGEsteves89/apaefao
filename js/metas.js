@@ -135,7 +135,13 @@ function cartao(m, lista) {
   } else if (m.nota) {
     fundo = `<p class="m-feito">${escapar(m.nota)}</p>`;
   }
-  el.innerHTML = `${imagem(m)}${selo(m)}
+  // Metas do recreio: a foto de hoje e a simulação (botão "Ver como está hoje"), como nas fases (folha recreio_fases).
+  const fase = PLANO && PLANO.fases ? PLANO.fases.find(f => f.hoje && f.projeto && (f.projetos || []).some(p => p.id === m.id)) : null;
+  const foto = fase ? `<div class="m-img r-vistas" data-vista="projeto">
+      <img class="r-v-projeto" src="${escapar(fase.projeto)}" alt="Simulação: ${escapar(m.titulo)}" loading="lazy">
+      <img class="r-v-hoje" src="${escapar(fase.hoje)}" alt="Hoje: ${escapar(m.titulo)}" loading="lazy">
+      <span class="r-v-rot"></span><button class="r-v-botao" type="button" aria-pressed="false"></button></div>` : imagem(m);
+  el.innerHTML = `${foto}${selo(m)}
     <div class="m-corpo">
       <h3>${escapar(m.emoji)} ${escapar(m.titulo)}</h3>
       <p class="m-frase">${escapar(m.frase)}</p>
@@ -143,6 +149,7 @@ function cartao(m, lista) {
       ${custos(m)}
       ${fundo}
     </div>`;
+  if (fase) vistas(el.querySelector(".r-vistas"));
   return el;
 }
 
