@@ -3,18 +3,58 @@
   "titulo": "Visitámos a cantina",
   "data": "2026-10-23",
   "texto": "Membros da APAEF reuniram com os professores e visitaram a cantina da escola. Provámos a comida e gostámos: está aprovada! Vamos continuar a acompanhar as refeições, com a escola e com a Câmara.",
-  "imagem": "",
-  "alt": ""
+  "imagem": "img/cantina-prato.jpg",
+  "alt": "Prato do almoço servido na cantina da escola",
+  "imagens": [
+   {
+    "src": "img/cantina-prato.jpg",
+    "legenda": "O prato do dia"
+   },
+   {
+    "src": "img/cantina-arroz.jpg",
+    "legenda": "Arroz acabado de fazer"
+   },
+   {
+    "src": "img/cantina-sopa.jpg",
+    "legenda": "A sopa"
+   }
+  ]
  },
  {
   "id": "halloween-2026",
   "titulo": "Doçura ou Travessura: foi um sucesso! 🎃",
   "data": "2026-10-31",
   "texto": "Na noite de 31 de outubro, cerca de 150 pais e crianças encheram as ruas de Fão de fantasmas, bruxinhas e muitas gargalhadas. Os grupos saíram da Alameda do Senhor Bom Jesus, cada um com um responsável, e no fim voltámos todos a juntar-nos. Com os mealheiros, as famílias ajudaram também a APAEF. Obrigado a todas as famílias, aos responsáveis dos grupos e a quem nos abriu a porta! Para o ano há mais.",
-  "imagem": "img/halloween.jpg",
-  "alt": "Abóboras de Halloween",
+  "imagem": "img/halloween-rua.jpg",
+  "alt": "Rua de Fão cheia de pais e crianças mascarados na noite de Halloween",
   "link": "https://www.facebook.com/share/r/1A3W3BS5Ty/",
-  "link_texto": "Ver o vídeo da noite"
+  "link_texto": "Ver o vídeo da noite",
+  "imagens": [
+   {
+    "src": "img/halloween-rua.jpg",
+    "legenda": "Uma das ruas de Fão cheia de bruxas e fantasmas"
+   },
+   {
+    "src": "img/halloween-largo.jpg",
+    "legenda": "Encontro no largo"
+   },
+   {
+    "src": "img/halloween-grupos.jpg",
+    "legenda": "Os grupos a caminho da próxima porta"
+   },
+   {
+    "src": "img/halloween-doces.jpg",
+    "legenda": "Mealheiro de abóbora cheio de doces"
+   },
+   {
+    "src": "img/halloween-noite.jpg",
+    "legenda": "A noite de 31 de outubro"
+   },
+   {
+    "src": "img/halloween-ruas-de-fao.jpg",
+    "legenda": "A caminhar pelas ruas de Fão"
+   }
+  ]
  },
  {
   "id": "refeicoes-greve-2026",
