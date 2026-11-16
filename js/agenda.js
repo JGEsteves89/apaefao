@@ -2,6 +2,7 @@
 // "fim" = último dia da atividade. Depois desse dia fica esbatida (e sai da página inicial).
 // Na página inicial, data-limite="3" mostra só as próximas 3.
 // Sem "imagem", aparece o "emoji" num quadrado.
+// Atividades que já passaram com "imagens" (2 ou mais): galeria de fotos com setas por baixo do cartão.
 
 function cartaoEvento(e, classe) {
   const etiqueta = e.etiqueta ? ` <span class="etiqueta${e.confirmar ? " confirmar" : ""}">${escapar(e.etiqueta)}</span>` : "";
@@ -16,6 +17,7 @@ function cartaoEvento(e, classe) {
           <p>${escapar(e.texto)}</p>
         </div>
       </div>
+      ${classe.includes("passou") && e.imagens && e.imagens.length > 1 ? `<div class="evento-fotos">${galeriaHTML(e.imagens, e.alt)}</div>` : ""}
     </li>`;
 }
 
@@ -34,4 +36,5 @@ document.querySelectorAll("[data-agenda]").forEach(async el => {
     else if (!destaque) { classe = " proxima"; destaque = true; }
     return cartaoEvento(e, classe);
   }).join("");
+  ativarGalerias(el);
 });

@@ -17,9 +17,27 @@
   "confirmar": false,
   "titulo": "Magusto",
   "texto": "Chegou o S. Martinho! As crianças fazem os saquinhos na sala. A APAEF ajuda com o carvão e a assadora.",
-  "imagem": "img/magusto-castanhas.jpg",
+  "imagem": "img/magusto-escola-castanhas.jpg",
   "alt": "Mãos a descascar castanhas assadas",
-  "emoji": ""
+  "emoji": "",
+  "imagens": [
+   {
+    "src": "img/magusto-escola-castanhas.jpg",
+    "legenda": "As castanhas"
+   },
+   {
+    "src": "img/magusto-escola-castanhas-caixas.jpg",
+    "legenda": "Prontas a distribuir"
+   },
+   {
+    "src": "img/magusto-escola-assadores.jpg",
+    "legenda": "Os assadores"
+   },
+   {
+    "src": "img/magusto-escola-concertinas.jpg",
+    "legenda": "As concertinas"
+   }
+  ]
  },
  {
   "fim": "2026-11-14",
@@ -28,9 +46,23 @@
   "confirmar": false,
   "titulo": "Magusto do Mercado de Esposende",
   "texto": "Castanhas assadas oferecidas, concertinas com o Grupo Zés P'reiras de Mar e música com o DJ WILD G. A APAEF vai ter uma banca com bolos, doces e cafés: cada compra ajuda a nossa escola!",
-  "imagem": "img/magusto-mercado.jpg",
-  "alt": "Cartaz do Magusto no Mercado de Esposende, 14 de novembro às 15h",
-  "emoji": "🌰"
+  "imagem": "img/magusto-mercado-banca.jpg",
+  "alt": "A banca da APAEF no Magusto do Mercado",
+  "emoji": "🌰",
+  "imagens": [
+   {
+    "src": "img/magusto-mercado-banca.jpg",
+    "legenda": "A nossa banca"
+   },
+   {
+    "src": "img/magusto-mercado-2026.jpg",
+    "legenda": "O Mercado Municipal de Esposende"
+   },
+   {
+    "src": "img/rollup-apaef.jpg",
+    "legenda": "O roll-up novo da APAEF"
+   }
+  ]
  },
  {
   "fim": "2026-11-30",
@@ -50,8 +82,8 @@
   "confirmar": false,
   "titulo": "Feirinha de Outono",
   "texto": "Doces caseiros, compotas, legumes e fruta da época, roupa e brinquedos. Uma manhã de partilha em que cada compra ajuda a nossa escola.",
-  "imagem": "img/feirinha.jpg",
-  "alt": "Caixas com legumes e abóboras da Feirinha de Outono",
+  "imagem": "img/feirinha-2026-cartaz.jpg",
+  "alt": "Cartaz do Mercado Escolar, Feirinha de Outono, 27 de novembro, 10h-15h",
   "emoji": ""
  },
  {

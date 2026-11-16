@@ -48,14 +48,46 @@
   "imagem": "img/magusto-escola-castanhas.jpg",
   "alt": "Castanhas assadas no Magusto da escola",
   "link": "https://www.instagram.com/apaefao",
-  "link_texto": "Ver no Instagram"
+  "link_texto": "Ver no Instagram",
+  "imagens": [
+   {
+    "src": "img/magusto-escola-castanhas.jpg",
+    "legenda": "As castanhas"
+   },
+   {
+    "src": "img/magusto-escola-castanhas-caixas.jpg",
+    "legenda": "Prontas a distribuir"
+   },
+   {
+    "src": "img/magusto-escola-assadores.jpg",
+    "legenda": "Os assadores"
+   },
+   {
+    "src": "img/magusto-escola-concertinas.jpg",
+    "legenda": "As concertinas"
+   }
+  ]
  },
  {
   "id": "magusto-mercado-feito-2026",
   "titulo": "Magusto do Mercado: vendemos os bolos todos!",
   "data": "2026-11-15",
   "texto": "No sábado estivemos no Magusto do Mercado Municipal de Esposende e foi uma tarde cheia de gente e de alegria. Houve concertinas, música e uma oficina de arte com cascas de castanha para os mais pequenos. A chuva chegou ao fim da tarde, mas mesmo assim vendemos os bolos todos! Obrigado às famílias que fizeram bolos, à Casa dos Travesseiros e à Cavaquinha, que ofereceram bolos, a quem ajudou na banca, ao Tiago e aos amigos das concertinas e ao DJ WILD G, que animaram a festa, e aos lojistas do Mercado e à ACICE pelo convite. Tudo o que conseguimos ajuda a APAEF e o projeto do novo recreio.",
-  "imagem": "img/magusto-mercado-2026.jpg",
-  "alt": "Entrada do Mercado Municipal de Esposende no dia do Magusto"
+  "imagem": "img/magusto-mercado-banca.jpg",
+  "alt": "A banca da APAEF no Magusto do Mercado, com bolos, café e marmelada",
+  "imagens": [
+   {
+    "src": "img/magusto-mercado-banca.jpg",
+    "legenda": "A nossa banca"
+   },
+   {
+    "src": "img/magusto-mercado-2026.jpg",
+    "legenda": "O Mercado Municipal de Esposende"
+   },
+   {
+    "src": "img/rollup-apaef.jpg",
+    "legenda": "O roll-up novo da APAEF"
+   }
+  ]
  }
 ]

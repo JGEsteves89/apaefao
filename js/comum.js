@@ -178,3 +178,29 @@ function confetti() {
     });
   });
 })();
+
+// Galeria de fotos com setas e pontos (notícias e agenda). A 1.ª imagem é a principal.
+// imgs: lista de "caminho" ou {src, legenda}.
+function galeriaHTML(imgs, alt) {
+  const lista = (imgs || []).filter(Boolean).map(i => typeof i === "string" ? { src: i } : i);
+  if (!lista.length) return "";
+  const slide = (i, n) => `<figure class="g-slide"><img src="${escapar(i.src)}" alt="${escapar(i.legenda || alt || "")}" loading="${n ? "lazy" : "eager"}">${i.legenda ? `<figcaption>${escapar(i.legenda)}</figcaption>` : ""}</figure>`;
+  if (lista.length === 1) return `<div class="galeria uma">${slide(lista[0], 0)}</div>`;
+  const pontos = lista.map((_, n) => `<button type="button" class="${n ? "" : "ativo"}" aria-label="Foto ${n + 1} de ${lista.length}"></button>`).join("");
+  return `<div class="galeria"><div class="g-pista">${lista.map(slide).join("")}</div>
+    <button type="button" class="g-seta ant" aria-label="Foto anterior">‹</button><button type="button" class="g-seta seg" aria-label="Foto seguinte">›</button>
+    <div class="g-pontos">${pontos}</div></div>`;
+}
+
+function ativarGalerias(raiz) {
+  (raiz || document).querySelectorAll(".galeria:not(.uma)").forEach(g => {
+    if (g.dataset.ativa) return; g.dataset.ativa = "1";
+    const pista = g.querySelector(".g-pista"), pontos = [...g.querySelectorAll(".g-pontos button")];
+    const atual = () => Math.round(pista.scrollLeft / pista.clientWidth);
+    const ir = n => pista.scrollTo({ left: n * pista.clientWidth, behavior: MOVIMENTO ? "smooth" : "auto" });
+    pista.addEventListener("scroll", () => pontos.forEach((b, n) => b.classList.toggle("ativo", n === atual())), { passive: true });
+    pontos.forEach((b, n) => b.addEventListener("click", () => ir(n)));
+    g.querySelector(".ant").addEventListener("click", () => ir((atual() - 1 + pontos.length) % pontos.length));
+    g.querySelector(".seg").addEventListener("click", () => ir((atual() + 1) % pontos.length));
+  });
+}
