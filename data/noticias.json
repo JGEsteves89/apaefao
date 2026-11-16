@@ -33,14 +33,6 @@
   "alt": "Vouchers de cinema da APAEF para o Auditório Municipal de Esposende"
  },
  {
-  "id": "magusto-mercado-2026",
-  "titulo": "Este sábado, 14 de novembro: estamos no Magusto do Mercado de Esposende! 🌰",
-  "data": "2026-11-13",
-  "texto": "Este sábado, a partir das 15h, a APAEF vai estar no Magusto do Mercado Municipal de Esposende, a animar a tarde e a vender bolinhos caseiros. A festa é dos lojistas do Mercado, com o apoio da ACICE: há castanhas assadas oferecidas, concertinas com o Grupo Zés P'reiras de Mar e música com o DJ WILD G. Na nossa banca há bolos feitos pelas famílias e por lojas amigas, café e marmelada caseira. As previsões dão uma tarde sem chuva. Apareçam, tragam a família e venham passar um bocadinho connosco: cada compra ajuda a nossa escola! 💛",
-  "imagem": "img/magusto-mercado.jpg",
-  "alt": "Cartaz do Magusto no Mercado de Esposende, 14 de novembro às 15h"
- },
- {
   "id": "magusto-escola-2026",
   "titulo": "Magusto na escola: castanhas, concertinas e muita alegria! 🌰",
   "data": "2026-11-12",
@@ -87,6 +79,10 @@
    {
     "src": "img/rollup-apaef.jpg",
     "legenda": "O roll-up novo da APAEF"
+   },
+   {
+    "src": "img/magusto-mercado.jpg",
+    "legenda": "O cartaz da festa"
    }
   ]
  }
