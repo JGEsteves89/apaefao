@@ -1006,3 +1006,6 @@ header.topo .menu { order: 2; margin-left: auto; align-items: center; }
 .rodape-titulo { margin: 0 0 4px; font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: .5px; color: var(--suave); }
 .rodape-redes { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
 @media (max-width: 560px) { .rodape-menu { grid-template-columns: 1fr 1fr; } }
+/* Agenda: atividade passada com fotos fica esbatida como as outras; ao abrir a galeria, as fotos ficam nítidas */
+.evento.passou .evento-cartao.com-fotos:not(.aberto) { opacity: .55; }
+.evento.passou .evento-cartao.com-fotos:not(.aberto) .evento-texto { opacity: 1; }
