@@ -6,26 +6,26 @@
 function carrossel(el, areas) {
   if (!areas || !areas.length) { el.hidden = true; return; }
   el.innerHTML = `
-    <div class="r-ad" style="--pos: 50%">
-      <img class="r-ad-projeto" alt="">
-      <img class="r-ad-hoje" alt="">
-      <span class="r-ad-rot hoje">Hoje</span><span class="r-ad-rot projeto">O projeto</span><span class="r-ad-rot sim">Simulação</span>
-      <span class="r-ad-pega" aria-hidden="true"></span>
+    <div class="r-comp" style="--pos: 50%">
+      <img class="r-comp-projeto" alt="">
+      <img class="r-comp-hoje" alt="">
+      <span class="r-comp-rot hoje">Hoje</span><span class="r-comp-rot projeto">O projeto</span><span class="r-comp-rot sim">Simulação</span>
+      <span class="r-comp-pega" aria-hidden="true"></span>
       <input type="range" min="0" max="100" value="50">
       <button class="r-car-seta ant" type="button" aria-label="Zona anterior">‹</button>
       <button class="r-car-seta seg" type="button" aria-label="Zona seguinte">›</button>
     </div>
     <div class="r-car-legenda" aria-live="polite"><b></b><span></span></div>
     <div class="r-car-pontos">${areas.map((a, i) => `<button type="button" aria-label="${escapar(a.titulo)}">${i + 1}</button>`).join("")}</div>`;
-  const ad = el.querySelector(".r-ad"), r = ad.querySelector("input"), pontos = [...el.querySelectorAll(".r-car-pontos button")];
+  const ad = el.querySelector(".r-comp"), r = ad.querySelector("input"), pontos = [...el.querySelectorAll(".r-car-pontos button")];
   let atual = 0;
   const mostra = i => {
     atual = (i + areas.length) % areas.length;
     const a = areas[atual];
-    ad.querySelector(".r-ad-projeto").src = a.projeto;
-    ad.querySelector(".r-ad-projeto").alt = a.titulo + ": simulação do projeto";
-    ad.querySelector(".r-ad-hoje").src = a.hoje;
-    ad.querySelector(".r-ad-hoje").alt = a.titulo + " hoje";
+    ad.querySelector(".r-comp-projeto").src = a.projeto;
+    ad.querySelector(".r-comp-projeto").alt = a.titulo + ": simulação do projeto";
+    ad.querySelector(".r-comp-hoje").src = a.hoje;
+    ad.querySelector(".r-comp-hoje").alt = a.titulo + " hoje";
     r.value = 50; ad.style.setProperty("--pos", "50%");
     r.setAttribute("aria-label", a.titulo + ": arrasta para comparar hoje e o projeto");
     el.querySelector(".r-car-legenda b").textContent = a.titulo;

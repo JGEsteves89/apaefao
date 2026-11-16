@@ -823,20 +823,20 @@ section[hidden] { display: none; }
 .r-heroi h1 { margin: 0 0 6px; }
 .r-heroi-sub { font-size: 19px; color: var(--suave); margin: 0 0 16px; }
 .r-apoiar { display: inline-block; text-decoration: none; }
-.r-ad { position: relative; margin: 0; aspect-ratio: 4 / 3; border: 2.5px solid var(--tinta); border-radius: var(--raio); box-shadow: 4px 4px 0 var(--tinta); overflow: hidden; background: #ddd; }
-.r-ad img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
-.r-ad .r-ad-hoje { clip-path: inset(0 calc(100% - var(--pos)) 0 0); }
-.r-ad-rot { position: absolute; bottom: 10px; background: rgba(31,26,20,.8); color: #fff; font-weight: 800; font-size: 14px; padding: 4px 10px; border-radius: 8px; pointer-events: none; }
-.r-ad-rot.hoje { left: 10px; } .r-ad-rot.projeto { right: 10px; }
-.r-ad-rot.sim { top: 10px; bottom: auto; right: 10px; background: var(--sol); color: var(--tinta); font-size: 12px; }
-.r-ad-pega { position: absolute; top: 0; bottom: 0; left: var(--pos); width: 4px; margin-left: -2px; background: #fff; pointer-events: none; }
-.r-ad-pega::after { content: "‹ ›"; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 48px; height: 48px; border-radius: 50%;
+.r-comp { position: relative; margin: 0; aspect-ratio: 4 / 3; border: 2.5px solid var(--tinta); border-radius: var(--raio); box-shadow: 4px 4px 0 var(--tinta); overflow: hidden; background: #ddd; }
+.r-comp img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+.r-comp .r-comp-hoje { clip-path: inset(0 calc(100% - var(--pos)) 0 0); }
+.r-comp-rot { position: absolute; bottom: 10px; background: rgba(31,26,20,.8); color: #fff; font-weight: 800; font-size: 14px; padding: 4px 10px; border-radius: 8px; pointer-events: none; }
+.r-comp-rot.hoje { left: 10px; } .r-comp-rot.projeto { right: 10px; }
+.r-comp-rot.sim { top: 10px; bottom: auto; right: 10px; background: var(--sol); color: var(--tinta); font-size: 12px; }
+.r-comp-pega { position: absolute; top: 0; bottom: 0; left: var(--pos); width: 4px; margin-left: -2px; background: #fff; pointer-events: none; }
+.r-comp-pega::after { content: "‹ ›"; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 48px; height: 48px; border-radius: 50%;
   background: var(--sol); border: 2.5px solid var(--tinta); display: grid; place-items: center; font: 800 18px/1 "Nunito", sans-serif; color: var(--tinta); }
-.r-ad-pega { font-size: 0; }
-.r-ad input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: ew-resize; -webkit-appearance: none; appearance: none; background: transparent; }
-.r-ad input::-webkit-slider-thumb { -webkit-appearance: none; width: 48px; height: 100vh; }
-.r-ad input::-moz-range-thumb { width: 48px; height: 100vh; border: 0; }
-.r-ad:focus-within { outline: 4px solid var(--sol-escuro); outline-offset: 3px; }
+.r-comp-pega { font-size: 0; }
+.r-comp input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: ew-resize; -webkit-appearance: none; appearance: none; background: transparent; }
+.r-comp input::-webkit-slider-thumb { -webkit-appearance: none; width: 48px; height: 100vh; }
+.r-comp input::-moz-range-thumb { width: 48px; height: 100vh; border: 0; }
+.r-comp:focus-within { outline: 4px solid var(--sol-escuro); outline-offset: 3px; }
 .esqueleto { display: block; height: 18px; margin: 0 0 8px; border-radius: 8px; background: linear-gradient(90deg, #ece5d6 30%, #f6f1e6 50%, #ece5d6 70%); background-size: 300% 100%; animation: esq 1.4s ease infinite; }
 .esqueleto.cartao { height: 380px; border-radius: var(--raio); }
 @keyframes esq { from { background-position: 100% 0; } to { background-position: 0 0; } }
