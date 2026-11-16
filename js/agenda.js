@@ -2,7 +2,7 @@
 // "fim" = último dia da atividade. Depois desse dia fica esbatida (e sai da página inicial).
 // Na página inicial, data-limite="3" mostra só as próximas 3.
 // Sem "imagem", aparece o "emoji" num quadrado.
-// Atividades que já passaram com "imagens" (2 ou mais): galeria de fotos com setas dentro do cartão, no lugar da imagem.
+// Atividades que já passaram com "imagens" (2 ou mais): foto pequena; ao clicar, abre a galeria de fotos com setas.
 
 function cartaoEvento(e, classe) {
   const fotos = classe.includes("passou") && e.imagens && e.imagens.length > 1;
@@ -10,7 +10,8 @@ function cartaoEvento(e, classe) {
   return `
     <li class="evento${classe}">
       <div class="evento-cartao${fotos ? " com-fotos" : ""}">
-        ${fotos ? `<div class="evento-galeria">${galeriaHTML(e.imagens, e.alt)}</div>` : e.imagem ? `<img src="${escapar(e.imagem)}" alt="${escapar(e.alt)}" loading="lazy">` : `<span class="evento-emoji" aria-hidden="true">${escapar(e.emoji || "⭐")}</span>`}
+        ${fotos ? `<button type="button" class="evento-mini" aria-label="Ver as ${e.imagens.length} fotos"><img src="${escapar(e.imagens[0].src || e.imagens[0])}" alt="${escapar(e.alt)}" loading="lazy"><span class="mais">${e.imagens.length} fotos</span></button>
+        <div class="evento-galeria">${galeriaHTML(e.imagens, e.alt)}</div>` : e.imagem ? `<img src="${escapar(e.imagem)}" alt="${escapar(e.alt)}" loading="lazy">` : `<span class="evento-emoji" aria-hidden="true">${escapar(e.emoji || "⭐")}</span>`}
         <div class="evento-texto">
           <span class="selo-proxima">⭐ Próxima atividade</span><br>
           <span class="quando">${escapar(e.quando)}${etiqueta}</span>
@@ -36,5 +37,8 @@ document.querySelectorAll("[data-agenda]").forEach(async el => {
     else if (!destaque) { classe = " proxima"; destaque = true; }
     return cartaoEvento(e, classe);
   }).join("");
+  el.querySelectorAll(".evento-mini").forEach(b => b.addEventListener("click", () => {
+    b.closest(".evento-cartao").classList.add("aberto");
+  }));
   ativarGalerias(el);
 });

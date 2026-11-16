@@ -3,9 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Metas — APAEF Fão</title>
-  <meta name="description" content="Escolhe para que coisa vai a tua ajuda: presentes de Natal, castanhas, baloiços para o recreio… Cada euro tem destino.">
-  <meta name="robots" content="noindex">
+  <title>O novo recreio e as metas — APAEF Fão</title>
+  <meta name="description" content="O novo recreio da Escola de Fão, fase a fase. Apadrinha uma peça ou ajuda uma meta: cada euro tem destino.">
   <link rel="canonical" href="https://apaefao.pt/metas.html">
   <meta name="theme-color" content="#ebce58">
   <meta property="og:type" content="website">
@@ -28,49 +27,59 @@
   <header class="topo">
     <div class="wrap">
       <a class="marca" href="./"><img src="img/logo.png" alt="Logótipo da APAEF" width="52" height="52"><span>APAEF</span></a>
+      <a class="botao-ajudar" href="metas.html"><span aria-hidden="true">💛</span> Ajudar</a>
       <button class="menu-botao" type="button" aria-expanded="false" aria-controls="menu"><span class="abrir">☰ Menu</span><span class="fechar">✕ Fechar</span></button>
       <nav class="menu" id="menu" aria-label="Menu principal">
-        <a href="agenda.html"><span aria-hidden="true">📅</span>Agenda</a>
-        <a href="documentos.html"><span aria-hidden="true">📄</span>Documentos</a>
-        <a href="socios.html"><span aria-hidden="true">🤝</span>Sócios</a>
-        <a href="quem-somos.html"><span aria-hidden="true">🌻</span>Quem somos</a>
-        <a href="noticias.html"><span aria-hidden="true">📰</span>Notícias</a>
-        <a href="sugestoes.html"><span aria-hidden="true">💬</span>Sugestões</a>
-        <a href="links.html"><span aria-hidden="true">🔗</span>Links</a>
-        <a href="apoiantes.html"><span aria-hidden="true">💛</span>Apoiantes</a>
+        <div class="menu-grupo"><p class="menu-titulo">Principal</p>
+          <a href="./"><span aria-hidden="true">🏠</span><b class="m-longo">Início</b><b class="m-curto">Início</b></a>
+          <a class="m-topo" href="agenda.html"><span aria-hidden="true">📅</span><b class="m-longo">Agenda</b><b class="m-curto">Agenda</b></a>
+          <a class="m-topo" href="noticias.html"><span aria-hidden="true">📰</span><b class="m-longo">Notícias</b><b class="m-curto">Notícias</b></a>
+          <a class="m-topo" href="recreio.html"><span aria-hidden="true">🛝</span><b class="m-longo">O novo recreio</b><b class="m-curto">O novo recreio</b></a>
+          <a href="metas.html"><span aria-hidden="true">🎯</span><b class="m-longo">Metas</b><b class="m-curto">Metas</b></a>
+          <a class="m-topo" href="socios.html"><span aria-hidden="true">🤝</span><b class="m-longo">Ser sócio</b><b class="m-curto">Sócios</b></a>
+        </div>
+        <div class="menu-grupo"><p class="menu-titulo">A APAEF</p>
+          <a class="m-topo" href="quem-somos.html"><span aria-hidden="true">🌻</span><b class="m-longo">Quem somos</b><b class="m-curto">Quem somos</b></a>
+          <a href="documentos.html"><span aria-hidden="true">📄</span><b class="m-longo">Documentos</b><b class="m-curto">Documentos</b></a>
+          <a href="apoiantes.html"><span aria-hidden="true">💛</span><b class="m-longo">Apoiantes</b><b class="m-curto">Apoiantes</b></a>
+        </div>
+        <div class="menu-grupo"><p class="menu-titulo">Fala connosco</p>
+          <a href="sugestoes.html"><span aria-hidden="true">💬</span><b class="m-longo">Sugestões</b><b class="m-curto">Sugestões</b></a>
+          <a href="ajudar.html"><span aria-hidden="true">🎁</span><b class="m-longo">Quero oferecer algo</b><b class="m-curto">Quero oferecer algo</b></a>
+          <a href="links.html"><span aria-hidden="true">🔗</span><b class="m-longo">Links úteis</b><b class="m-curto">Links úteis</b></a>
+        </div>
       </nav>
     </div>
   </header>
 
   <main class="wrap pagina metas-pagina">
     <div class="cabeca-lumi">
+      <button class="mascote-zona mascote-lado" type="button" data-fala="Cada moedinha conta! 🐷" aria-label="Toca na Lumi"><img class="mascote" src="img/mascote/mealheiro.webp" alt="A Lumi, a mascote da APAEF, a pôr uma moeda num mealheiro" width="420" height="515"></button>
       <h1 class="titulo-pagina">As nossas metas 🎯</h1>
-      <p class="metas-resumo">Já cumprimos <b class="contador" id="m-feitas">0</b> metas. Neste momento estamos a angariar para <b class="contador" id="m-agora">0</b>.</p>
-      <p class="metas-resumo" id="m-fundo" hidden></p>
-      <p class="nota">Escolhe <b>para que coisa</b> vai a tua ajuda. Quando a barra enche, fica garantido. Depois mostramos as fotos de como foi: cada euro tem destino.</p>
+      <p class="nota">Escolhe <b>para que coisa</b> vai a tua ajuda. Quando a barra enche, fica garantido. Depois mostramos as fotos: cada euro tem destino.</p>
     </div>
 
-
-    <section aria-labelledby="h-ativas">
-      <h2 id="h-ativas" class="metas-h2">A angariar agora</h2>
-      <div class="metas-grelha" id="m-ativas"></div>
-    </section>
-
-    <section aria-labelledby="h-caminho" class="metas-caminho-sec">
-      <h2 id="h-caminho" class="metas-h2">O plano do recreio, passo a passo</h2>
-      <p class="metas-sub">O que vamos fazer no recreio, por ordem. Cada passo acende quando fica pago. Toca num passo para ver os detalhes.</p>
-      <ol class="metas-caminho" id="m-caminho"></ol>
-    </section>
-
-    <section aria-labelledby="h-seguir">
-      <h2 id="h-seguir" class="metas-h2">A seguir 🔒</h2>
-      <p class="metas-sub">Abrem quando uma meta de cima ficar garantida.</p>
-      <div class="metas-linhas" id="m-seguir"></div>
+    <section aria-labelledby="h-lista" id="m-lista">
+      <h2 id="h-lista" class="metas-h2">A angariar agora</h2>
+      <div class="metas-grelha" id="m-ativas"><div class="esqueleto cartao"></div><div class="esqueleto cartao"></div><div class="esqueleto cartao"></div></div>
     </section>
 
     <section aria-labelledby="h-feitas">
       <h2 id="h-feitas" class="metas-h2">Garantidas e feitas</h2>
+      <p class="metas-sub">O teu dinheiro já fez isto. Obrigado! 💛</p>
       <div class="metas-feitas" id="m-feitas-lista"></div>
+    </section>
+
+    <a class="r-cartao-recreio" href="recreio.html">
+      <img src="img/metas/recreio/projeto-recreio.jpg" alt="Simulação do novo recreio da pré, com chão colorido e bancos em forma de lápis" loading="lazy">
+      <span class="r-v-rot">Simulação</span>
+      <span class="r-cr-txt"><b>🌻 O novo recreio da Escola de Fão</b>Vê o que queremos mudar em cada parte da escola, hoje e depois.<span class="botao">Ver o projeto ›</span></span>
+    </a>
+
+    <section class="r-empresas" id="r-empresas" aria-labelledby="h-empresas">
+      <h2 id="h-empresas">Queres ajudar?</h2>
+      <p>Há várias formas: dinheiro, tempo, materiais ou serviços. Diz-nos como queres ajudar.</p>
+      <a class="botao botao-escuro" href="ajudar.html">Quero ajudar ›</a>
     </section>
 
     <details class="metas-regras">
@@ -82,9 +91,11 @@
         <li><b>Se uma meta não encher até à data</b>, o dinheiro vai para a meta mais parecida, e escrevemos aqui qual foi.</li>
         <li><b>Quando ajudas, vês logo a tua parte na barra.</b> Só tu a vês, neste telemóvel ou computador.</li>
         <li><b>Quando a meta é feita</b>, mostramos as fotos de como foi, no máximo 30 dias depois.</li>
+        <li><b>Pedes recibo?</b> Enviamos por email o documento para as Finanças.</li>
       </ul>
     </details>
   </main>
+
 
   <dialog class="metas-dialogo" id="m-dialogo" aria-labelledby="m-d-titulo">
     <form method="dialog" class="m-d-fechar"><button aria-label="Fechar">✕</button></form>
@@ -104,6 +115,32 @@
       <input type="text" id="m-contacto" autocomplete="email" maxlength="80" placeholder="Só a APAEF vê">
     </label>
     <label class="m-check"><input type="checkbox" id="m-publico"> Podem agradecer-me publicamente (site e redes)</label>
+    <label class="m-check"><input type="checkbox" id="m-recibo"> Quero recibo para as Finanças</label>
+    <div class="m-extra" id="m-recibo-campos" hidden>
+      <label class="m-campo">NIF
+        <input type="text" id="m-nif" inputmode="numeric" maxlength="9" autocomplete="off" placeholder="9 algarismos">
+      </label>
+      <label class="m-campo">Nome / empresa (como vai no recibo)
+        <input type="text" id="m-r-nome" autocomplete="organization" maxlength="120">
+      </label>
+      <label class="m-campo">Email (enviamos o recibo para aqui)
+        <input type="email" id="m-email" autocomplete="email" maxlength="120">
+      </label>
+      <label class="m-campo">Morada <small>(opcional)</small>
+        <input type="text" id="m-morada" autocomplete="street-address" maxlength="200">
+      </label>
+    </div>
+    <label class="m-check"><input type="checkbox" id="m-levantar"> Preferem vir buscar? (empresas)</label>
+    <div class="m-extra" id="m-levantar-campos" hidden>
+      <label class="m-campo">Telefone
+        <input type="tel" id="m-l-tel" inputmode="tel" autocomplete="tel" maxlength="20" placeholder="253 000 000">
+      </label>
+      <p>Ligamos para combinar.</p>
+      <button class="botao m-pagar" type="button" data-levantar>Pedir que venham buscar</button>
+      <p class="m-resposta" id="m-resp-levantar" aria-live="polite"></p>
+    </div>
+    <p class="m-erro" id="m-recibo-erro" aria-live="polite"></p>
+    <div id="m-pagamento">
     <p class="m-d-passo"><b>3. Como queres pagar?</b></p>
     <div class="m-metodos" role="tablist" aria-label="Como pagar">
       <button type="button" role="tab" data-metodo="mbway" hidden>📱 MB WAY</button>
@@ -154,10 +191,14 @@
       <button class="botao m-pagar" type="button" data-transferi>Já transferi <span class="m-v"></span></button>
       <p class="m-resposta" id="m-resp-transf" aria-live="polite"></p>
     </div>
+    </div>
   </dialog>
 
   <footer>
     <div class="wrap">
+      <!-- rodape:inicio (gerado por scripts/site_menu.py) -->
+      <nav class="rodape-menu" aria-label="Todas as páginas"><div><p class="rodape-titulo">Principal</p><ul><li><a href="./">Início</a></li><li><a href="agenda.html">Agenda</a></li><li><a href="noticias.html">Notícias</a></li><li><a href="recreio.html">O novo recreio</a></li><li><a href="metas.html">Metas</a></li><li><a href="socios.html">Ser sócio</a></li></ul></div><div><p class="rodape-titulo">A APAEF</p><ul><li><a href="quem-somos.html">Quem somos</a></li><li><a href="documentos.html">Documentos</a></li><li><a href="apoiantes.html">Apoiantes</a></li></ul></div><div><p class="rodape-titulo">Fala connosco</p><ul><li><a href="sugestoes.html">Sugestões</a></li><li><a href="ajudar.html">Quero oferecer algo</a></li><li><a href="links.html">Links úteis</a></li></ul></div></nav><div class="rodape-redes"><a class="botao botao-fb" href="https://www.facebook.com/profile.php?id=61555363610929" target="_blank" rel="noopener">Facebook</a><a class="botao botao-ig" href="https://www.instagram.com/apaefao/" target="_blank" rel="noopener">Instagram</a></div>
+      <!-- rodape:fim -->
       <div>APAEF · Escola Básica de Fão, Rua da Caixa de Água, 4740-364 Fão · <a href="mailto:apaefao@gmail.com">apaefao@gmail.com</a></div>
     </div>
   </footer>

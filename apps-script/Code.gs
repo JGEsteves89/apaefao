@@ -339,6 +339,9 @@ function responsaveis() {
 //   estado: "a angariar" (barra), "a seguir" (fechada), "garantido" (já há dinheiro), "feito" (com foto e fatura).
 //   prioridade: só interna (ordem e para onde vai o que sobra). imagens: "caminho | legenda ; caminho | legenda".
 //   custos_detalhe: linhas separadas por ";". unidade ("ioiô|ioiôs": singular|plural) + preco_unidade: para o impacto ("10 € = 14 ioiôs").
+//   Recreio: as fases e as fotos estão no site (data/recreio.json); aqui só o dinheiro e o estado de cada meta.
+//   peça + peças (opcional): "Canteiro de horta" + 5 → aparece em "Apadrinha uma peça"; cada peça custa custo ÷ peças.
+//     As peças pagas e os padrinhos saem da folha "movimentos" (não se escrevem à mão).
 // Folha "movimentos": o ÚNICO sítio com valores. Uma linha por movimento de dinheiro. Só contam as linhas com confirmado = sim.
 //   tipo "entrada"  → entra dinheiro. destino "geral" (Halloween, quotas…) ou o id de uma meta (donativo com destino).
 //   tipo "saída"    → sai dinheiro. destino = a meta onde foi gasto (ex.: bilhetes do cinema) ou "geral" (outras despesas).
@@ -347,7 +350,7 @@ function responsaveis() {
 //   barra de uma meta = entradas + passagens dessa meta.   custo real de uma meta feita = saídas dessa meta.
 //   fundo geral livre = (todas as entradas − todas as saídas) − o que está guardado nas metas ainda não feitas.
 //   O que uma meta não juntou sozinha sai do fundo geral. O que sobra de uma meta feita volta ao fundo geral.
-const META_COLS = ["id", "publicar", "prioridade", "estado", "emoji", "titulo", "frase", "grupo", "custo", "data_limite", "feito_em", "nota", "unidade", "preco_unidade", "imagens", "custos_detalhe", "fatura"];
+const META_COLS = ["id", "publicar", "prioridade", "estado", "emoji", "titulo", "frase", "grupo", "custo", "data_limite", "feito_em", "nota", "unidade", "preco_unidade", "imagens", "custos_detalhe", "fatura", "peça", "peças"];
 const MOV_COLS = ["data", "tipo", "valor", "destino", "descrição", "como", "quem tratou", "comprovativo", "confirmado", "doador", "contacto", "agradecer em público", "nota"];
 
 function numero(v) { return parseFloat(String(v).replace(/\s/g, "").replace(",", ".")) || 0; }
@@ -374,7 +377,7 @@ function metas() {
   const guardado = cache.get("metas");
   if (guardado) return JSON.parse(guardado);
   const lista = linhasDe("metas").filter(m => String(m.id).trim() && sim(m.publicar)).map(m => ({
-    id: limpar(m.id, 60), estado: limpar(m.estado, 20).toLowerCase(), prioridade: numero(m.prioridade) || 99,
+    id: limpar(m.id, 60), estado: limpar(m.estado, 20).toLowerCase(), prioridade: String(m.prioridade).trim() === "" ? 99 : numero(m.prioridade),
     emoji: limpar(m.emoji, 8), titulo: limpar(m.titulo, 120), frase: limpar(m.frase, 300), grupo: limpar(m.grupo, 30),
     custo: numero(m.custo), data_limite: dataISO(m.data_limite), feito_em: dataISO(m.feito_em), nota: limpar(m.nota, 200),
     unidade: limpar(m.unidade, 40), preco_unidade: numero(m.preco_unidade),
@@ -384,6 +387,7 @@ function metas() {
     }).filter(i => /^(img\/|https:\/\/)/.test(i.src)),
     custos_detalhe: String(m.custos_detalhe || "").split(";").map(s => s.trim()).filter(Boolean),
     fatura: /^https:\/\//.test(String(m.fatura || "")) ? String(m.fatura).trim() : "",
+    peca: limpar(m["peça"], 60), pecas: Math.max(0, Math.floor(numero(m["peças"]))),
     publicar: true,
   }));
   const resultado = calcularMetas(lista, linhasDe("movimentos"));
@@ -391,9 +395,16 @@ function metas() {
   return resultado;
 }
 
+// Níveis da parede "Os nossos padrinhos" (recreio), pelo total que cada pessoa deu. ⚠️ PROPOSTA: a Direção confirma.
+// "Padrinho de uma peça" = pagou sozinho uma peça inteira (ex.: um canteiro de horta).
+const NIVEIS_PADRINHOS = [["Girassol", 100], ["Flor", 50], ["Semente", 0]];
+
 // Lê os movimentos confirmados e diz, para cada meta, quanto juntou e quanto custou. Não divide nada sozinho.
+// Padrinhos: só quem marcou "agradecer em público". O site recebe o nome e o nível, nunca o valor.
 function calcularMetas(lista, movimentos) {
   const ent = {}, pas = {}, sai = {}, doadores = {};
+  const recreio = {}, padrinhos = {};
+  lista.forEach(m => { if (m.grupo.toLowerCase() === "recreio") recreio[m.id.toLowerCase()] = m; });
   let saldo = 0;
   movimentos.filter(d => sim(d.confirmado) && numero(d.valor) > 0).forEach(d => {
     const t = tipoMov(d.tipo), v = numero(d.valor);
@@ -401,6 +412,15 @@ function calcularMetas(lista, movimentos) {
     if (t === "entrada") {
       saldo += v; ent[dest] = (ent[dest] || 0) + v;
       if (dest !== "geral") (doadores[dest] = doadores[dest] || new Set()).add((String(d.doador || d["descrição"] || "anónimo").trim() + "|" + dataISO(d.data)).toLowerCase());
+      const nome = limpar(d.doador, 80), m = recreio[dest];
+      if (m && nome && !/^an[oó]nimo$/i.test(nome) && sim(d["agradecer em público"])) {
+        const p = padrinhos[nome.toLowerCase()] = padrinhos[nome.toLowerCase()] || { nome: nome, total: 0, peca: false };
+        p.total += v;
+        if (m.pecas && v >= m.custo / m.pecas) {
+          p.peca = true;
+          (m.padrinhos_peca = m.padrinhos_peca || []).push(nome);
+        }
+      }
     } else if (t === "saida") { saldo -= v; sai[dest] = (sai[dest] || 0) + v; }
     else pas[dest] = (pas[dest] || 0) + v;
   });
@@ -410,13 +430,18 @@ function calcularMetas(lista, movimentos) {
     m.angariado = r2((ent[id] || 0) + (pas[id] || 0));
     m.gasto = r2(sai[id] || 0);
     m.apoiantes = doadores[id] ? doadores[id].size : 0;
+    if (m.pecas) m.pecas_pagas = Math.min(m.pecas, Math.floor(m.angariado / (m.custo / m.pecas) + 1e-9));
     if (m.estado !== "feito") guardado += Math.max(0, m.angariado - m.gasto);
   });
-  return { metas: lista, fundo_livre: r2(Math.max(0, saldo - guardado)) };
+  const parede = Object.values(padrinhos).map(p => ({
+    nome: p.nome, nivel: p.peca ? "Padrinho de uma peça" : NIVEIS_PADRINHOS.find(n => p.total >= n[1])[0],
+  }));
+  return { metas: lista, fundo_livre: r2(Math.max(0, saldo - guardado)), padrinhos: parede };
 }
 
 // Donativo para uma meta vindo do site. Entra sempre por confirmar: só conta para todos
 // depois de a tesoureira marcar "confirmado" (quem pagou já vê a sua parte no próprio browser).
+// metodo "levantar": a empresa pede para irmos buscar o donativo (ainda não pagou).
 function guardarDoacaoMeta(d) {
   const aba = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("movimentos");
   const valor = r2(numero(d.valor));
@@ -424,10 +449,32 @@ function guardarDoacaoMeta(d) {
   const abc = aba.getRange(2, 1, Math.max(1, aba.getLastRow() - 1), 3).getValues();
   let livre = abc.findIndex(r => r.every(c => !String(c).trim()));
   livre = livre === -1 ? aba.getLastRow() + 1 : livre + 2;
-  const como = ({ ref: "Multibanco", transf: "Transferência" }[d.metodo] || "MB WAY") + " (site)" + (d.demo ? " · DEMONSTRAÇÃO" : "");
+  const como = ({ ref: "Multibanco", transf: "Transferência", levantar: "Vamos levantar" }[d.metodo] || "MB WAY") + " (site)" + (d.demo ? " · DEMONSTRAÇÃO" : "");
   aba.getRange(livre, 1, 1, MOV_COLS.length).setValues([[new Date(), "entrada", valor, limpar(d.meta, 60), "Donativo pelo site", como, "", "", false,
     limpar(d.nome, 80) || "Anónimo", limpar(d.contacto, 80), d.publico ? "sim" : "não", limpar(d.nota, 200)]]);
+  if (d.recibo || d.metodo === "levantar") guardarPedidoRecibo(d, valor, como);
   return ContentService.createTextOutput("ok");
+}
+
+// Pedidos de recibo (documento para as Finanças) e de levantamento: uma linha na folha "recibos" + email ao Jose e à APAEF.
+// A Direção marca "enviado" quando mandar o recibo.
+const RECIBO_COLS = ["data", "meta", "valor", "como", "nome / empresa", "nif", "email", "morada", "quer recibo", "levantar", "telefone", "enviado", "demonstração"];
+function guardarPedidoRecibo(d, valor, como) {
+  const folha = SpreadsheetApp.getActiveSpreadsheet();
+  let aba = folha.getSheetByName("recibos");
+  if (!aba) {
+    aba = folha.insertSheet("recibos");
+    aba.getRange(1, 1, 1, RECIBO_COLS.length).setValues([RECIBO_COLS]).setFontWeight("bold").setBackground("#ebce58");
+    aba.setFrozenRows(1);
+  }
+  const nif = String(d.nif || "").replace(/\D/g, "").slice(0, 9);
+  const linha = [new Date(), limpar(d.meta, 60), valor, como, limpar(d.recibo_nome || d.nome, 120), nif, limpar(d.email, 120),
+    limpar(d.morada, 200), d.recibo ? "sim" : "não", d.metodo === "levantar" ? "sim" : "não", limpar(d.telefone, 30), false, d.demo ? "sim" : ""];
+  aba.appendRow(linha);
+  aba.getRange(aba.getLastRow(), RECIBO_COLS.indexOf("enviado") + 1).insertCheckboxes();
+  const assunto = (d.metodo === "levantar" ? "Pedido para levantar donativo" : "Pedido de recibo") + ": " + linha[4] + " — " + valor + " €";
+  MailApp.sendEmail(EMAIL_AVISOS + ",apaefao@gmail.com", "[APAEF site] " + assunto + (d.demo ? " (DEMONSTRAÇÃO)" : ""),
+    RECIBO_COLS.slice(0, 11).map((c, i) => c + ": " + linha[i]).join("\n") + "\n\nFolha \"recibos\": marcar \"enviado\" quando o recibo seguir.");
 }
 
 // Correr UMA vez no editor (▶ criarMovimentos): cria a folha "movimentos" com o que estava em "doacoes_metas"
@@ -459,5 +506,30 @@ function criarMovimentos() {
   aba.setFrozenRows(1);
   const antiga = folha.getSheetByName("doacoes_metas");
   if (antiga) antiga.setName("antigo_doacoes_metas");
+  CacheService.getScriptCache().remove("metas");
+}
+
+// Correr UMA vez no editor (▶ juntarFases), no dia em que a página nova do recreio for publicada:
+// junta as colunas "peça" e "peças" e as metas novas do recreio (escorrega formiga, pátio, jardim, hortas),
+// para os donativos para elas contarem. O plano (fases, fotos) está no site, em data/recreio.json.
+// ⚠️ Valores e quantidades são uma PROPOSTA: a Direção confirma antes de publicar.
+function juntarFases() {
+  const aba = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("metas");
+  let cab = aba.getRange(1, 1, 1, aba.getLastColumn()).getValues()[0].map(c => String(c).trim().toLowerCase());
+  ["peça", "peças"].forEach(c => {
+    if (cab.includes(c)) return;
+    aba.getRange(1, cab.length + 1).setValue(c);
+    cab.push(c);
+  });
+  const ids = aba.getRange(2, cab.indexOf("id") + 1, Math.max(1, aba.getLastRow() - 1), 1).getValues().map(r => String(r[0]).trim());
+  const novas = [
+    { id: "escorrega-formiga", prioridade: 8, emoji: "🐜", titulo: "Escorrega formiga", frase: "Um escorrega em forma de formiga para os mais pequenos.", custo: 2500 },
+    { id: "patio-chao", prioridade: 9, emoji: "🎨", titulo: "Pátio e chão colorido", frase: "Chão novo e colorido no pátio, com pista e campo para jogar.", custo: "" },
+    { id: "jardim-sentidos", prioridade: 10, emoji: "🌼", titulo: "Jardim dos sentidos", frase: "Painéis para tocar, ouvir e descobrir, junto aos canteiros de flores.", custo: 3200, "peça": "Painel do jardim dos sentidos", "peças": 8 },
+    { id: "hortas", prioridade: 11, emoji: "🥕", titulo: "Canteiros de horta", frase: "Canteiros de madeira para cada turma cuidar da sua horta.", custo: 750, "peça": "Canteiro de horta", "peças": 5 },
+  ];
+  novas.filter(m => !ids.includes(m.id)).forEach(m => {
+    aba.appendRow(cab.map(c => c in m ? m[c] : ({ publicar: true, estado: "a seguir", grupo: "Recreio" }[c] ?? "")));
+  });
   CacheService.getScriptCache().remove("metas");
 }

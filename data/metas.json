@@ -1,294 +1,464 @@
 {
- "metas": [
-  {
-   "id": "castanhas-2026",
-   "estado": "feito",
-   "prioridade": 99,
-   "emoji": "🌰",
-   "titulo": "Castanhas assadas no Magusto",
-   "frase": "A senhora das castanhas assa para todas as crianças no Magusto da escola.",
-   "grupo": "Atividades",
-   "custo": 120,
-   "data_limite": "",
-   "feito_em": "2026-11-12",
-   "nota": "Obrigado a todos! 💛",
-   "unidade": "",
-   "preco_unidade": 0,
-   "imagens": [
+  "metas": [
     {
-     "src": "img/magusto-escola-castanhas.jpg",
-     "legenda": "As castanhas do Magusto"
+      "id": "castanhas-2026",
+      "estado": "feito",
+      "prioridade": 99,
+      "emoji": "🌰",
+      "titulo": "Castanhas assadas no Magusto",
+      "frase": "A senhora das castanhas assa para todas as crianças no Magusto da escola.",
+      "grupo": "Atividades",
+      "custo": 120,
+      "data_limite": "",
+      "feito_em": "2026-11-12",
+      "nota": "Obrigado a todos! 💛",
+      "unidade": "",
+      "preco_unidade": 0,
+      "imagens": [
+        {
+          "src": "img/magusto-escola-castanhas.jpg",
+          "legenda": "As castanhas do Magusto"
+        },
+        {
+          "src": "img/magusto-escola-assadores.jpg",
+          "legenda": "Os assadores, a 12/11"
+        }
+      ],
+      "custos_detalhe": [
+        "Serviço da assadora ≈ 50 €",
+        "Carvão: oferta do Supermercado Ramalhão"
+      ],
+      "fatura": "",
+      "publicar": true,
+      "angariado": 0,
+      "gasto": 120,
+      "apoiantes": 0,
+      "fase": "",
+      "peca": "",
+      "pecas": 0
     },
     {
-     "src": "img/magusto-escola-assadores.jpg",
-     "legenda": "Os assadores, a 12/11"
-    }
-   ],
-   "custos_detalhe": [
-    "Serviço da assadora ≈ 50 €",
-    "Carvão: oferta do Supermercado Ramalhão"
-   ],
-   "fatura": "",
-   "publicar": true,
-   "angariado": 0,
-   "gasto": 120,
-   "apoiantes": 0
-  },
-  {
-   "id": "cinema-2026",
-   "estado": "feito",
-   "prioridade": 99,
-   "emoji": "🎬",
-   "titulo": "Um bilhete de cinema para cada criança",
-   "frase": "206 crianças ganharam um bilhete para ver um filme de animação à escolha.",
-   "grupo": "Atividades",
-   "custo": 200,
-   "data_limite": "",
-   "feito_em": "2026-11-05",
-   "nota": "Obrigado a todos! 💛",
-   "unidade": "",
-   "preco_unidade": 0,
-   "imagens": [
-    {
-     "src": "img/cinema-vouchers.jpg",
-     "legenda": ""
-    }
-   ],
-   "custos_detalhe": [
-    "206 bilhetes com desconto (Esposende 2000) ≈ 200 €"
-   ],
-   "fatura": "",
-   "publicar": true,
-   "angariado": 0,
-   "gasto": 310,
-   "apoiantes": 0
-  },
-  {
-   "id": "passeio-4ano",
-   "estado": "a angariar",
-   "prioridade": 1,
-   "emoji": "🚌",
-   "titulo": "Passeio dos finalistas",
-   "frase": "Um dia especial para os finalistas do 4.º ano, que se despedem da escola.",
-   "grupo": "Atividades",
-   "custo": 800,
-   "data_limite": "",
-   "feito_em": "",
-   "nota": "",
-   "unidade": "lugar no passeio|lugares no passeio",
-   "preco_unidade": 20,
-   "imagens": [
-    {
-     "src": "img/metas/passeio-2.jpg",
-     "legenda": "Ilustração"
+      "id": "cinema-2026",
+      "estado": "feito",
+      "prioridade": 99,
+      "emoji": "🎬",
+      "titulo": "Um bilhete de cinema para cada criança",
+      "frase": "206 crianças ganharam um bilhete para ver um filme de animação à escolha.",
+      "grupo": "Atividades",
+      "custo": 200,
+      "data_limite": "",
+      "feito_em": "2026-11-05",
+      "nota": "Obrigado a todos! 💛",
+      "unidade": "",
+      "preco_unidade": 0,
+      "imagens": [
+        {
+          "src": "img/cinema-vouchers.jpg",
+          "legenda": ""
+        }
+      ],
+      "custos_detalhe": [
+        "206 bilhetes com desconto (Esposende 2000) ≈ 200 €"
+      ],
+      "fatura": "",
+      "publicar": true,
+      "angariado": 0,
+      "gasto": 310,
+      "apoiantes": 0,
+      "fase": "",
+      "peca": "",
+      "pecas": 0
     },
     {
-     "src": "img/metas/passeio-1.jpg",
-     "legenda": "Ilustração"
-    }
-   ],
-   "custos_detalhe": [
-    "Autocarro 1 dia ≈ 400 €",
-    "Entradas ≈ 10 € × 40 alunos"
-   ],
-   "fatura": "",
-   "publicar": true,
-   "angariado": 0,
-   "gasto": 0,
-   "apoiantes": 0
-  },
-  {
-   "id": "presentes-natal-2026",
-   "estado": "a angariar",
-   "prioridade": 2,
-   "emoji": "🎁",
-   "titulo": "Um presente de Natal para cada criança",
-   "frase": "Cada criança da escola recebe um ioiô da Lumi, a nossa mascote, na festa de Natal.",
-   "grupo": "Natal",
-   "custo": 210,
-   "data_limite": "2026-12-04",
-   "feito_em": "",
-   "nota": "",
-   "unidade": "ioiô|ioiôs",
-   "preco_unidade": 0.7,
-   "imagens": [
-    {
-     "src": "img/metas/presentes-entrega.jpg",
-     "legenda": "Ilustração"
+      "id": "passeio-4ano",
+      "estado": "a angariar",
+      "prioridade": 1,
+      "emoji": "🚌",
+      "titulo": "Passeio dos finalistas",
+      "frase": "Um dia especial para os finalistas do 4.º ano, que se despedem da escola.",
+      "grupo": "Atividades",
+      "custo": 800,
+      "data_limite": "",
+      "feito_em": "",
+      "nota": "",
+      "unidade": "lugar no passeio|lugares no passeio",
+      "preco_unidade": 20,
+      "imagens": [
+        {
+          "src": "img/metas/passeio-2.jpg",
+          "legenda": "Ilustração"
+        },
+        {
+          "src": "img/metas/passeio-1.jpg",
+          "legenda": "Ilustração"
+        }
+      ],
+      "custos_detalhe": [
+        "Autocarro 1 dia ≈ 400 €",
+        "Entradas ≈ 10 € × 40 alunos"
+      ],
+      "fatura": "",
+      "publicar": true,
+      "angariado": 0,
+      "gasto": 0,
+      "apoiantes": 0,
+      "fase": "",
+      "peca": "",
+      "pecas": 0
     },
     {
-     "src": "img/metas/presentes-ioio.jpg",
-     "legenda": "Ilustração do ioiô da Lumi"
+      "id": "presentes-natal-2026",
+      "estado": "a angariar",
+      "prioridade": 2,
+      "emoji": "🎁",
+      "titulo": "Um presente de Natal para cada criança",
+      "frase": "Cada criança da escola recebe um ioiô da Lumi, a nossa mascote, na festa de Natal.",
+      "grupo": "Natal",
+      "custo": 210,
+      "data_limite": "2026-12-04",
+      "feito_em": "",
+      "nota": "",
+      "unidade": "ioiô|ioiôs",
+      "preco_unidade": 0.7,
+      "imagens": [
+        {
+          "src": "img/metas/presentes-entrega.jpg",
+          "legenda": "Ilustração"
+        },
+        {
+          "src": "img/metas/presentes-ioio.jpg",
+          "legenda": "Ilustração do ioiô da Lumi"
+        },
+        {
+          "src": "img/metas/presentes-2.jpg",
+          "legenda": "Ilustração"
+        }
+      ],
+      "custos_detalhe": [
+        "300 ioiôs personalizados com a Lumi × 0,70 € = 210 €",
+        "Os que sobrarem vendem-se na Feirinha"
+      ],
+      "fatura": "",
+      "publicar": true,
+      "angariado": 100,
+      "gasto": 0,
+      "apoiantes": 1,
+      "fase": "",
+      "peca": "",
+      "pecas": 0
     },
     {
-     "src": "img/metas/presentes-2.jpg",
-     "legenda": "Ilustração"
-    }
-   ],
-   "custos_detalhe": [
-    "300 ioiôs personalizados com a Lumi × 0,70 € = 210 €",
-    "Os que sobrarem vendem-se na Feirinha"
-   ],
-   "fatura": "",
-   "publicar": true,
-   "angariado": 100,
-   "gasto": 0,
-   "apoiantes": 1
-  },
-  {
-   "id": "baloico-pre",
-   "estado": "a angariar",
-   "prioridade": 3,
-   "emoji": "🛝",
-   "titulo": "Baloiço de dois lugares para a pré",
-   "frase": "O primeiro passo do projeto do recreio: um baloiço novo na caixa de areia da pré. O dinheiro das rifas de S. Martinho vai para aqui.",
-   "grupo": "Recreio",
-   "custo": 3248,
-   "data_limite": "",
-   "feito_em": "",
-   "nota": "",
-   "unidade": "",
-   "preco_unidade": 0,
-   "imagens": [
-    {
-     "src": "img/metas/baloico-pre-simulacao.jpg",
-     "legenda": "Simulação"
+      "id": "baloico-pre",
+      "estado": "a angariar",
+      "prioridade": 3,
+      "emoji": "🛝",
+      "titulo": "Baloiço de dois lugares para a pré",
+      "frase": "O primeiro passo do projeto do recreio: um baloiço novo na caixa de areia da pré. O dinheiro das rifas de S. Martinho vai para aqui.",
+      "grupo": "Recreio",
+      "custo": 3248,
+      "data_limite": "",
+      "feito_em": "",
+      "nota": "",
+      "unidade": "",
+      "preco_unidade": 0,
+      "imagens": [
+        {
+          "src": "img/metas/recreio/fase1-hoje.jpg",
+          "legenda": "Hoje"
+        },
+        {
+          "src": "img/metas/recreio/fase1-projeto.jpg",
+          "legenda": "Simulação"
+        },
+        {
+          "src": "img/metas/baloico-pre-simulacao.jpg",
+          "legenda": "Simulação"
+        },
+        {
+          "src": "img/metas/baloico-pre.jpg",
+          "legenda": "O baloiço (Greenplay)"
+        }
+      ],
+      "custos_detalhe": [
+        "Baloiço Greenplay PO732 (2 assentos) 2 798 €",
+        "Transporte 450 €",
+        "Montagem: oferta da Greenplay"
+      ],
+      "fatura": "",
+      "publicar": true,
+      "angariado": 0,
+      "gasto": 0,
+      "apoiantes": 0,
+      "fase": "Fase 1 · Baloiço e areia da pré",
+      "peca": "",
+      "pecas": 0
     },
     {
-     "src": "img/metas/baloico-pre.jpg",
-     "legenda": "O baloiço (Greenplay)"
-    }
-   ],
-   "custos_detalhe": [
-    "Baloiço Greenplay PO732 (2 assentos) 2 798 €",
-    "Transporte 450 €",
-    "Montagem: oferta da Greenplay"
-   ],
-   "fatura": "",
-   "publicar": true,
-   "angariado": 0,
-   "gasto": 0,
-   "apoiantes": 0
-  },
-  {
-   "id": "areia-2026",
-   "estado": "a seguir",
-   "prioridade": 4,
-   "emoji": "🏖️",
-   "titulo": "Areia nova para a caixa do parque",
-   "frase": "Repor a areia da caixa onde vai ficar o baloiço da pré.",
-   "grupo": "Recreio",
-   "custo": 350,
-   "data_limite": "",
-   "feito_em": "",
-   "nota": "",
-   "unidade": "",
-   "preco_unidade": 0,
-   "imagens": [
-    {
-     "src": "img/metas/areia-1.jpg",
-     "legenda": "Ilustração"
-    }
-   ],
-   "custos_detalhe": [
-    "≈ 5 m³ de areia lavada + transporte ≈ 350 € (vamos pedir à Junta)"
-   ],
-   "fatura": "",
-   "publicar": true,
-   "angariado": 0,
-   "gasto": 0,
-   "apoiantes": 0
-  },
-  {
-   "id": "estrutura-1ciclo",
-   "estado": "a seguir",
-   "prioridade": 5,
-   "emoji": "🧗",
-   "titulo": "Escorrega e parede de escalada para o 1.º ciclo",
-   "frase": "Uma estrutura com escorrega, escalada e barras para o recreio do 1.º ciclo.",
-   "grupo": "Recreio",
-   "custo": 4744,
-   "data_limite": "",
-   "feito_em": "",
-   "nota": "",
-   "unidade": "",
-   "preco_unidade": 0,
-   "imagens": [
-    {
-     "src": "img/metas/estrutura-simulacao.jpg",
-     "legenda": "Simulação"
+      "id": "areia-2026",
+      "estado": "a seguir",
+      "prioridade": 4,
+      "emoji": "🏖️",
+      "titulo": "Areia nova para a caixa do parque",
+      "frase": "Repor a areia da caixa onde vai ficar o baloiço da pré.",
+      "grupo": "Recreio",
+      "custo": 350,
+      "data_limite": "",
+      "feito_em": "",
+      "nota": "",
+      "unidade": "",
+      "preco_unidade": 0,
+      "imagens": [
+        {
+          "src": "img/metas/areia-1.jpg",
+          "legenda": "Ilustração"
+        }
+      ],
+      "custos_detalhe": [
+        "≈ 5 m³ de areia lavada + transporte ≈ 350 € (vamos pedir à Junta)"
+      ],
+      "fatura": "",
+      "publicar": true,
+      "angariado": 0,
+      "gasto": 0,
+      "apoiantes": 0,
+      "fase": "Fase 1 · Baloiço e areia da pré",
+      "peca": "",
+      "pecas": 0
     },
     {
-     "src": "img/metas/estrutura-1ciclo.jpg",
-     "legenda": "A estrutura (Greenplay)"
-    }
-   ],
-   "custos_detalhe": [
-    "Estrutura Greenplay ≈ 4 744 €"
-   ],
-   "fatura": "",
-   "publicar": true,
-   "angariado": 0,
-   "gasto": 0,
-   "apoiantes": 0
-  },
-  {
-   "id": "arvores-2027",
-   "estado": "a seguir",
-   "prioridade": 6,
-   "emoji": "🌳",
-   "titulo": "10 árvores para dar sombra ao recreio",
-   "frase": "Uma árvore por turma, plantada no Dia da Árvore (19 de março).",
-   "grupo": "Recreio",
-   "custo": 600,
-   "data_limite": "",
-   "feito_em": "",
-   "nota": "",
-   "unidade": "árvore|árvores",
-   "preco_unidade": 60,
-   "imagens": [
-    {
-     "src": "img/metas/arvores-simulacao.jpg",
-     "legenda": "Simulação"
+      "id": "estrutura-1ciclo",
+      "estado": "a seguir",
+      "prioridade": 5,
+      "emoji": "🧗",
+      "titulo": "Escorrega e parede de escalada para o 1.º ciclo",
+      "frase": "Uma estrutura com escorrega, escalada e barras para o recreio do 1.º ciclo.",
+      "grupo": "Recreio",
+      "custo": 4744,
+      "data_limite": "",
+      "feito_em": "",
+      "nota": "",
+      "unidade": "",
+      "preco_unidade": 0,
+      "imagens": [
+        {
+          "src": "img/metas/recreio/fase2-hoje.jpg",
+          "legenda": "Hoje"
+        },
+        {
+          "src": "img/metas/recreio/fase2-projeto.jpg",
+          "legenda": "Simulação"
+        },
+        {
+          "src": "img/metas/estrutura-simulacao.jpg",
+          "legenda": "Simulação"
+        },
+        {
+          "src": "img/metas/estrutura-1ciclo.jpg",
+          "legenda": "A estrutura (Greenplay)"
+        }
+      ],
+      "custos_detalhe": [
+        "Estrutura Greenplay ≈ 4 744 €"
+      ],
+      "fatura": "",
+      "publicar": true,
+      "angariado": 0,
+      "gasto": 0,
+      "apoiantes": 0,
+      "fase": "Fase 2 · Parque do 1.º ciclo",
+      "peca": "",
+      "pecas": 0
     },
     {
-     "src": "img/metas/arvores-plantacao.jpg",
-     "legenda": "Ilustração"
+      "id": "arvores-2027",
+      "estado": "a seguir",
+      "prioridade": 6,
+      "emoji": "🌳",
+      "titulo": "10 árvores para dar sombra ao recreio",
+      "frase": "Uma árvore por turma, plantada no Dia da Árvore (19 de março).",
+      "grupo": "Recreio",
+      "custo": 600,
+      "data_limite": "",
+      "feito_em": "",
+      "nota": "",
+      "unidade": "árvore|árvores",
+      "preco_unidade": 60,
+      "imagens": [
+        {
+          "src": "img/metas/arvores-simulacao.jpg",
+          "legenda": "Simulação"
+        },
+        {
+          "src": "img/metas/arvores-plantacao.jpg",
+          "legenda": "Ilustração"
+        }
+      ],
+      "custos_detalhe": [
+        "10 árvores de 2–3 m × ≈ 60 € (com tutor e terra)"
+      ],
+      "fatura": "",
+      "publicar": true,
+      "angariado": 0,
+      "gasto": 0,
+      "apoiantes": 0,
+      "fase": "Fase 3 · Pátio, jardim e sombra",
+      "peca": "",
+      "pecas": 0
+    },
+    {
+      "id": "insuflaveis-2027",
+      "estado": "a seguir",
+      "prioridade": 7,
+      "emoji": "🎈",
+      "titulo": "Insufláveis no Dia da Criança",
+      "frase": "Dois insufláveis no recreio a 1 de junho.",
+      "grupo": "Atividades",
+      "custo": 350,
+      "data_limite": "",
+      "feito_em": "",
+      "nota": "",
+      "unidade": "",
+      "preco_unidade": 0,
+      "imagens": [],
+      "custos_detalhe": [
+        "2 insufláveis, 1 dia, com montagem ≈ 350 €"
+      ],
+      "fatura": "",
+      "publicar": true,
+      "angariado": 0,
+      "gasto": 0,
+      "apoiantes": 0,
+      "fase": "",
+      "peca": "",
+      "pecas": 0
+    },
+    {
+      "estado": "a seguir",
+      "grupo": "Recreio",
+      "data_limite": "",
+      "feito_em": "",
+      "nota": "",
+      "unidade": "",
+      "preco_unidade": 0,
+      "custos_detalhe": [],
+      "fatura": "",
+      "publicar": true,
+      "angariado": 0,
+      "gasto": 0,
+      "apoiantes": 0,
+      "peca": "",
+      "pecas": 0,
+      "id": "escorrega-formiga",
+      "prioridade": 8,
+      "emoji": "🐜",
+      "titulo": "Escorrega formiga",
+      "frase": "Um escorrega em forma de formiga para os mais pequenos.",
+      "custo": 2500,
+      "fase": "Fase 2 · Parque do 1.º ciclo",
+      "imagens": [
+        {
+          "src": "img/metas/recreio/peca-formiga.jpg",
+          "legenda": "Simulação"
+        }
+      ]
+    },
+    {
+      "estado": "a seguir",
+      "grupo": "Recreio",
+      "data_limite": "",
+      "feito_em": "",
+      "nota": "",
+      "unidade": "",
+      "preco_unidade": 0,
+      "custos_detalhe": [],
+      "fatura": "",
+      "publicar": true,
+      "angariado": 0,
+      "gasto": 0,
+      "apoiantes": 0,
+      "peca": "",
+      "pecas": 0,
+      "id": "patio-chao",
+      "prioridade": 9,
+      "emoji": "🎨",
+      "titulo": "Pátio e chão colorido",
+      "frase": "Chão novo e colorido no pátio, com pista e campo para jogar.",
+      "custo": 0,
+      "fase": "Fase 3 · Pátio, jardim e sombra",
+      "imagens": [
+        {
+          "src": "img/metas/recreio/fase3-hoje.jpg",
+          "legenda": "Hoje"
+        },
+        {
+          "src": "img/metas/recreio/fase3-projeto.jpg",
+          "legenda": "Simulação"
+        }
+      ]
+    },
+    {
+      "estado": "a seguir",
+      "grupo": "Recreio",
+      "data_limite": "",
+      "feito_em": "",
+      "nota": "",
+      "unidade": "",
+      "preco_unidade": 0,
+      "custos_detalhe": [],
+      "fatura": "",
+      "publicar": true,
+      "angariado": 0,
+      "gasto": 0,
+      "apoiantes": 0,
+      "peca": "Painel do jardim dos sentidos",
+      "pecas": 8,
+      "id": "jardim-sentidos",
+      "prioridade": 10,
+      "emoji": "🌼",
+      "titulo": "Jardim dos sentidos",
+      "frase": "Painéis para tocar, ouvir e descobrir, junto aos canteiros de flores.",
+      "custo": 3200,
+      "fase": "Fase 3 · Pátio, jardim e sombra",
+      "pecas_pagas": 0,
+      "imagens": [
+        {
+          "src": "img/metas/recreio/peca-painel.jpg",
+          "legenda": "Simulação"
+        }
+      ]
+    },
+    {
+      "estado": "a seguir",
+      "grupo": "Recreio",
+      "data_limite": "",
+      "feito_em": "",
+      "nota": "",
+      "unidade": "",
+      "preco_unidade": 0,
+      "custos_detalhe": [],
+      "fatura": "",
+      "publicar": true,
+      "angariado": 0,
+      "gasto": 0,
+      "apoiantes": 0,
+      "peca": "Canteiro de horta",
+      "pecas": 5,
+      "id": "hortas",
+      "prioridade": 11,
+      "emoji": "🥕",
+      "titulo": "Canteiros de horta",
+      "frase": "Canteiros de madeira para cada turma cuidar da sua horta.",
+      "custo": 750,
+      "fase": "Fase 3 · Pátio, jardim e sombra",
+      "pecas_pagas": 0,
+      "imagens": [
+        {
+          "src": "img/metas/recreio/peca-horta.jpg",
+          "legenda": "Simulação"
+        }
+      ]
     }
-   ],
-   "custos_detalhe": [
-    "10 árvores de 2–3 m × ≈ 60 € (com tutor e terra)"
-   ],
-   "fatura": "",
-   "publicar": true,
-   "angariado": 0,
-   "gasto": 0,
-   "apoiantes": 0
-  },
-  {
-   "id": "insuflaveis-2027",
-   "estado": "a seguir",
-   "prioridade": 7,
-   "emoji": "🎈",
-   "titulo": "Insufláveis no Dia da Criança",
-   "frase": "Dois insufláveis no recreio a 1 de junho.",
-   "grupo": "Atividades",
-   "custo": 350,
-   "data_limite": "",
-   "feito_em": "",
-   "nota": "",
-   "unidade": "",
-   "preco_unidade": 0,
-   "imagens": [],
-   "custos_detalhe": [
-    "2 insufláveis, 1 dia, com montagem ≈ 350 €"
-   ],
-   "fatura": "",
-   "publicar": true,
-   "angariado": 0,
-   "gasto": 0,
-   "apoiantes": 0
-  }
- ],
- "fundo_livre": 1073.89
+  ],
+  "fundo_livre": 1073.89,
+  "padrinhos": []
 }

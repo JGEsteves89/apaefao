@@ -1,0 +1,216 @@
+{
+  "areas": [
+    {
+      "titulo": "Recreio da pré",
+      "frase": "Chão colorido, canteiros e bancos em forma de lápis.",
+      "hoje": "img/metas/recreio/hoje-recreio.jpg",
+      "projeto": "img/metas/recreio/projeto-recreio.jpg"
+    },
+    {
+      "titulo": "Caixa de areia",
+      "frase": "Areia nova e um baloiço de dois lugares.",
+      "hoje": "img/metas/recreio/fase1-hoje.jpg",
+      "projeto": "img/metas/recreio/fase1-projeto.jpg"
+    },
+    {
+      "titulo": "Parque do 1.º ciclo",
+      "frase": "Escorrega, parede de escalada e chão novo.",
+      "hoje": "img/metas/recreio/fase2-hoje.jpg",
+      "projeto": "img/metas/recreio/fase2-projeto.jpg"
+    },
+    {
+      "titulo": "Pátio interior",
+      "frase": "Pista e campo coloridos para jogar.",
+      "hoje": "img/metas/recreio/fase3-hoje.jpg",
+      "projeto": "img/metas/recreio/fase3-projeto.jpg"
+    }
+  ],
+  "fases": [
+    {
+      "titulo": "Fase 1 · Baloiço e areia da pré",
+      "hoje": "img/metas/recreio/fase1-hoje.jpg",
+      "projeto": "img/metas/recreio/fase1-projeto.jpg",
+      "projetos": [
+        {
+          "id": "baloico-pre",
+          "emoji": "🛝",
+          "titulo": "Baloiço de dois lugares para a pré",
+          "custo": 3248
+        },
+        {
+          "id": "areia-2026",
+          "emoji": "🏖️",
+          "titulo": "Areia nova para a caixa do parque",
+          "custo": 350
+        }
+      ]
+    },
+    {
+      "titulo": "Fase 2 · Parque do 1.º ciclo",
+      "hoje": "img/metas/recreio/fase2-hoje.jpg",
+      "projeto": "img/metas/recreio/fase2-projeto.jpg",
+      "projetos": [
+        {
+          "id": "estrutura-1ciclo",
+          "emoji": "🧗",
+          "titulo": "Escorrega e parede de escalada para o 1.º ciclo",
+          "custo": 4744
+        },
+        {
+          "id": "escorrega-formiga",
+          "emoji": "🐜",
+          "titulo": "Escorrega formiga",
+          "custo": 2500
+        }
+      ]
+    },
+    {
+      "titulo": "Fase 3 · Pátio, jardim e sombra",
+      "hoje": "img/metas/recreio/fase3-hoje.jpg",
+      "projeto": "img/metas/recreio/fase3-projeto.jpg",
+      "projetos": [
+        {
+          "id": "patio-chao",
+          "emoji": "🎨",
+          "titulo": "Pátio e chão colorido",
+          "custo": 0
+        },
+        {
+          "id": "arvores-2027",
+          "emoji": "🌳",
+          "titulo": "10 árvores para dar sombra ao recreio",
+          "custo": 600
+        },
+        {
+          "id": "jardim-sentidos",
+          "emoji": "🌼",
+          "titulo": "Jardim dos sentidos",
+          "custo": 3200,
+          "peca": "Painel do jardim dos sentidos",
+          "pecas": 8,
+          "imagem": "img/metas/recreio/peca-painel.jpg"
+        },
+        {
+          "id": "hortas",
+          "emoji": "🥕",
+          "titulo": "Canteiros de horta",
+          "custo": 750,
+          "peca": "Canteiro de horta",
+          "pecas": 5,
+          "imagem": "img/metas/recreio/peca-horta.jpg"
+        }
+      ]
+    }
+  ],
+  "zonas": [
+    {
+      "num": 1,
+      "grupo": "Pré-escolar",
+      "titulo": "Caixa de areia e baloiço",
+      "frase": "Areia nova, um baloiço com cesto para 4 crianças e um murete para sentar à volta.",
+      "nota": "Castelos de areia a sério! 🏰",
+      "projeto": "img/metas/recreio/zonas/p1-projeto.jpg",
+      "x": 11.4,
+      "y": 8.7,
+      "hoje": "img/metas/recreio/zonas/p1-hoje.jpg"
+    },
+    {
+      "num": 2,
+      "grupo": "Pré-escolar",
+      "titulo": "Jardim dos sentidos",
+      "frase": "Painéis para tocar e ouvir (música, labirinto, xilofone), chão de casca de pinheiro e canteiros de flores.",
+      "nota": "Toca, ouve e descobre! 🎶",
+      "projeto": "img/metas/recreio/zonas/p2-projeto.jpg",
+      "x": 24.4,
+      "y": 7.2,
+      "hoje": "img/metas/recreio/zonas/p2-hoje.jpg"
+    },
+    {
+      "num": 3,
+      "grupo": "Pré-escolar",
+      "titulo": "Chão colorido e bancos-lápis",
+      "frase": "Chão macio e colorido, com desenhos gigantes, pista e jogos pintados. Bancos em forma de lápis junto às árvores.",
+      "nota": "Uma lagarta gigante no chão! 🐛",
+      "projeto": "img/metas/recreio/zonas/p3-projeto.jpg",
+      "x": 9.9,
+      "y": 21.8,
+      "hoje": "img/metas/recreio/zonas/p3-hoje.jpg"
+    },
+    {
+      "num": 4,
+      "grupo": "Pré-escolar",
+      "titulo": "Sala de aula ao ar livre",
+      "frase": "Canteiros e troncos para sentar, entre as árvores, junto à escola.",
+      "nota": "Hoje a aula é lá fora! 🌳",
+      "projeto": "img/metas/recreio/zonas/p4-projeto.jpg",
+      "x": 19.8,
+      "y": 30.7,
+      "hoje": "img/metas/recreio/zonas/p4-hoje.jpg"
+    },
+    {
+      "num": 5,
+      "grupo": "Pré-escolar",
+      "titulo": "Hortas",
+      "frase": "Um deck de madeira junto ao muro, com canteiros para cada turma ter a sua horta.",
+      "nota": "Quem planta a maior cenoura? 🥕",
+      "projeto": "img/metas/recreio/zonas/p5-projeto.jpg",
+      "x": 5.6,
+      "y": 36.0,
+      "hoje": "img/metas/recreio/zonas/p5-hoje.jpg"
+    },
+    {
+      "num": 6,
+      "grupo": "Pré-escolar",
+      "titulo": "Parque da pré",
+      "frase": "Chão macio com flores gigantes e um escorrega em forma de formiga.",
+      "nota": "Cuidado com a formiga! 🐜",
+      "projeto": "img/metas/recreio/zonas/p7-projeto.jpg",
+      "x": 11.3,
+      "y": 50.6,
+      "hoje": "img/metas/recreio/zonas/p7-hoje.jpg"
+    },
+    {
+      "num": 7,
+      "grupo": "1.º ciclo",
+      "titulo": "Pátio interior",
+      "frase": "Campo verde com pista azul à volta e rede de voleibol.",
+      "nota": "Quem ganha no voleibol? 🏐",
+      "projeto": "img/metas/recreio/zonas/c2-projeto.jpg",
+      "x": 39.6,
+      "y": 25.9,
+      "hoje": "img/metas/recreio/zonas/c2-hoje.jpg"
+    },
+    {
+      "num": 8,
+      "grupo": "1.º ciclo",
+      "titulo": "Corredores com pista",
+      "frase": "Chão novo nos corredores cobertos, com pista de 4 corredores e jogos pintados.",
+      "nota": "Prontos? Partida… já! 🏃",
+      "projeto": "img/metas/recreio/zonas/c1-projeto.jpg",
+      "x": 38.5,
+      "y": 45.7
+    },
+    {
+      "num": 9,
+      "grupo": "1.º ciclo",
+      "titulo": "Parque do 1.º ciclo",
+      "frase": "Torre com escorrega em tubo, bancos divertidos e uma rede alta para as bolas não irem para o parque.",
+      "nota": "Quem chega primeiro ao topo? 🧗",
+      "projeto": "img/metas/recreio/zonas/c3-projeto.jpg",
+      "x": 78.1,
+      "y": 47.3,
+      "hoje": "img/metas/recreio/zonas/c3-hoje.jpg"
+    },
+    {
+      "num": 10,
+      "grupo": "1.º ciclo",
+      "titulo": "Polidesportivo",
+      "frase": "Campo novo, azul, para futebol e basquetebol, com balizas e tabelas novas.",
+      "nota": "Gooolo! ⚽",
+      "projeto": "img/metas/recreio/zonas/c6-projeto.jpg",
+      "x": 80.2,
+      "y": 72.5,
+      "hoje": "img/metas/recreio/zonas/c6-hoje.jpg"
+    }
+  ]
+}

@@ -13,10 +13,10 @@ const espera = ms => new Promise(r => setTimeout(r, ms));
   const menu = document.querySelector(".menu");
   const botao = document.querySelector(".menu-botao");
   if (!menu) return;
-  let pagina = location.pathname.split("/").pop() || "index.html";
-  if (pagina === "ajudar.html") pagina = "apoiantes.html";   // "Quero ajudar" faz parte dos Apoiantes
+  const nome = caminho => caminho.split("/").pop() || "index.html";
+  const pagina = nome(location.pathname);
   menu.querySelectorAll("a").forEach(a => {
-    if (a.pathname.split("/").pop() === pagina && !a.hash) a.setAttribute("aria-current", "page");
+    if (nome(a.pathname) === pagina && !a.hash) a.setAttribute("aria-current", "page");
   });
   if (!botao) return;
   const abrir = sim => {
@@ -107,7 +107,7 @@ async function copiar(texto, botao) {
     document.execCommand("copy"); t.remove();
   }
   botao.classList.add("copiado");
-  setTimeout(() => botao.classList.remove("copiado"), 1600);
+  setTimeout(() => botao.classList.remove("copiado"), 2000);
 }
 
 // Confetti leve com as cores do tema.
@@ -216,3 +216,16 @@ function ativarGalerias(raiz) {
     .observe(document.documentElement, { childList: true, subtree: true });
   document.addEventListener("DOMContentLoaded", () => marcar(document));
 })();
+
+// Metas e recreio: botão "Ver como está hoje" / "Ver o projeto" numa foto com as duas vistas.
+function vistas(caixa) {
+  const botao = caixa.querySelector(".r-v-botao"), rot = caixa.querySelector(".r-v-rot");
+  const pinta = () => {
+    const hoje = caixa.dataset.vista === "hoje";
+    rot.textContent = hoje ? "Hoje" : "Simulação";
+    botao.textContent = hoje ? "Ver o projeto ›" : "‹ Ver como está hoje";
+    botao.setAttribute("aria-pressed", hoje);
+  };
+  botao.addEventListener("click", () => { caixa.dataset.vista = caixa.dataset.vista === "hoje" ? "projeto" : "hoje"; pinta(); });
+  pinta();
+}

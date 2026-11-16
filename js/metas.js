@@ -3,11 +3,13 @@
 // Valores: barra = entradas + passagens da meta; meta feita = o que custou (saídas). fundo_livre = dinheiro ainda sem destino.
 // Estados: "a angariar" (barra), "garantido" (barra cheia), "feito" (foto + fatura), "a seguir" (fechada).
 // MOSTRAR_EUROS (config.js): enquanto for false, a página mostra só percentagens, sem valores em €.
+// Recreio: as metas do grupo "Recreio" juntam-se por "fase" (um cartão por fase). As que têm "peca" + "pecas"
+// aparecem em "Apadrinha uma peça". "padrinhos" (nome + nível, sem valores) vem do Apps Script.
 
 const EUROS = typeof MOSTRAR_EUROS !== "undefined" && MOSTRAR_EUROS;
-const euros = v => Number(v).toLocaleString("pt-PT", { maximumFractionDigits: 0 }) + " €";
+// "1 820 €": espaço nos milhares também com 4 algarismos, e o € nunca fica sozinho noutra linha.
+const euros = v => Number(v).toLocaleString("pt-PT", { maximumFractionDigits: 0, useGrouping: "always" }) + "\u00a0€";
 const pct = m => Math.min(100, Math.round((m.angariado / m.custo) * 100)) || 0;
-let FUNDO_LIVRE = 0;
 const dataCurta = d => new Date(d + "T12:00").toLocaleDateString("pt-PT", { day: "numeric", month: "short" });
 
 async function carregarMetas() {
@@ -15,13 +17,11 @@ async function carregarMetas() {
     try {
       const r = await fetch(ENDPOINT + "?acao=metas", { signal: AbortSignal.timeout(6000) });
       const dados = await r.json();
-      FUNDO_LIVRE = (dados && dados.fundo_livre) || 0;
       const lista = Array.isArray(dados) ? dados : dados && dados.metas;
       if (Array.isArray(lista) && lista.length) return lista;
     } catch (e) {}
   }
   const dados = await carregarJSON("data/metas.json");
-  FUNDO_LIVRE = (dados && dados.fundo_livre) || 0;
   return Array.isArray(dados) ? dados : dados && dados.metas;
 }
 
@@ -72,7 +72,7 @@ function barra(m) {
   const p = Math.min(100, Math.round(total / m.custo * 100)) || 0;
   const pBase = Math.min(100, m.angariado / m.custo * 100) || 0, pMeu = Math.max(0, Math.min(100, total / m.custo * 100) - pBase);
   const valores = EUROS
-    ? `<b><span class="m-num" data-ate="${total}">0</span> €</b> de ${euros(m.custo)}`
+    ? `<b><span class="m-num" data-ate="${total}">0</span>&nbsp;€</b> de ${euros(m.custo)}`
     : `<b><span class="m-num" data-ate="${p}">0</span>%</b> da meta`;
   const falta = m.custo - total;
   const resto = [];
@@ -90,38 +90,10 @@ function barra(m) {
     ${resto.length ? `<p class="m-falta">${resto.join(" · ")}</p>` : ""}`;
 }
 
-// Partilhar uma meta (WhatsApp ou o menu de partilha do telemóvel). O link abre a página nessa meta.
-function partilhar(m) {
-  const url = location.origin + location.pathname + "#meta-" + m.id;
-  const falta = Math.max(0, m.custo - m.angariado);
-  const texto = `${m.emoji} ${m.titulo}` + (EUROS && falta ? ` — faltam ${euros(falta)}.` : ".") + " Ajudas a APAEF? " + url;
-  if (navigator.share) { navigator.share({ title: m.titulo, text: texto }).catch(() => {}); return; }
-  window.open("https://wa.me/?text=" + encodeURIComponent(texto), "_blank", "noopener");
-}
-
 function custos(m) {
   if (!m.custos_detalhe || !m.custos_detalhe.length) return "";
   const linhas = m.custos_detalhe.map(l => `<li>${escapar(EUROS ? l : l.replace(/[≈]?\s?[\d\s.,]+\s?€/g, "").replace(/\s[×=]\s*$/, "").trim())}</li>`).join("");
   return `<details class="m-custos"><summary>Ver custos</summary><ul>${linhas}</ul></details>`;
-}
-
-// Metas "a seguir" e "garantidas/feitas": linha curta (miniatura + título + estado), sem barra nem texto longo.
-function linha(m) {
-  const el = document.createElement("article");
-  el.className = "m-linha m-cartao estado-" + m.estado.replace(" ", "-");
-  el.id = "meta-" + m.id;
-  el.dataset.grupo = m.grupo || "";
-  const l = m.imagens && m.imagens.length ? m.imagens : (m.imagem ? [m.imagem] : []);
-  const src = m.estado === "feito" && m.imagem_depois ? m.imagem_depois : (l[0] && (l[0].src || l[0]));
-  const mini = src ? `<img src="${escapar(src)}" alt="" loading="lazy">` : `<span aria-hidden="true">${escapar(m.emoji || "🎯")}</span>`;
-  let estado;
-  const valor = EUROS ? ` · <b>${euros(m.angariado || m.custo)}</b>` : "";
-  const custou = EUROS ? ` · custou <b>${euros(m.gasto || m.custo)}</b>` : "";
-  if (m.estado === "feito") estado = `🎉 Feito a ${dataCurta(m.feito_em)}${custou}` + (m.nota ? " · " + escapar(m.nota) : "") + (m.fatura ? ` · <a href="${escapar(m.fatura)}" target="_blank" rel="noopener">🧾 fatura</a>` : "");
-  else if (m.estado === "garantido") estado = `✅ Garantido${valor}` + (m.nota ? " · " + escapar(m.nota) : "");
-  else estado = "🔒 Abre a seguir" + (EUROS ? ` · ${euros(m.custo)}` : "");
-  el.innerHTML = `<div class="m-mini">${mini}</div><div><h3>${escapar(m.emoji)} ${escapar(m.titulo)}</h3><p class="m-linha-estado">${estado}</p></div>`;
-  return el;
 }
 
 // Metas garantidas e feitas: cartão com as fotos de como foi (galeria grande), título e o que se conseguiu.
@@ -147,7 +119,7 @@ function cartao(m, lista) {
   let fundo = "";
   if (m.estado === "a angariar") {
     fundo = `<div class="m-acoes"><button class="botao m-ajudar" type="button" data-meta="${escapar(m.id)}">Quero ajudar esta meta</button>`
-      + `<button class="m-partilhar" type="button" data-partilhar="${escapar(m.id)}">📤 Partilhar esta meta</button></div>`;
+      + "</div>";
   } else if (m.estado === "feito") {
     fundo = `<p class="m-feito">Feito a ${dataCurta(m.feito_em)}${m.nota ? " · " + escapar(m.nota) : ""}</p>`
       + (m.fatura ? `<a class="m-fatura" href="${escapar(m.fatura)}" target="_blank" rel="noopener">🧾 Ver fatura</a>` : "");
@@ -172,11 +144,11 @@ function animar(raiz) {
     c.classList.add("visivel");
     c.querySelectorAll(".m-num").forEach(n => {
       const ate = Number(n.dataset.ate);
-      if (!MOVIMENTO) { n.textContent = ate.toLocaleString("pt-PT"); return; }
-      const t0 = performance.now(), dur = 1200;
+      if (!MOVIMENTO) { n.textContent = ate.toLocaleString("pt-PT", { useGrouping: "always" }); return; }
+      const t0 = performance.now(), dur = 800;
       const passo = t => {
         const k = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - k, 3);
-        n.textContent = Math.round(ate * e).toLocaleString("pt-PT");
+        n.textContent = Math.round(ate * e).toLocaleString("pt-PT", { useGrouping: "always" });
         if (k < 1) requestAnimationFrame(passo);
       };
       requestAnimationFrame(passo);
@@ -190,12 +162,6 @@ function animar(raiz) {
   els.forEach(c => io.observe(c));
 }
 
-function contar(el, ate) {
-  if (!MOVIMENTO) { el.textContent = ate; return; }
-  let n = 0;
-  const t = setInterval(() => { el.textContent = ++n; if (n >= ate) clearInterval(t); }, 120);
-  if (!ate) clearInterval(t);
-}
 
 // Confetes uma vez por meta garantida/feita neste browser.
 function festejar(lista) {
@@ -207,35 +173,16 @@ function festejar(lista) {
   try { localStorage.setItem("metas-festejadas", JSON.stringify(vistos.concat(novas.map(m => m.id)))); } catch (e) {}
 }
 
-// Plano do recreio: os passos por ordem, com o estado de cada um. Tocar num passo leva ao cartão.
-function caminho(lista) {
-  const el = document.getElementById("m-caminho");
-  const recreio = lista.filter(m => m.grupo === "Recreio").sort((a, b) => (a.prioridade || 99) - (b.prioridade || 99));
-  el.innerHTML = recreio.map((m, i) => {
-    const feito = m.estado === "garantido" || m.estado === "feito";
-    const agora = m.estado === "a angariar";
-    const estado = feito ? "✅ Pago" : agora ? `A angariar · ${pct(m)}%` : "🔒 Depois";
-    return `<li class="${feito ? "aceso" : agora ? "agora" : ""}"><a href="#meta-${escapar(m.id)}">
-      <span class="passo" aria-hidden="true">${escapar(m.emoji)}</span>
-      <small>Passo ${i + 1}</small><b>${escapar(m.titulo.replace(/ para .*$/, ""))}</b><em>${estado}</em></a></li>`;
-  }).join("");
-  if (!recreio.length) el.closest("section").hidden = true;
-}
-
 // Diálogo "Quero ajudar": valor (com impacto) → forma de pagar.
 const ONLINE = (typeof PAGAMENTOS_ONLINE !== "undefined" && PAGAMENTOS_ONLINE) || /demo=pagamentos/.test(location.search);
 const DEMO = /demo=pagamentos/.test(location.search);
-let metaAberta = null, valorEscolhido = 0;
+let metaAberta = null, valorEscolhido = 0, opcoes = {};
 
 function impacto(m, v) {
   if (!v) return "";
+  if (opcoes.fixo) return `${v}\u00a0€ = 1 ${m.titulo.charAt(0).toLowerCase() + m.titulo.slice(1)} 💛`;
   const faltaJa = Math.max(0, m.custo - m.angariado);
   if (faltaJa && v >= faltaJa) return `${v} € fecham esta meta! 🎉`;
-  if (m.unidade && m.preco_unidade) {
-    const n = Math.floor(v / m.preco_unidade);
-    const [um, varios] = m.unidade.split("|").map(s => s.trim());
-    if (n >= 1) return `${v} € = ${n} ${n === 1 ? um : (varios || um)} 💛`;
-  }
   return `${v} € = ${Math.max(1, Math.round(v / m.custo * 100))}% desta meta 💛`;
 }
 
@@ -243,7 +190,7 @@ function escolherValor(v) {
   valorEscolhido = v;
   const m = metaAberta, d = document.getElementById("m-dialogo");
   const nome = (document.getElementById("m-nome").value || "").trim();
-  const ref = "META " + m.id.split("-")[0].toUpperCase() + (v ? " " + v + "EUR" : "") + " " + (nome || "+ o teu nome");
+  const ref = (opcoes.ref || "META " + m.id.split("-")[0].toUpperCase()) + (v ? " " + v + "EUR" : "") + " " + (nome || "+ o teu nome");
   d.querySelector("#m-ref").textContent = ref;
   d.querySelector("#m-ref2").textContent = ref;
   d.querySelectorAll(".m-v").forEach(s => { s.textContent = v ? v + " €" : "o valor"; });
@@ -251,8 +198,9 @@ function escolherValor(v) {
   d.querySelectorAll(".m-pagar").forEach(b => { b.disabled = !v; });
 }
 
-function abrirDialogo(m) {
-  metaAberta = m;
+// o.fixo: valor fechado (peça). o.ref: início do texto da transferência (ex.: "PECA HORTA").
+function abrirDialogo(m, o = {}) {
+  metaAberta = m; opcoes = o;
   const d = document.getElementById("m-dialogo");
   d.querySelector("#m-d-titulo").textContent = `${m.emoji} ${m.titulo}`;
   d.querySelector(".m-d-frase").textContent = m.frase;
@@ -260,6 +208,7 @@ function abrirDialogo(m) {
   d.querySelector("#m-valores").innerHTML = sugestoes.map((v, i) =>
     `<button type="button" role="radio" class="m-valor${i === 1 ? " ativo" : ""}" aria-checked="${i === 1}" data-valor="${v}">${v} €</button>`).join("")
     + '<button type="button" role="radio" class="m-valor" aria-checked="false" data-valor="outro">Outro</button>';
+  d.querySelector("#m-valores").hidden = !!o.fixo;
   d.querySelector("#m-outro").hidden = true;
   d.querySelector("#m-outro-valor").value = "";
   // Formas de pagar: MB WAY (online ou manual), Multibanco (só online), transferência (sempre).
@@ -273,8 +222,41 @@ function abrirDialogo(m) {
   d.querySelectorAll(".m-resposta").forEach(r => { r.textContent = ""; });
   d.querySelector("#m-refmb").hidden = true;
   metodo(temMb ? "mbway" : temRef ? "ref" : "transf");
-  escolherValor(sugestoes[1]);
+  d.querySelector("#m-recibo-erro").textContent = "";
+  extras();
+  escolherValor(o.fixo || sugestoes[1]);
   if (d.showModal) d.showModal(); else d.setAttribute("open", "");
+}
+
+// Recibo para as Finanças e "Preferem vir buscar?": mostram os seus campos.
+function extras() {
+  const levantar = document.getElementById("m-levantar").checked;
+  document.getElementById("m-recibo-campos").hidden = !document.getElementById("m-recibo").checked;
+  document.getElementById("m-levantar-campos").hidden = !levantar;
+  document.getElementById("m-pagamento").hidden = levantar;
+}
+
+// NIF português: 9 algarismos e o último confere com os outros (módulo 11).
+function nifValido(n) {
+  if (!/^\d{9}$/.test(n)) return false;
+  let soma = 0;
+  for (let i = 0; i < 8; i++) soma += Number(n[i]) * (9 - i);
+  const resto = soma % 11, controlo = resto < 2 ? 0 : 11 - resto;
+  return controlo === Number(n[8]);
+}
+
+// Dados do recibo (ou null se faltar alguma coisa: mostra o erro e põe o cursor no campo).
+function dadosRecibo() {
+  const erro = document.getElementById("m-recibo-erro");
+  erro.textContent = "";
+  if (!document.getElementById("m-recibo").checked) return {};
+  const v = id => document.getElementById(id).value.trim();
+  const falha = (id, texto) => { erro.textContent = texto; document.getElementById(id).focus(); return null; };
+  const nif = v("m-nif").replace(/\s/g, "");
+  if (!nifValido(nif)) return falha("m-nif", "O NIF não está certo. Confirma os 9 algarismos.");
+  if (!v("m-r-nome")) return falha("m-r-nome", "Escreve o nome ou a empresa para o recibo.");
+  if (!/^\S+@\S+\.\S+$/.test(v("m-email"))) return falha("m-email", "Escreve o email para onde enviamos o recibo.");
+  return { recibo: true, nif, recibo_nome: v("m-r-nome"), email: v("m-email"), morada: v("m-morada") };
 }
 
 function metodo(nome) {
@@ -285,6 +267,7 @@ function metodo(nome) {
 // Pagamento online: o Apps Script fala com a Eupago/ifthenpay (?acao=pagamento). Em ?demo=pagamentos é simulado.
 async function pagar(tipo) {
   const m = metaAberta, v = valorEscolhido;
+  if (!dadosRecibo()) return;
   const resp = document.getElementById(tipo === "mbway" ? "m-resp-mbway" : "m-resp-ref");
   const tel = (document.getElementById("m-tel").value || "").replace(/\D/g, "");
   if (tipo === "mbway" && !/^9\d{8}$/.test(tel)) { resp.textContent = "Escreve um número de telemóvel português (9 algarismos)."; return; }
@@ -313,15 +296,26 @@ async function pagar(tipo) {
 
 // Pagamento recebido: mensagem, linha na Sheet (por confirmar), barra avança só neste browser.
 async function pago(m, v, tipo, resp) {
-  resp.innerHTML = tipo === "transf" ? `✅ <b>Obrigado pelos teus ${v} €!</b> 💛` : `✅ <b>Recebemos os teus ${v} €.</b> Obrigado! 💛`;
-  enviar("doacao_meta", { meta: m.id, valor: v, metodo: tipo, demo: DEMO,
+  const recibo = dadosRecibo();
+  if (!recibo) return;
+  resp.innerHTML = recibo.recibo && tipo === "transf" ? "✅ <b>Obrigado!</b> Vamos confirmar a transferência e enviar o recibo por email. 💛"
+    : (tipo === "transf" ? `✅ <b>Obrigado pelos teus ${v}\u00a0€!</b> 💛` : `✅ <b>Recebemos os teus ${v}\u00a0€.</b> Obrigado! 💛`)
+      + (recibo.recibo ? " Enviamos o recibo por email." : "");
+  enviar("doacao_meta", { ...recibo, meta: m.id, valor: v, metodo: tipo, demo: DEMO,
     nome: document.getElementById("m-nome").value.trim(), contacto: document.getElementById("m-contacto").value.trim(),
     publico: document.getElementById("m-publico").checked, nota: DEMO ? "Demonstração (não é dinheiro real)" : tipo === "transf" ? "Avisou no site que transferiu" : "" });
   guardarMinha(m.id, v);
   m.meu = (m.meu || 0) + v;
-  await espera(1400);
+  await espera(recibo.recibo ? 3000 : 1400);
   const d = document.getElementById("m-dialogo");
   if (d.close) d.close(); else d.removeAttribute("open");
+  if (m.grupo === "Recreio") {
+    desenharMetas();
+    const f = document.querySelector(`[data-tem-meta~="${m.id}"]`);
+    if (f) { f.scrollIntoView({ block: "center", behavior: MOVIMENTO ? "smooth" : "auto" }); f.classList.add("m-festa"); }
+    confetti();
+    return;
+  }
   const c = document.getElementById("meta-" + m.id);
   if (!c) return;
   c.scrollIntoView({ block: "center", behavior: MOVIMENTO ? "smooth" : "auto" });
@@ -347,55 +341,138 @@ async function pago(m, v, tipo, resp) {
   confetti();
 }
 
-// Filtros: esconde cartões, passos e secções que ficam vazias.
-function filtrar(grupo) {
-  document.querySelectorAll(".m-cartao").forEach(c => { c.hidden = !!grupo && c.dataset.grupo !== grupo; });
-  document.querySelectorAll(".metas-caminho li").forEach(li => { li.hidden = !!grupo && grupo !== "Recreio"; });
-  document.querySelectorAll(".metas-pagina section").forEach(s => {
-    const cartoes = s.querySelectorAll(".m-cartao, .metas-caminho li");
-    s.hidden = cartoes.length > 0 && [...cartoes].every(c => c.hidden);
+// "Preferem vir buscar?": pedido para a Direção ligar. Ainda não é dinheiro, por isso a barra não mexe.
+function pedirLevantar() {
+  const recibo = dadosRecibo();
+  if (!recibo) return;
+  const tel = document.getElementById("m-l-tel").value.trim(), resp = document.getElementById("m-resp-levantar");
+  if (tel.replace(/\D/g, "").length < 9) { resp.textContent = "Escreve um telefone para combinarmos."; document.getElementById("m-l-tel").focus(); return; }
+  if (!valorEscolhido) { resp.textContent = "Escolhe primeiro quanto queres dar."; return; }
+  enviar("doacao_meta", { ...recibo, meta: metaAberta.id, valor: valorEscolhido, metodo: "levantar", telefone: tel, demo: DEMO,
+    nome: document.getElementById("m-nome").value.trim(), contacto: document.getElementById("m-contacto").value.trim() || tel,
+    publico: document.getElementById("m-publico").checked, nota: "Pede para irmos levantar" });
+  resp.innerHTML = "✅ <b>Obrigado!</b> Ligamos para combinar. 💛";
+}
+
+// ---------- Recreio ----------
+// data/recreio.json, "fases": os projetos do recreio, juntos (as "areas" e as "zonas" são da página recreio.html). Uma fase aparece nas metas quando uma das suas metas está "a angariar".
+// A Sheet dá o dinheiro e o estado: se tem uma meta com o mesmo id, os valores dela ganham.
+let PUBLICAS = [], PLANO = null;
+const porPrio = (a, b) => (a.prioridade ?? 99) - (b.prioridade ?? 99);
+const PAGA = m => m.estado === "garantido" || m.estado === "feito";
+
+function fasesDoRecreio() {
+  if (!PLANO || !PLANO.fases) return [];
+  const meus = minhas();
+  return PLANO.fases.map((f, i) => {
+    const ms = f.projetos.map(p => {
+      const s = PUBLICAS.find(m => m.id === p.id);
+      const m = { estado: "a seguir", angariado: 0, custos_detalhe: [], prioridade: 99, frase: "", ...p, ...(s || {}), emoji: p.emoji, custo: (s && s.custo) || p.custo };
+      m.grupo = "Recreio";
+      if (!PAGA(m)) m.meu = meus[m.id] || 0;
+      return m;
+    });
+    return {
+      titulo: f.titulo, num: i + 1, metas: ms, hoje: f.hoje, projeto: f.projeto,
+      custo: ms.reduce((t, m) => t + (m.custo || 0), 0),
+      angariado: ms.reduce((t, m) => t + (m.angariado || 0) + (m.meu || 0), 0),
+      aberta: ms.some(m => m.estado === "a angariar"),
+      alvo: ms.find(m => m.estado === "a angariar") || ms[0],
+      prioridade: Math.min(...ms.map(m => m.prioridade ?? 99)),
+    };
   });
 }
 
-(async function () {
-  const lista = await carregarMetas();
-  if (!lista) return;
-  const publicas = lista.filter(m => m.publicar).sort((a, b) => (a.ordem || 99) - (b.ordem || 99));
+// Fase do recreio como meta: foto grande (o projeto) com um botão para ver como está hoje, e o resto como as outras metas.
+function cartaoFase(f) {
+  const el = document.createElement("article");
+  el.className = "m-cartao anima estado-a-angariar r-fase";
+  el.id = "fase-" + f.num;
+  el.dataset.temMeta = f.metas.map(m => m.id).join(" ");
+  const p = f.custo ? Math.min(100, Math.round(f.angariado / f.custo * 100)) : 0;
+  const falta = Math.max(0, f.custo - f.angariado);
+  const custos = f.metas.filter(m => m.custos_detalhe && m.custos_detalhe.length);
+  el.innerHTML = `
+    <div class="m-img r-vistas" data-vista="projeto">
+      <img class="r-v-projeto" src="${escapar(f.projeto)}" alt="Simulação: ${escapar(f.titulo)}" loading="lazy">
+      <img class="r-v-hoje" src="${escapar(f.hoje)}" alt="Hoje: ${escapar(f.titulo)}" loading="lazy">
+      <span class="r-v-rot"></span>
+      <button class="r-v-botao" type="button" aria-pressed="false"></button>
+    </div>
+    <div class="m-corpo">
+      <h3>🌻 ${escapar(f.titulo)}</h3>
+      <p class="m-frase">${f.metas.map((m, i) => escapar(i ? m.titulo.charAt(0).toLowerCase() + m.titulo.slice(1) : m.titulo)).join(" e ")}.</p>
+      <div class="m-barra" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${p}" aria-label="${p}% da meta"><i style="--p:${p}%"></i></div>
+      <p class="m-valores-linha">${EUROS ? `<b>${euros(f.angariado)}</b> de ${euros(f.custo)}` : `<b>${p}%</b> da meta`}</p>
+      ${EUROS && falta ? `<p class="m-falta">Faltam ${euros(falta)}</p>` : ""}
+      ${custos.length ? `<details class="m-custos"><summary>Ver custos</summary><ul>${custos.map(m =>
+        m.custos_detalhe.map(l => `<li>${escapar(l)}</li>`).join("")).join("")}</ul></details>` : ""}
+      <div class="m-acoes"><button class="botao m-ajudar-fase" type="button" data-fase="${f.num}">Quero ajudar esta meta</button></div>
+    </div>`;
+  vistas(el.querySelector(".r-vistas"));
+  return el;
+}
+
+
+// Metas a angariar agora: as metas normais "a angariar" e as fases do recreio abertas, por prioridade.
+function desenharMetas() {
+  const doPlano = new Set(PLANO && PLANO.fases ? PLANO.fases.flatMap(f => f.projetos.map(p => p.id)) : []);
   const meus = minhas();
-  publicas.forEach(m => { if (m.estado === "a angariar") m.meu = meus[m.id] || 0; });
+  const normais = PUBLICAS.filter(m => m.estado === "a angariar" && !doPlano.has(m.id));
+  normais.forEach(m => { m.meu = meus[m.id] || 0; });
+  const lista = normais.map(m => ({ m, prioridade: m.prioridade ?? 99 }))
+    .concat(fasesDoRecreio().filter(f => f.aberta).map(f => ({ f, prioridade: f.prioridade })))
+    .sort((a, b) => a.prioridade - b.prioridade);
+  const grelha = document.getElementById("m-ativas");
+  grelha.innerHTML = "";
+  lista.forEach(x => grelha.appendChild(x.f ? cartaoFase(x.f) : cartao(x.m, PUBLICAS)));
+  grelha.closest("section").hidden = !lista.length;
+  galerias(grelha);
+  animar(grelha);
+}
+
+(async function () {
+  const [lista, plano] = await Promise.all([carregarMetas(), carregarJSON("data/recreio.json")]);
+  PLANO = plano;
+  if (!lista) {
+    document.getElementById("m-ativas").innerHTML = '<p class="metas-sub">Não conseguimos carregar as metas agora. Experimenta daqui a pouco.</p>';
+    return;
+  }
+  PUBLICAS = lista.filter(m => m.publicar);
+  const publicas = PUBLICAS;
   if (DEMO) {
     const aviso = document.createElement("p");
     aviso.className = "m-demo";
     aviso.textContent = "Modo demonstração: MB WAY e Multibanco são simulados. Nenhum pagamento é feito.";
     document.querySelector(".metas-pagina").prepend(aviso);
   }
-  const porPrio = (a, b) => (a.prioridade || 99) - (b.prioridade || 99);
-  const ativas = publicas.filter(m => m.estado === "a angariar").sort(porPrio);
-  const seguir = publicas.filter(m => m.estado === "a seguir").sort(porPrio);
   // Se sobrar dinheiro, vai para a meta seguinte por prioridade (salvo "proxima" na Sheet).
-  const fila = ativas.concat(seguir);
+  const fila = publicas.filter(m => m.estado === "a angariar").sort(porPrio).concat(publicas.filter(m => m.estado === "a seguir").sort(porPrio));
   fila.forEach((m, i) => { if (!m.proxima && fila[i + 1]) m.proxima = fila[i + 1].id; });
-  const feitas = publicas.filter(m => m.estado === "garantido" || m.estado === "feito");
 
-  const por = (id, l, f) => { const el = document.getElementById(id); l.forEach(m => el.appendChild(f ? f(m) : cartao(m, publicas))); };
-  por("m-ativas", ativas);
-  if (ativas.length === 1) document.getElementById("m-ativas").classList.add("uma"); por("m-seguir", seguir, linha); por("m-feitas-lista", feitas, feita);
-  caminho(publicas);
-  galerias(document);
-  animar(document);
-
-  contar(document.getElementById("m-feitas"), feitas.length);
-  contar(document.getElementById("m-agora"), ativas.length);
-  const fundo = document.getElementById("m-fundo");
-  if (fundo && EUROS && FUNDO_LIVRE >= 1) {
-    fundo.innerHTML = `💛 No fundo geral há <b>${euros(FUNDO_LIVRE)}</b> ainda sem destino. A Direção decide em que meta entram.`;
-    fundo.hidden = false;
-  }
+  desenharMetas();
+  const feitas = publicas.filter(PAGA);
+  const el = document.getElementById("m-feitas-lista");
+  feitas.forEach(m => el.appendChild(feita(m)));
+  el.closest("section").hidden = !feitas.length;
+  galerias(el);
+  animar(el);
   festejar(publicas);
+
+  // Ajudar uma fase do recreio: o dinheiro vai para a primeira meta aberta dessa fase.
+  const abrirFase = num => {
+    const f = fasesDoRecreio().find(x => String(x.num) === String(num));
+    if (!f) return;
+    const m = f.alvo;
+    abrirDialogo({ ...m, titulo: f.titulo, emoji: "🌻", frase: `O teu donativo vai para: ${m.titulo}.`, custo: f.custo, angariado: f.angariado,
+      unidade: "", grupo: "Recreio", id: m.id }, { ref: "FASE" + f.num });
+  };
 
   document.addEventListener("click", e => {
     const b = e.target.closest(".m-ajudar");
     if (b) abrirDialogo(publicas.find(m => m.id === b.dataset.meta));
+    const fb = e.target.closest("[data-fase]");
+    if (fb) abrirFase(fb.dataset.fase);
     const t = e.target.closest(".m-metodos button");
     if (t) metodo(t.dataset.metodo);
     const v = e.target.closest(".m-valor");
@@ -410,9 +487,10 @@ function filtrar(grupo) {
     if (p) pagar(p.dataset.pagar);
     if (e.target.closest("[data-simular]")) pago(metaAberta, valorEscolhido, "ref", document.getElementById("m-resp-ref"));
     if (e.target.closest("[data-transferi]") && valorEscolhido) pago(metaAberta, valorEscolhido, "transf", document.getElementById("m-resp-transf"));
-    const s = e.target.closest("[data-partilhar]");
-    if (s) partilhar(publicas.find(m => m.id === s.dataset.partilhar));
+    if (e.target.closest("[data-levantar]")) pedirLevantar();
   });
+  ["m-recibo", "m-levantar"].forEach(id => document.getElementById(id).addEventListener("change", extras));
+  document.getElementById("m-recibo-campos").addEventListener("input", () => { document.getElementById("m-recibo-erro").textContent = ""; });
   document.getElementById("m-nome").addEventListener("input", () => escolherValor(valorEscolhido));
   document.getElementById("m-outro-valor").addEventListener("input", e => escolherValor(Math.max(0, parseInt(e.target.value, 10) || 0)));
   if (location.hash) { const alvo = document.querySelector(location.hash); if (alvo) setTimeout(() => alvo.scrollIntoView({ block: "center" }), 300); }
