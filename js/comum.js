@@ -16,8 +16,10 @@ const espera = ms => new Promise(r => setTimeout(r, ms));
   const nome = caminho => caminho.split("/").pop() || "index.html";
   const pagina = nome(location.pathname);
   menu.querySelectorAll("a").forEach(a => {
-    if (nome(a.pathname) === pagina && !a.hash) a.setAttribute("aria-current", "page");
+    if (nome(a.pathname) === pagina && !a.hash) { a.setAttribute("aria-current", "page"); const d = a.closest("details"); if (d && innerWidth < 960) d.open = true; }
   });
+  // "Mais ▾" no computador: fecha ao clicar fora
+  document.addEventListener("click", e => { const d = menu.querySelector(".menu-mais"); if (d && d.open && !d.contains(e.target) && innerWidth >= 960) d.open = false; });
   if (!botao) return;
   const abrir = sim => {
     botao.setAttribute("aria-expanded", sim);

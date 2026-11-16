@@ -968,26 +968,35 @@ section[hidden] { display: none; }
 .evento-cartao.com-fotos.aberto .evento-mini { display: none; }
 @media (max-width: 640px) { .evento-cartao.com-fotos:not(.aberto) { flex-direction: row; } }
 
-/* ===== Menu v2 (16/11): 5 links + "Ajudar" no computador; no telemóvel "Ajudar" + "☰ Menu" com 3 grupos numa coluna ===== */
-.menu .menu-grupo { display: contents; }
-.menu .menu-titulo, .menu a:not(.m-topo), .menu .m-longo { display: none; }
-.menu a b { font-weight: inherit; }
+/* ===== Menu v3 (16/11): 5 principais + "Mais ▾" (o resto lá dentro). Gerado por scripts/site_menu.py ===== */
+.menu a span { display: none; }
 .botao-ajudar { order: 3; display: inline-flex; align-items: center; gap: 6px; min-height: 48px; padding: 0 18px; border-radius: 999px; border: 2px solid var(--tinta);
   background: var(--sol); color: var(--tinta); font-weight: 800; text-decoration: none; white-space: nowrap; box-shadow: 2px 2px 0 var(--tinta); }
 .botao-ajudar:hover { background: var(--sol-escuro); }
-header.topo .menu { order: 2; margin-left: auto; }
+header.topo .menu { order: 2; margin-left: auto; align-items: center; }
+.menu-mais { position: relative; }
+.menu-mais summary { list-style: none; display: inline-flex; align-items: center; gap: 4px; min-height: 48px; padding: 0 8px; border-radius: 999px; font-weight: 700; color: var(--suave); cursor: pointer; }
+.menu-mais summary::-webkit-details-marker { display: none; }
+.menu-mais summary:hover, .menu-mais[open] summary { color: var(--tinta); }
+.menu-mais[open] .seta { display: inline-block; transform: rotate(180deg); }
+.menu-mais .seta { display: inline-block; font-size: 12px; }
+.menu-mais-lista { position: absolute; right: 0; top: 100%; z-index: 10; min-width: 220px; padding: 6px; background: var(--cartao); border: 2px solid var(--tinta); border-radius: 14px; box-shadow: 3px 3px 0 var(--tinta); }
+.menu-mais-lista a { display: flex; width: 100%; border-radius: 10px; min-height: 42px; }
+.menu-mais-lista a span { display: inline; }
 @media (max-width: 959px) {
   .botao-ajudar { order: 0; margin-left: auto; padding: 0 14px; }
   .menu-botao { order: 1; }
   header.topo .menu { order: 4; margin-left: 0; }
-  .menu-aberto .menu { display: block; padding: 6px 0 10px; }
-  .menu .menu-grupo { display: block; margin-top: 8px; }
-  .menu .menu-titulo { display: block; margin: 6px 4px 4px; font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: .5px; color: var(--suave); }
-  .menu a, .menu a:not(.m-topo) { display: flex; min-height: 48px; margin: 0 0 6px; padding: 0 14px; border-radius: 12px; border-width: 2px; font-size: 16px; }
-  .menu .m-longo { display: inline; } .menu .m-curto { display: none; }
-  .menu a span { font-size: 20px; width: 26px; text-align: center; }
+  .menu-aberto .menu { display: block; padding: 4px 0 10px; }
+  .menu a, .menu-mais summary { display: flex; width: 100%; min-height: 44px; padding: 0 6px; margin: 0; border: 0; border-radius: 10px; background: none; color: var(--tinta); font-size: 16px; font-weight: 700; box-shadow: none; }
+  .menu a span { display: inline; width: 24px; font-size: 18px; }
+  .menu a[aria-current] { background: var(--sol); }
+  .menu-mais { border-top: 1px dashed var(--linha); margin-top: 4px; }
+  .menu-mais summary { justify-content: space-between; color: var(--suave); }
+  .menu-mais-lista { position: static; min-width: 0; padding: 0 0 0 12px; border: 0; box-shadow: none; background: none; }
 }
 @media (max-width: 380px) { .marca span { display: none; } }
+.menu-aberto .lumi-cena { display: none; }
 
 /* Rodapé: todas as páginas, nos mesmos 3 grupos */
 .rodape-menu { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; width: 100%; max-width: 720px; text-align: left; margin-bottom: 8px; }
@@ -997,26 +1006,3 @@ header.topo .menu { order: 2; margin-left: auto; }
 .rodape-titulo { margin: 0 0 4px; font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: .5px; color: var(--suave); }
 .rodape-redes { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
 @media (max-width: 560px) { .rodape-menu { grid-template-columns: 1fr 1fr; } }
-.atalho.destaque-recreio { background: var(--sol); }
-/* Menu do telemóvel: 2 colunas por grupo, para caber num ecrã; a Lumi não aparece por cima do menu aberto */
-@media (max-width: 959px) {
-  .menu .menu-grupo { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 6px; }
-  .menu .menu-titulo { grid-column: 1 / -1; margin: 4px 4px 0; }
-  .menu a, .menu a:not(.m-topo) { margin: 0; padding: 0 10px; font-size: 15px; line-height: 1.15; }
-}
-.menu-aberto .lumi-cena { display: none; }
-/* Menu do telemóvel mais compacto (16/11): linhas baixas, sem caixas grossas */
-@media (max-width: 959px) {
-  .menu-aberto .menu { padding: 2px 0 8px; }
-  .menu .menu-grupo { gap: 4px 8px; margin-top: 4px; }
-  .menu .menu-titulo { font-size: 11px; margin: 6px 2px 0; }
-  .menu a, .menu a:not(.m-topo) { min-height: 40px; padding: 0 8px; gap: 6px; border: 0; border-radius: 10px; background: var(--cartao); font-size: 15px; font-weight: 700; box-shadow: none; }
-  .menu a span { font-size: 16px; width: 20px; }
-  .menu a[aria-current] { background: var(--sol); }
-}
-@media (max-width: 959px) {
-  .menu .menu-grupo { gap: 0 8px; }
-  .menu a, .menu a:not(.m-topo) { min-height: 38px; background: none; font-size: 15px; white-space: nowrap; }
-  .menu .menu-titulo { margin-top: 8px; border-top: 1px dashed var(--linha); padding-top: 8px; }
-  .menu .menu-grupo:first-child .menu-titulo { border-top: 0; padding-top: 0; }
-}
