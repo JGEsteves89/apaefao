@@ -265,12 +265,16 @@ function vistas(caixa) {
 
 // Avisos urgentes (greve, escola fechada, horário…): barra no topo de todas as páginas + cartão na página inicial.
 // Vêm da aba "avisos" da Sheet (?acao=avisos, cache de 60 s; não entra no ?acao=site, que guarda 6 h).
-// Erro ou sem avisos: não mostra nada. Teste com ?avisos-teste na morada (dados inventados, só neste ecrã).
+// Erro ou sem avisos: não mostra nada. Cada aviso só aparece nos 3 dias antes do evento (ver DIAS_ANTES). Teste com ?avisos-teste na morada (dados inventados, só neste ecrã).
 (function () {
   if (!ENDPOINT) return;
   const CHAVE = "apaef-avisos-v1", FRESCO = 60 * 1000;
   const hoje = hojeISO();
-  const ativos = l => (Array.isArray(l) ? l : []).filter(a => a && a.ate > hoje && a.atualizacoes && a.atualizacoes.length);
+  // Só aparece nos 3 dias antes (o dia do evento é o dia antes de "ate") e desaparece às 00:00 de "ate".
+  // Ex.: ate = 21/11 (greve a 20/11) → aparece a 17/11.
+  const DIAS_ANTES = 3;
+  const desde = new Date(new Date(hoje + "T12:00:00Z").getTime() + (DIAS_ANTES + 1) * 864e5).toISOString().slice(0, 10);
+  const ativos = l => (Array.isArray(l) ? l : []).filter(a => a && a.ate > hoje && a.ate <= desde && a.atualizacoes && a.atualizacoes.length);
   const lerCopia = () => { try { return JSON.parse(localStorage.getItem(CHAVE) || "null"); } catch (e) { return null; } };
 
   function teste() {
