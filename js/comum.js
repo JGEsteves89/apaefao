@@ -35,9 +35,9 @@ const espera = ms => new Promise(r => setTimeout(r, ms));
 // Lê um ficheiro de data/. Se falhar, deixa uma mensagem simpática no sítio.
 // Todos os dados do site vêm da Google Sheet (Apps Script, ?acao=site): um só pedido por página,
 // com agenda, noticias, documentos, links, orgaos, recreio, metas e apoiantes.
-// Para ser rápido: guarda a última resposta no telemóvel. Se tiver menos de 5 minutos, usa-a logo;
+// Para ser rápido: guarda a última resposta no telemóvel. Se tiver menos de 1 minuto, usa-a logo;
 // se for mais velha, espera pela Sheet (e só usa a guardada se a Sheet falhar). Atualiza sempre em fundo.
-const CHAVE_SITE = "apaef-site-v1", FRESCO_MS = 5 * 60 * 1000;
+const CHAVE_SITE = "apaef-site-v1", FRESCO_MS = 60 * 1000;   // 1 minuto (pedido do Jose, 18/11)
 let pedidoSite = null;
 function guardado() {
   try { return JSON.parse(localStorage.getItem(CHAVE_SITE) || "null"); } catch (e) { return null; }
