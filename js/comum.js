@@ -340,7 +340,8 @@ function vistas(caixa) {
   }
 
   obter().then(l => {
-    const lista = ativos(l);
+    // urgente primeiro; depois o evento mais perto primeiro
+    const lista = ativos(l).sort((a, b) => (a.nivel === b.nivel ? 0 : a.nivel === "urgente" ? -1 : 1) || (a.ate < b.ate ? -1 : a.ate > b.ate ? 1 : 0));
     if (!lista.length) return;
     faixa(lista);
     const sec = document.getElementById("avisos");
