@@ -616,6 +616,7 @@ const FOLHAS_INFO = [
   ["noticias", "Site", "Notícias do site, com fotos.", "Direção (à mão)"],
   ["documentos", "Site", "Convocatórias, atas, estatutos e documentos do Agrupamento.", "Direção (à mão)"],
   ["links", "Site", "Página 'Links úteis' (portais da escola, contactos).", "Direção (à mão)"],
+  ["avisos", "Site", "Avisos urgentes: barra no topo de todas as páginas + cartão na página inicial. Uma linha = uma atualização.", "Direção (à mão)"],
   ["orgaos", "Site", "Órgãos sociais (Direção, AG, Conselho Fiscal). Página Quem somos.", "Direção (à mão)"],
   ["representantes", "Site", "Representantes de cada turma. Página Quem somos.", "Direção (à mão)"],
   ["recreio_areas", "Recreio", "Comparação 'Hoje / O projeto' no topo da página do recreio.", "Direção (à mão)"],
@@ -666,6 +667,15 @@ const NOTAS = {
     ficheiro: "Ficheiro (docs/…) ou link para o documento.",
     destaque: "sim = aparece em destaque na página inicial.",
     rascunho: "sim = ainda não é a versão final."
+  },
+  avisos: {
+    atualizado: "Data e hora desta atualização. Ex.: 20/11/2026 09:20",
+    titulo: "Nome do aviso. Mesmo título = mesmo aviso (as linhas antigas aparecem em 'Antes').",
+    texto: "O que os pais precisam de saber (1–2 frases).",
+    nivel: "urgente = vermelho. Vazio ou info = amarelo.",
+    quando: "Opcional. Ex.: Sexta, 20 de novembro",
+    ate: "O aviso desaparece às 00:00 deste dia. Ex.: 21/11/2026",
+    fonte: "Opcional. Ex.: Escola"
   },
   links: {
     titulo: "Nome do link.",
@@ -990,4 +1000,34 @@ function dataAviso(v, comHora) {
   if (!m) return "";
   const d = m[0] + "-" + ("0" + m[1]).slice(-2) + "-" + ("0" + m[2]).slice(-2);
   return comHora ? d + "T" + ("0" + (m[3] || "0")).slice(-2) + ":" + (m[4] || "00") : d;
+}
+
+// Correr UMA vez (▶ prepararAvisos): cria a aba "avisos" com as colunas e põe o link da Ementa na aba "links".
+function prepararAvisos() {
+  const livro = SpreadsheetApp.getActiveSpreadsheet(), feito = [];
+  let aba = livro.getSheetByName("avisos");
+  if (aba) feito.push("avisos: já existia, não mexi");
+  else {
+    aba = livro.insertSheet("avisos");
+    const cols = ["atualizado", "titulo", "texto", "nivel", "quando", "ate", "fonte"];
+    aba.getRange(1, 1, 1, cols.length).setValues([cols]).setFontWeight("bold").setBackground("#ebce58");
+    aba.getRange(1, 1, 1, cols.length).setNotes([cols.map(c => NOTAS.avisos[c])]);
+    aba.setFrozenRows(1);
+    aba.getRange("A2:A").setNumberFormat("dd/mm/yyyy hh:mm");
+    aba.getRange("F2:F").setNumberFormat("dd/mm/yyyy");
+    [140, 140, 420, 80, 180, 100, 100].forEach((w, i) => aba.setColumnWidth(i + 1, w));
+    aba.getRange("D2:D").setDataValidation(SpreadsheetApp.newDataValidation().requireValueInList(["urgente", "info"], true).setAllowInvalid(true).build());
+    feito.push("avisos: criada");
+  }
+  const links = livro.getSheetByName("links");
+  if (links && links.getLastRow() > 1) {
+    const dados = links.getDataRange().getValues(), cab = dados[0].map(c => String(c).trim().toLowerCase());
+    const t = cab.indexOf("titulo"), u = cab.indexOf("url");
+    const i = dados.findIndex((l, n) => n > 0 && /ementa/i.test(String(l[t])));
+    if (t < 0 || u < 0) feito.push("links: não encontrei as colunas titulo/url");
+    else if (i < 0) feito.push("links: não encontrei nenhum link com 'Ementa' no título");
+    else { links.getRange(i + 1, u + 1).setValue("https://apaefao.pt/ementa"); feito.push("links: '" + dados[i][t] + "' → https://apaefao.pt/ementa"); }
+  }
+  limparCache();
+  Logger.log(feito.join("\n"));
 }
