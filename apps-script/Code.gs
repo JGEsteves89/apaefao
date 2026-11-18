@@ -486,7 +486,7 @@ function criarMovimentos() {
 }
 
 // ===== Site: todos os dados do site vêm desta Google Sheet (16/11/2026). =====
-// O site pede ?acao=site e recebe: agenda, noticias, documentos, links, orgaos, recreio.
+// O site pede ?acao=site e recebe: agenda, calendario, noticias, documentos, links, orgaos, recreio.
 // Cada parte é uma folha: uma linha por item, a 1.ª linha tem os nomes das colunas.
 // Regras para quem edita a Sheet:
 //  - sim/não: escrever "sim" (ou deixar vazio).
@@ -495,7 +495,7 @@ function criarMovimentos() {
 //  - Linha com "publicar" = não → não aparece.
 
 const SITE_FOLHAS = {
-  agenda: "agenda", noticias: "noticias", documentos: "documentos", links: "links",
+  agenda: "agenda", calendario: "calendario", noticias: "noticias", documentos: "documentos", links: "links",
   orgaos: "orgaos", representantes: "representantes",
   recreio_areas: "recreio_areas", recreio_fases: "recreio_fases", recreio_zonas: "recreio_zonas"
 };
@@ -516,6 +516,7 @@ function site() {
   });
   const dados = {
     agenda: ler("agenda"),
+    calendario: ler("calendario"),
     noticias: ler("noticias"),
     documentos: ler("documentos"),
     links: ler("links"),
@@ -613,6 +614,7 @@ function listarFolhas() {
 
 const FOLHAS_INFO = [
   ["agenda", "Site", "Atividades do ano. Página Agenda e 'A seguir' na página inicial.", "Direção (à mão)"],
+  ["calendario", "Site", "Datas da escola: períodos, férias, feriados e dias temáticos. Página Calendário.", "Direção (à mão)"],
   ["noticias", "Site", "Notícias do site, com fotos.", "Direção (à mão)"],
   ["documentos", "Site", "Convocatórias, atas, estatutos e documentos do Agrupamento.", "Direção (à mão)"],
   ["links", "Site", "Página 'Links úteis' (portais da escola, contactos).", "Direção (à mão)"],
@@ -666,7 +668,21 @@ const NOTAS = {
     nota: "Nota extra (opcional).",
     ficheiro: "Ficheiro (docs/…) ou link para o documento.",
     destaque: "sim = aparece em destaque na página inicial.",
-    rascunho: "sim = ainda não é a versão final."
+    rascunho: "sim = ainda não é a versão final.",
+    inicio: "Calendário: 1.º dia da atividade (AAAA-MM-DD). Vazio + 'mes' = dia a definir.",
+    mes: "Calendário: só o mês (AAAA-MM), quando ainda não há dia. Ex.: 2027-01",
+    curto: "Calendário: nome curto para a grelha (opcional)."
+  },
+  calendario: {
+    tipo: "periodo, ferias, feriado ou escola (dia temático da escola).",
+    inicio: "1.º dia (AAAA-MM-DD).",
+    fim: "Último dia (AAAA-MM-DD). Vazio = o mesmo dia.",
+    nome: "Nome. Ex.: Férias de Natal",
+    curto: "Nome curto para a grelha (opcional).",
+    emoji: "Um emoji. Ex.: 🎄",
+    texto: "Frase curta (opcional).",
+    confirmar: "sim = data ainda por confirmar.",
+    publicar: "não = não aparece no site."
   },
   avisos: {
     atualizado: "Data e hora desta atualização. Ex.: 20/11/2026 09:20",
@@ -1028,6 +1044,114 @@ function prepararAvisos() {
     else if (i < 0) feito.push("links: não encontrei nenhum link com 'Ementa' no título");
     else { links.getRange(i + 1, u + 1).setValue("https://apaefao.pt/ementa"); feito.push("links: '" + dados[i][t] + "' → https://apaefao.pt/ementa"); }
   }
+  limparCache();
+  Logger.log(feito.join("\n"));
+}
+
+// Correr UMA vez (▶ prepararCalendario): cria a aba "calendario" com as datas de 2026/27 e
+// junta à aba "agenda" as colunas inicio / mes / curto, preenchidas para as atividades que já lá estão.
+// Não apaga nada. Se a aba "calendario" já existir, não mexe nela.
+function prepararCalendario() {
+  const livro = SpreadsheetApp.getActiveSpreadsheet(), feito = [];
+  const COLS = ["tipo", "inicio", "fim", "nome", "curto", "emoji", "texto", "confirmar", "publicar"];
+  const L = (tipo, inicio, fim, nome, curto, emoji, texto, confirmar) => [tipo, inicio, fim || "", nome, curto || "", emoji || "", texto || "", confirmar ? "sim" : "", ""];
+  const linhas = [
+    L("periodo", "2026-09-14", "2026-12-15", "1.º período"), L("periodo", "2027-01-04", "2027-03-19", "2.º período"), L("periodo", "2027-04-05", "2027-06-30", "3.º período"),
+    L("ferias", "2026-12-16", "2027-01-03", "Férias de Natal", "Natal", "🎄"), L("ferias", "2027-02-08", "2027-02-10", "Férias do Carnaval", "Carnaval", "🎭"),
+    L("ferias", "2027-03-22", "2027-04-02", "Férias da Páscoa", "Páscoa", "🐣"),
+    L("feriado", "2026-10-05", "", "Implantação da República"), L("feriado", "2026-11-01", "", "Todos os Santos"),
+    L("feriado", "2026-12-01", "", "Restauração da Independência"), L("feriado", "2026-12-08", "", "Imaculada Conceição"),
+    L("feriado", "2026-12-25", "", "Natal"), L("feriado", "2027-01-01", "", "Ano Novo"), L("feriado", "2027-03-26", "", "Sexta-feira Santa"),
+    L("feriado", "2027-03-28", "", "Páscoa"), L("feriado", "2027-04-25", "", "Dia da Liberdade"), L("feriado", "2027-05-01", "", "Dia do Trabalhador"),
+    L("feriado", "2027-05-27", "", "Corpo de Deus"), L("feriado", "2027-06-10", "", "Dia de Portugal"),
+    L("escola", "2026-09-14", "", "Primeiro dia de aulas", "", "🎒"),
+    L("escola", "2026-09-23", "2026-09-30", "Semana Europeia do Desporto", "Semana do Desporto", "⚽"),
+    L("escola", "2026-10-16", "", "Dia Mundial da Alimentação", "Dia da Alimentação", "🍎"),
+    L("escola", "2026-11-20", "", "Dia do Pijama", "", "🧸", "Dia dos Direitos da Criança. Vem de pijama!"),
+    L("escola", "2026-12-03", "", "Dia das Pessoas com Deficiência", "Dia da Inclusão", "🤝", "Palestra na escola."),
+    L("escola", "2026-12-15", "", "Último dia de aulas · Pai Natal", "Último dia · Pai Natal", "🎅", "O Pai Natal chega no carro dos bombeiros.", true),
+    L("escola", "2027-01-04", "", "Voltamos às aulas", "", "🎒"),
+    L("escola", "2027-01-05", "", "Espetáculo no gelo (Porto)", "Espetáculo no gelo", "⛸️"),
+    L("escola", "2027-02-09", "", "Carnaval", "", "🎭"), L("escola", "2027-02-14", "", "Dia dos Afetos", "", "💛"),
+    L("escola", "2027-04-05", "", "Voltamos às aulas", "", "🎒"),
+    L("escola", "2027-06-03", "", "Dia da Bicicleta", "", "🚲", "", true),
+    L("escola", "2027-06-25", "", "Festa de Final de Ano", "", "🎉", "", true),
+    L("escola", "2027-06-30", "", "Último dia de aulas", "", "☀️")
+  ];
+  if (livro.getSheetByName("calendario")) feito.push("calendario: já existia, não mexi");
+  else {
+    const aba = livro.insertSheet("calendario");
+    aba.getRange("B:C").setNumberFormat("@");   // datas como texto AAAA-MM-DD
+    aba.getRange(1, 1, 1, COLS.length).setValues([COLS]).setFontWeight("bold").setBackground("#ebce58");
+    aba.getRange(1, 1, 1, COLS.length).setNotes([COLS.map(c => NOTAS.calendario[c])]);
+    aba.getRange(2, 1, linhas.length, COLS.length).setValues(linhas);
+    aba.setFrozenRows(1);
+    feito.push("calendario: criada com " + linhas.length + " linhas");
+  }
+
+  // agenda: novas colunas + valores para as atividades que já existem (procura pelo título)
+  const ag = livro.getSheetByName("agenda");
+  if (!ag) { feito.push("agenda: não encontrei a aba"); Logger.log(feito.join("\n")); return; }
+  let cab = ag.getRange(1, 1, 1, ag.getLastColumn()).getValues()[0].map(c => String(c).trim().toLowerCase());
+  ["inicio", "mes", "curto", "emoji"].forEach(c => {
+    if (cab.indexOf(c) >= 0) return;
+    ag.getRange(1, cab.length + 1).setValue(c).setNote(NOTAS.agenda[c] || "");
+    cab.push(c);
+    feito.push("agenda: coluna nova '" + c + "'");
+  });
+  const col = c => cab.indexOf(c) + 1;
+  ag.getRange(2, col("inicio"), Math.max(ag.getMaxRows() - 1, 1), 1).setNumberFormat("@");
+  ag.getRange(2, col("mes"), Math.max(ag.getMaxRows() - 1, 1), 1).setNumberFormat("@");
+  // [palavra do título, inicio, mes, curto, emoji]  (Espetáculo no Gelo, Dia da Bicicleta e Festa de Final de Ano já estão no "calendario")
+  const MAPA = [
+    [/^dia do cinema/i, "2026-11-05", "", "", "🎬"], [/^magusto$/i, "2026-11-12", "", "Magusto da escola", "🌰"],
+    [/^magusto do mercado/i, "2026-11-14", "", "Magusto do Mercado", "🌰"], [/^feirinha de outono/i, "2026-11-27", "", "", "🍂"],
+    [/^jantar de natal/i, "2026-12-12", "", "", "🎄"], [/^cantar as janeiras/i, "", "2027-01", "", "👑"],
+    [/^noite das sopas/i, "2027-02-05", "", "", "🍲"], [/baile de m[aá]scaras/i, "", "2027-02", "Baile de Máscaras", "🎭"],
+    [/^p[aá]scoa$/i, "2027-03-15", "", "Semana da Páscoa", "🐣"], [/^dia da [aá]rvore/i, "2027-03-19", "", "", "🌳"],
+    [/^marchas luminosas/i, "2027-04-02", "", "", "✨"], [/^feira do livro/i, "", "2027-04", "Feira do Livro", "📚"],
+    [/^dia da fam[ií]lia/i, "2027-05-15", "", "", "👨‍👩‍👧"], [/^dia mundial da crian[cç]a/i, "2027-06-01", "", "Dia da Criança", "🧒"]
+  ];
+  const dados = ag.getDataRange().getValues(), t = cab.indexOf("titulo");
+  MAPA.forEach(([rx, inicio, mes, curto, emoji]) => {
+    const i = dados.findIndex((l, n) => n > 0 && rx.test(String(l[t]).trim()));
+    if (i < 0) { feito.push("agenda: não encontrei " + rx); return; }
+    const por = (c, v) => { if (v && !String(dados[i][col(c) - 1] || "").trim()) ag.getRange(i + 1, col(c)).setValue(v); };
+    por("inicio", inicio); por("mes", mes); por("curto", curto); por("emoji", emoji);
+    // um só dia (a Páscoa é a semana toda): o "fim" passa a ser o mesmo dia, para não aparecer em vários dias
+    const fimDia = /p[aá]scoa/i.test(String(dados[i][t])) ? "2027-03-19" : inicio;
+    if (fimDia && cab.indexOf("fim") >= 0) ag.getRange(i + 1, col("fim")).setValue(fimDia);
+    feito.push("agenda: " + dados[i][t] + " → " + (inicio || mes));
+  });
+  // Feira da Primavera e Caminhada: ainda não estava na agenda
+  if (!dados.some((l, n) => n > 0 && /feira da primavera/i.test(String(l[t])))) {
+    const nova = cab.map(c => ({ titulo: "Feira da Primavera e Caminhada", quando: "maio", mes: "2027-05", emoji: "🌸", fim: "2027-05-31" }[c] || ""));
+    ag.appendRow(nova);
+    feito.push("agenda: nova linha 'Feira da Primavera e Caminhada'");
+  }
+  limparCache();
+  Logger.log(feito.join("\n"));
+}
+
+// Correr UMA vez (▶ confirmarDatas, 18/11/2026): datas decididas pelo Jose deixam de estar "a confirmar".
+// Pai Natal: 15/12 na escola (último dia de aulas) e 12/12 no Jantar de Natal (entrega os presentes).
+function confirmarDatas() {
+  const livro = SpreadsheetApp.getActiveSpreadsheet(), feito = [];
+  function mudar(nomeAba, colTitulo, rx, valores) {
+    const aba = livro.getSheetByName(nomeAba);
+    if (!aba) { feito.push(nomeAba + ": não encontrei a aba"); return; }
+    const dados = aba.getDataRange().getValues(), cab = dados[0].map(c => String(c).trim().toLowerCase());
+    const i = dados.findIndex((l, n) => n > 0 && rx.test(String(l[cab.indexOf(colTitulo)]).trim()));
+    if (i < 0) { feito.push(nomeAba + ": não encontrei " + rx); return; }
+    Object.keys(valores).forEach(c => { if (cab.indexOf(c) >= 0) aba.getRange(i + 1, cab.indexOf(c) + 1).setValue(valores[c]); });
+    feito.push(nomeAba + ": " + dados[i][cab.indexOf(colTitulo)] + " ✓");
+  }
+  mudar("calendario", "nome", /pai natal/i, { nome: "Último dia de aulas · Pai Natal na escola", texto: "De manhã, o Pai Natal chega à escola no carro dos bombeiros.", confirmar: "" });
+  mudar("calendario", "nome", /^dia da bicicleta/i, { confirmar: "" });
+  mudar("calendario", "nome", /^festa de final de ano/i, { confirmar: "" });
+  mudar("agenda", "titulo", /^jantar de natal/i, { titulo: "Jantar de Natal · Pai Natal", curto: "Jantar · Pai Natal" });
+  mudar("agenda", "titulo", /^noite das sopas/i, { quando: "Sexta, 5 fev", confirmar: "" });
+  mudar("agenda", "titulo", /^dia da fam[ií]lia/i, { quando: "Sábado, 15 mai", confirmar: "" });
   limparCache();
   Logger.log(feito.join("\n"));
 }

@@ -1137,3 +1137,157 @@ header.topo .menu { order: 2; margin-left: auto; align-items: center; }
 .aviso-hist li:last-child { margin-bottom: 0; }
 .aviso-hist li::before { content: ""; position: absolute; left: -24px; top: 5px; width: 13px; height: 13px; border-radius: 50%; background: var(--linha); border: 2px solid #fff; }
 .aviso-h { display: block; font-weight: 900; font-size: 14px; }
+
+/* ---------- Calendário do ano (calendario.html, 18/11). Tudo dentro de .cal para não chocar com o resto. ---------- */
+.cal { container-type: inline-size;
+  --c-aulas: #fffaf0; --c-ferias: #cfe7c3; --c-ferias-t: #2e6a28; --c-feriado: #f7d2c9; --c-feriado-t: #a3341f;
+  --c-fds: #eadfc6; --c-escola: #d5e6f1; --c-escola-b: #3b6d8e; }
+.cal button { font: inherit; color: inherit; }
+.cal .cal-titulo { margin-bottom: 4px; }
+.cal .cal-sub { margin: 0 0 16px; }
+.cal .tabs { display: inline-flex; background: #fff; border: 2px solid var(--tinta); border-radius: 999px; padding: 3px; margin: 0 0 14px; }
+.cal .tabs button { border: 0; background: transparent; border-radius: 999px; padding: 8px 18px; min-height: 40px; font-weight: 800; cursor: pointer; }
+.cal .tabs button[aria-selected="true"] { background: var(--tinta); color: var(--sol); }
+/* Mês */
+.cal .mes-topo { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+.cal .mes-topo h2 { font-size: 30px; flex: 1; text-align: center; margin: 0; }
+.cal .mes-topo h2 small { font-size: 18px; color: var(--suave); font-weight: 600; }
+.cal .seta { width: 44px; height: 44px; border-radius: 50%; border: 2px solid var(--tinta); background: #fff; font-size: 22px; font-weight: 800; cursor: pointer; box-shadow: 2px 2px 0 var(--tinta); }
+.cal .seta:disabled { opacity: .35; cursor: default; box-shadow: none; }
+.cal .btn-hoje { height: 44px; border-radius: 999px; border: 2px solid var(--tinta); background: var(--sol); font-weight: 800; padding: 0 16px; cursor: pointer; box-shadow: 2px 2px 0 var(--tinta); }
+.cal .grelha { display: grid; grid-template-columns: repeat(5, 1fr) repeat(2, .72fr); gap: 5px; }
+.cal .sem { font-weight: 800; font-size: 13px; text-transform: uppercase; letter-spacing: .5px; color: var(--suave); text-align: center; padding: 2px 0; }
+.cal .c { position: relative; min-height: 96px; border: 2px solid var(--linha); border-radius: 12px; background: var(--c-aulas); padding: 5px 6px; text-align: left; display: flex; flex-direction: column; gap: 3px; cursor: pointer; overflow: hidden; min-width: 0; }
+.cal .c.vazio { background: transparent; border: 0; cursor: default; }
+.cal .c .n { font-family: "Fredoka", sans-serif; font-size: 20px; font-weight: 700; line-height: 1; }
+.cal .c.fds { background: var(--c-fds); border-color: transparent; }
+.cal .c.fds .n { color: var(--suave); }
+.cal .c.ferias, .cal .c.verao { background: var(--c-ferias); border-color: #a9d39a; }
+.cal .c.feriado { background: var(--c-feriado); border-color: #eaa797; }
+.cal .c .casa { position: absolute; top: 4px; right: 6px; font-size: 16px; }
+.cal .tag-dia { font-size: 11.5px; font-weight: 800; line-height: 1.15; }
+.cal .c.ferias .tag-dia, .cal .c.verao .tag-dia { color: var(--c-ferias-t); }
+.cal .c.feriado .tag-dia { color: var(--c-feriado-t); }
+.cal .c.passou { opacity: .55; }
+.cal .c.hoje { border: 3px solid var(--vermelho); box-shadow: 0 0 0 3px #fff, 0 0 0 5px var(--vermelho); opacity: 1; z-index: 1; }
+.cal .hoje-fita { position: absolute; top: 3px; right: 4px; background: var(--vermelho); color: #fff; font-size: 10.5px; font-weight: 800; border-radius: 999px; padding: 1px 7px; letter-spacing: .5px; }
+.cal .c.sel { outline: 3px solid var(--tinta); outline-offset: 1px; }
+.cal .c:focus-visible { outline: 3px solid var(--sol-escuro); outline-offset: 1px; }
+.cal .chips { display: flex; flex-direction: column; gap: 3px; }
+.cal .chip { display: flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 800; line-height: 1.15; border-radius: 8px; padding: 2px 5px; border: 1.5px solid transparent; }
+.cal .chip i { font-style: normal; font-size: 14px; }
+.cal .chip b { font-weight: 800; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.cal .chip.apaef { background: var(--sol); border-color: var(--tinta); }
+.cal .chip.escola { background: var(--c-escola); border-color: var(--c-escola-b); }
+.cal .chip.conf { border-style: dashed; background-image: repeating-linear-gradient(-45deg, transparent 0 6px, rgba(255,255,255,.55) 6px 12px); }
+.cal .legenda { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; margin: 14px 0 4px; font-size: 13.5px; font-weight: 700; color: var(--suave); }
+.cal .lg { display: inline-flex; align-items: center; gap: 6px; }
+.cal .lg i { display: inline-block; width: 20px; height: 20px; border-radius: 6px; border: 2px solid var(--linha); font-style: normal; font-size: 12px; text-align: center; line-height: 16px; }
+.cal .lg i.aulas { background: var(--c-aulas); }
+.cal .lg i.ferias { background: var(--c-ferias); border-color: #a9d39a; }
+.cal .lg i.feriado { background: var(--c-feriado); border-color: #eaa797; }
+.cal .lg i.fds { background: var(--c-fds); border-color: transparent; }
+.cal .lg i.hj { border: 3px solid var(--vermelho); }
+.cal .legenda .chip { display: inline-flex; }
+/* painel do dia escolhido */
+.cal .dia-painel { background: #fff; border: 2px solid var(--tinta); border-radius: 14px; padding: 12px 14px; margin-top: 12px; }
+.cal .dia-painel h4 { font-size: 19px; margin: 0; }
+.cal .dia-painel .estado { display: inline-flex; gap: 6px; align-items: center; font-weight: 800; font-size: 14px; margin-top: 6px; border-radius: 999px; padding: 2px 10px; background: var(--c-aulas); border: 1.5px solid var(--linha); }
+.cal .dia-painel .estado.casa { background: var(--c-ferias); }
+.cal .dia-painel ul { list-style: none; margin: 8px 0 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.cal .dia-painel li { display: flex; gap: 8px; align-items: flex-start; }
+.cal .dia-painel li .em { font-size: 22px; line-height: 1; }
+.cal .dia-painel .txt { color: var(--suave); font-size: 14px; }
+.cal .dia-painel .nada { color: var(--suave); font-size: 14px; margin: 6px 0 0; }
+/* lista do mês */
+.cal .lista-titulo { font-size: 22px; margin: 22px 0 10px; }
+.cal .lista { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.cal .item { display: flex; gap: 12px; align-items: center; background: var(--cartao); border: 2px solid var(--tinta); border-radius: 14px; padding: 10px 12px; box-shadow: 3px 3px 0 var(--linha); }
+.cal .item.proxima { background: var(--sol-claro); box-shadow: 4px 4px 0 var(--sol-escuro); }
+.cal .folha { position: static; height: auto; z-index: auto; transform: none; transition: none; padding: 0; background: #fff; background-clip: border-box; flex: none; width: 52px; border: 2px solid var(--tinta); border-radius: 10px; overflow: hidden; text-align: center; }
+.cal .folha .m { background: var(--vermelho); color: #fff; font-size: 11px; font-weight: 800; text-transform: uppercase; padding: 1px 0; }
+.cal .folha .d { font-family: "Fredoka", sans-serif; font-size: 22px; font-weight: 700; line-height: 1.25; }
+.cal .folha .w { font-size: 10.5px; font-weight: 800; color: var(--suave); text-transform: uppercase; padding-bottom: 2px; }
+.cal .folha.sem-data .d { font-size: 18px; }
+.cal .item .em { font-size: 28px; flex: none; }
+.cal .item h5 { margin: 0; font-family: "Fredoka", sans-serif; font-size: 17px; line-height: 1.15; }
+.cal .item p { margin: 2px 0 0; font-size: 13.5px; color: var(--suave); }
+.cal .tag { display: inline-block; font-size: 11.5px; font-weight: 800; border-radius: 999px; padding: 0 8px; margin-right: 4px; vertical-align: 1px; color: var(--tinta); }
+.cal .tag.apaef { background: var(--sol); border: 1.5px solid var(--tinta); }
+.cal .tag.escola { background: var(--c-escola); border: 1.5px solid var(--c-escola-b); }
+.cal .tag.conf { border: 1.5px dashed var(--suave); color: var(--suave); background: transparent; }
+.cal .tag.semaulas { background: var(--c-ferias); border: 1.5px solid #a9d39a; }
+/* Ano: meses pequenos */
+.cal .meses { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+.cal .mini { display: flex; flex-direction: column; justify-content: flex-start; background: var(--cartao); border: 2px solid var(--tinta); border-radius: 14px; padding: 8px 8px 10px; cursor: pointer; text-align: left; min-width: 0; }
+.cal .mini:hover { box-shadow: 3px 3px 0 var(--tinta); }
+.cal .mini.atual { background: var(--sol-claro); border-width: 3px; }
+.cal .mini h3 { margin: 0 0 6px; font-size: 16px; display: flex; justify-content: space-between; align-items: center; }
+.cal .mini h3 em { font-style: normal; font-size: 16px; }
+.cal .mg { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+.cal .mg span { aspect-ratio: 1; border-radius: 4px; background: var(--c-aulas); border: 1px solid var(--linha); font-size: 9px; font-weight: 700; display: flex; align-items: center; justify-content: center; position: relative; color: var(--suave); }
+.cal .mg span.v { background: transparent; border: 0; }
+.cal .mg span.l { font-size: 8px; }
+.cal .mg span.fds { background: var(--c-fds); border-color: transparent; }
+.cal .mg span.ferias, .cal .mg span.verao { background: var(--c-ferias); border-color: #a9d39a; }
+.cal .mg span.feriado { background: var(--c-feriado); border-color: #eaa797; }
+.cal .mg span.passou { color: rgba(95, 85, 72, .35); }
+.cal .mg span.ev::after { content: ""; position: absolute; top: -2px; right: -2px; width: 6px; height: 6px; border: 1px solid #fff; border-radius: 50%; background: var(--c-escola-b); }
+.cal .mg span.ev.apaef::after { background: var(--sol-escuro); }
+.cal .mg span.hj { outline: 2.5px solid var(--vermelho); outline-offset: 0; z-index: 1; color: var(--vermelho); font-weight: 900; }
+.cal .mini-lista { list-style: none; margin: 8px 0 0; padding: 6px 0 0; border-top: 1.5px dashed var(--linha); display: flex; flex-direction: column; gap: 3px; }
+.cal .mini-lista li { display: grid; grid-template-columns: 20px 18px 1fr; gap: 3px; align-items: start; font-size: 12px; line-height: 1.2; font-weight: 700; }
+.cal .mini-lista li b { font-family: "Fredoka", sans-serif; font-size: 13px; text-align: right; }
+.cal .mini-lista li.casa { color: var(--c-ferias-t); }
+.cal .mini-lista li.conf span:last-child::after { content: " (?)"; color: var(--suave); }
+.cal .mini-lista li.passou { opacity: .5; }
+.cal .mini .resumo { background: none; border: 0; padding: 0; border-radius: 0; box-shadow: none; text-align: left; font-size: 11.5px; color: var(--suave); font-weight: 700; margin-top: 6px; line-height: 1.3; }
+/* As atividades da APAEF são as mais importantes: saltam à vista (pedido do Jose, 18/11). As da escola ficam mais discretas. */
+.cal .c.tem-apaef { background: var(--sol-claro); border: 2px solid var(--sol-escuro); }
+.cal .c.tem-apaef.passou { opacity: .7; }
+.cal .chip.apaef { font-size: 13px; padding: 3px 6px; border-width: 2px; box-shadow: 2px 2px 0 var(--tinta); }
+.cal .chip.apaef i { font-size: 17px; }
+.cal .chip.escola { font-weight: 700; }
+.cal .dia-painel li.apaef { background: var(--sol-claro); border: 2px solid var(--sol-escuro); border-radius: 10px; padding: 6px 8px; }
+.cal .dia-painel li.apaef .em { font-size: 28px; }
+.cal .item.apaef { border-width: 3px; box-shadow: 4px 4px 0 var(--sol-escuro); }
+.cal .item.apaef h5 { font-size: 19px; }
+.cal .item.apaef .em { font-size: 34px; }
+.cal .item.escola { border-color: var(--linha); box-shadow: none; }
+.cal .item.escola h5 { font-size: 16px; }
+.cal .item.semaulas { border-color: #a9d39a; box-shadow: none; }
+.cal .item.passou { opacity: .5; box-shadow: none; }
+.cal .mg span.apaef { background: var(--sol); border: 1.5px solid var(--tinta); color: var(--tinta); font-weight: 900; }
+.cal .mg span.apaef::after { display: none; }
+.cal .mini-lista li.apaef { background: var(--sol); border-radius: 6px; padding: 2px 3px; color: var(--tinta); font-weight: 900; margin: 0 -3px; }
+@container (max-width: 760px) { .cal .meses { grid-template-columns: repeat(3, 1fr); } }
+/* telemóvel */
+@container (max-width: 560px) {
+  .cal .grelha { grid-template-columns: repeat(7, 1fr); gap: 3px; }
+  .cal .sem { font-size: 11px; }
+  .cal .c { min-height: 54px; padding: 3px; align-items: center; border-radius: 9px; gap: 1px; }
+  .cal .c .n { font-size: 16px; }
+  .cal .c .casa { position: static; font-size: 11px; }
+  .cal .tag-dia { display: none; }
+  .cal .chips { flex-direction: row; flex-wrap: wrap; gap: 1px; justify-content: center; }
+  .cal .chip { padding: 0; border: 0; background: none !important; }
+  .cal .chip b { display: none; }
+  .cal .chip i { font-size: 15px; }
+  .cal .chip.apaef { box-shadow: none; }
+  .cal .chip.apaef i { font-size: 18px; }
+  .cal .c.tem-apaef { background: var(--sol); border-color: var(--tinta); }
+  .cal .hoje-fita { display: none; }
+  .cal .legenda .chip { padding: 2px 5px; border: 1.5px solid; }
+  .cal .legenda .chip.apaef { background: var(--sol) !important; }
+  .cal .legenda .chip.escola { background: var(--c-escola) !important; }
+  .cal .legenda .chip b { display: inline; }
+  .cal .mes-topo h2 { font-size: 24px; }
+  .cal .seta { width: 42px; height: 42px; }
+  .cal .btn-hoje { height: 42px; padding: 0 12px; }
+  .cal .lista { grid-template-columns: 1fr; }
+  .cal .meses { grid-template-columns: 1fr; gap: 10px; }
+  .cal .mini { display: grid; grid-template-columns: 150px 1fr; gap: 0 12px; align-items: start; }
+  .cal .mini h3 { grid-column: 1 / -1; }
+  .cal .mini .mg, .cal .mini .resumo { grid-column: 1; }
+  .cal .mini-lista { grid-column: 2; grid-row: 2 / span 2; margin: 0; padding: 0 0 0 10px; border-top: 0; border-left: 1.5px dashed var(--linha); align-self: stretch; }
+}
