@@ -1112,3 +1112,28 @@ header.topo .menu { order: 2; margin-left: auto; align-items: center; }
   .em-semana .em-b { font-size: 16px; padding: 3px 9px; }
   .em-semana .em-humor { flex-basis: 100%; max-width: none; }
 }
+
+/* ---------- Avisos urgentes (barra em todas as páginas + cartão na página inicial, 18/11) ---------- */
+.aviso-faixa { display: flex; gap: 10px; align-items: flex-start; justify-content: center; padding: 10px 16px; background: var(--vermelho); color: #fff; font-size: 15px; line-height: 1.4; }
+.aviso-txt { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.aviso-faixa p { margin: 0; max-width: 1000px; display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 6px; }
+.aviso-faixa b { font-weight: 900; }
+.aviso-faixa a { color: inherit; font-weight: 900; text-decoration: underline; white-space: nowrap; }
+.aviso-ico { flex: none; width: 24px; height: 24px; border-radius: 50%; background: #fff; color: var(--vermelho); font-weight: 900; display: grid; place-items: center; font-size: 15px; }
+.aviso-faixa.info { background: var(--sol); color: var(--tinta); }
+.aviso-faixa.info .aviso-ico { background: var(--tinta); color: var(--sol); }
+@media (max-width: 640px) { .aviso-faixa { justify-content: flex-start; font-size: 14px; } }
+.avisos { margin: 18px 0 8px; scroll-margin-top: 16px; display: grid; gap: 14px; }
+.aviso-cartao { background: #fff; border: 3px solid var(--vermelho); border-radius: var(--raio); box-shadow: 4px 4px 0 var(--vermelho); padding: 16px 18px; }
+.aviso-cartao.info { background: var(--sol-claro); border-color: var(--sol-escuro); box-shadow: 4px 4px 0 var(--sol-escuro); }
+.aviso-cartao h2 { font-size: 24px; margin: 0 0 4px; }
+.aviso-quando { font-weight: 800; margin: 0; }
+.aviso-agora { font-size: 18px; font-weight: 800; margin: 10px 0 2px; line-height: 1.4; }
+.aviso-hora { font-size: 14px; color: var(--suave); margin: 0; }
+.aviso-hora b { color: var(--tinta); }
+.aviso-antes { font-size: 12px; font-weight: 900; letter-spacing: .06em; text-transform: uppercase; color: var(--suave); margin: 14px 0 0; padding-top: 12px; border-top: 2px dashed var(--linha); }
+.aviso-hist { list-style: none; margin: 8px 0 0; padding: 0 0 0 16px; border-left: 3px solid var(--linha); }
+.aviso-hist li { position: relative; margin: 0 0 12px; color: var(--suave); }
+.aviso-hist li:last-child { margin-bottom: 0; }
+.aviso-hist li::before { content: ""; position: absolute; left: -24px; top: 5px; width: 13px; height: 13px; border-radius: 50%; background: var(--linha); border: 2px solid #fff; }
+.aviso-h { display: block; font-weight: 900; font-size: 14px; }

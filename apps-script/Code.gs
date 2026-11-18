@@ -213,6 +213,7 @@ function doGet(e) {
   if (e && e.parameter && e.parameter.acao === "apoiantes") return json(apoiantes());
   if (e && e.parameter && e.parameter.acao === "metas") return json(metas());
   if (e && e.parameter && e.parameter.acao === "site") return json(site());
+  if (e && e.parameter && e.parameter.acao === "avisos") return json(avisos());
   if (e && e.parameter && e.parameter.acao === "ementa_votos") return json(votosEmenta(e.parameter.semana));
   return json({ ok: true });
 }
@@ -837,7 +838,7 @@ function corrigirFases() {
 
 // Cache de 6 horas: limpa-se sempre que alguém edita a Sheet (onEdit) ou o site envia um formulário (doPost).
 function limparCache() {
-  CacheService.getScriptCache().removeAll(["site", "metas", "apoiantes"]);
+  CacheService.getScriptCache().removeAll(["site", "metas", "apoiantes", "avisos"]);
 }
 function onEdit(e) { limparCache(); }
 
@@ -942,4 +943,51 @@ function contarVotosEmenta() {
     if (Number(voto) === 1) t.up++; else if (Number(voto) === -1) t.down++;
   });
   return r;
+}
+
+// ---------- Avisos urgentes (barra em todas as páginas + cartão na página inicial, 18/11/2026) ----------
+// Aba "avisos": uma linha = uma atualização. Linhas com o mesmo título = o mesmo aviso.
+// Colunas: atualizado | titulo | texto | nivel (urgente/info) | quando | ate | fonte
+// O aviso desaparece às 00:00 do dia "ate" (Lisboa). Cache de só 60 s (não entra no ?acao=site, que guarda 6 h).
+function avisos() {
+  const cache = CacheService.getScriptCache();
+  const guardado = cache.get("avisos");
+  if (guardado) return JSON.parse(guardado);
+  const hoje = Utilities.formatDate(new Date(), "Europe/Lisbon", "yyyy-MM-dd");
+  const grupos = {};
+  linhasDe("avisos").forEach(l => {
+    const hora = dataAviso(l.atualizado, true), titulo = limpar(l.titulo, 80), texto = limpar(l.texto, 400);
+    if (!hora || !titulo || !texto) return;
+    const chave = titulo.toLowerCase();
+    (grupos[chave] = grupos[chave] || []).push({ hora, titulo, texto, l });
+  });
+  const lista = Object.keys(grupos).map(k => {
+    const g = grupos[k].sort((a, b) => a.hora < b.hora ? 1 : -1), novo = g[0].l;
+    return {
+      titulo: g[0].titulo,
+      nivel: String(novo.nivel || "").trim().toLowerCase() === "urgente" ? "urgente" : "info",
+      quando: limpar(novo.quando, 80),
+      ate: dataAviso(novo.ate, false),
+      fonte: limpar(novo.fonte, 60),
+      atualizacoes: g.map(x => ({ hora: x.hora, texto: x.texto })),
+    };
+  }).filter(a => a.ate && a.ate > hoje)
+    .sort((a, b) => (a.nivel === b.nivel ? 0 : a.nivel === "urgente" ? -1 : 1) || (a.atualizacoes[0].hora < b.atualizacoes[0].hora ? 1 : -1));
+  cache.put("avisos", JSON.stringify(lista), 60);
+  return lista;
+}
+
+// Data da Sheet (data ou texto "20/11/2026 09:20" / "2026-11-20 09:20") → "2026-11-20T09:20" ou "2026-11-20".
+function dataAviso(v, comHora) {
+  if (v instanceof Date && !isNaN(v)) return Utilities.formatDate(v, "Europe/Lisbon", comHora ? "yyyy-MM-dd'T'HH:mm" : "yyyy-MM-dd");
+  const s = String(v || "").trim();
+  let m = s.match(/^(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{4})(?:[ T]+(\d{1,2})[:h](\d{2}))?/);
+  if (m) m = [m[3], m[2], m[1], m[4], m[5]];
+  else {
+    m = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})(?:[ T]+(\d{1,2})[:h](\d{2}))?/);
+    if (m) m = m.slice(1);
+  }
+  if (!m) return "";
+  const d = m[0] + "-" + ("0" + m[1]).slice(-2) + "-" + ("0" + m[2]).slice(-2);
+  return comHora ? d + "T" + ("0" + (m[3] || "0")).slice(-2) + ":" + (m[4] || "00") : d;
 }

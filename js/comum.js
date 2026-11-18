@@ -262,3 +262,84 @@ function vistas(caixa) {
   botao.addEventListener("click", e => { e.stopPropagation(); caixa.dataset.vista = caixa.dataset.vista === "hoje" ? "projeto" : "hoje"; pinta(); });
   pinta();
 }
+
+// Avisos urgentes (greve, escola fechada, horário…): barra no topo de todas as páginas + cartão na página inicial.
+// Vêm da aba "avisos" da Sheet (?acao=avisos, cache de 60 s; não entra no ?acao=site, que guarda 6 h).
+// Erro ou sem avisos: não mostra nada. Teste com ?avisos-teste na morada (dados inventados, só neste ecrã).
+(function () {
+  if (!ENDPOINT) return;
+  const CHAVE = "apaef-avisos-v1", FRESCO = 60 * 1000;
+  const hoje = hojeISO();
+  const ativos = l => (Array.isArray(l) ? l : []).filter(a => a && a.ate > hoje && a.atualizacoes && a.atualizacoes.length);
+  const lerCopia = () => { try { return JSON.parse(localStorage.getItem(CHAVE) || "null"); } catch (e) { return null; } };
+
+  function teste() {
+    const d = new Date(), iso = n => new Date(d.getTime() + n * 864e5).toLocaleDateString("sv-SE", { timeZone: "Europe/Lisbon" });
+    return [{ titulo: "Greve 20/11", nivel: "urgente", quando: "Sexta, 20 de novembro", ate: iso(1), fonte: "Escola", atualizacoes: [
+      { hora: hoje + "T09:20", texto: "Não há aulas. A escola pede a todos os pais para irem buscar os alunos." },
+      { hora: hoje + "T09:00", texto: "Não há aulas hoje." },
+      { hora: hoje + "T07:45", texto: "Os funcionários comunicam às 9h se há aulas." },
+      { hora: iso(-2) + "T18:00", texto: "Anunciada greve do pessoal não docente para dia 20." }] }];
+  }
+
+  function obter() {
+    if (/[?&]avisos-teste/.test(location.search)) return Promise.resolve(teste());
+    const c = lerCopia();
+    if (c && Date.now() - c.t < FRESCO) return Promise.resolve(c.d);
+    return fetch(ENDPOINT + "?acao=avisos", { signal: AbortSignal.timeout(8000) })
+      .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+      .then(d => { try { localStorage.setItem(CHAVE, JSON.stringify({ t: Date.now(), d })); } catch (e) {} return d; })
+      .catch(() => (c && ativos(c.d).length === (c.d || []).length ? c.d : []));   // cópia velha só se tudo ainda estiver ativo
+  }
+
+  // "2026-11-20T09:20" → "Hoje às 9h20" (cartão) / "Hoje, 9h20" (lista) / "Ontem, 18h00" / "Quarta 18/11, 18h00"
+  const DIAS = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"];
+  function hora(iso, cartao) {
+    const [data, hm = "00:00"] = String(iso).split("T");
+    const [h, m] = hm.split(":"), hh = Number(h) + "h" + m;
+    const ontem = new Date(new Date(hoje + "T12:00:00Z").getTime() - 864e5).toISOString().slice(0, 10);
+    if (data === hoje) return cartao ? "Hoje às " + hh : "Hoje, " + hh;
+    if (data === ontem) return "Ontem, " + hh;
+    const d = new Date(data + "T12:00:00Z");
+    return DIAS[d.getUTCDay()] + " " + data.slice(8, 10) + "/" + data.slice(5, 7) + ", " + hh;
+  }
+
+  function faixa(lista) {
+    const a = lista[0], urgente = lista.some(x => x.nivel === "urgente");
+    const naInicial = document.getElementById("avisos");
+    const texto = lista.length > 1
+      ? `<b>${lista.length} avisos:</b> ${escapar(a.titulo)}`
+      : `<b>${escapar(a.titulo)}:</b> ${escapar(a.atualizacoes[0].texto)}`;
+    const f = document.createElement("div");
+    f.className = "aviso-faixa " + (urgente ? "urgente" : "info");
+    f.setAttribute("role", "region");
+    f.setAttribute("aria-label", "Aviso");
+    f.innerHTML = `<span class="aviso-ico" aria-hidden="true">${urgente ? "!" : "i"}</span>
+      <p><span class="aviso-txt">${texto}</span> <a href="${naInicial ? "#avisos" : "/#avisos"}">Ver&nbsp;→</a></p>`;
+    document.body.prepend(f);
+  }
+
+  function cartoes(sec, lista) {
+    sec.innerHTML = lista.map(a => {
+      const [novo, ...antes] = a.atualizacoes;
+      return `<article class="aviso-cartao ${a.nivel === "urgente" ? "urgente" : "info"}">
+        <h2>${escapar(a.titulo)}</h2>
+        ${a.quando ? `<p class="aviso-quando">${escapar(a.quando)}</p>` : ""}
+        <p class="aviso-agora">${escapar(novo.texto)}</p>
+        <p class="aviso-hora"><b>${hora(novo.hora, true)}</b>${a.fonte ? " · Fonte: " + escapar(a.fonte) : ""}</p>
+        ${antes.length ? `<p class="aviso-antes">Antes</p><ol class="aviso-hist">${antes.map(u =>
+          `<li><span class="aviso-h">${hora(u.hora, false)}</span>${escapar(u.texto)}</li>`).join("")}</ol>` : ""}
+      </article>`;
+    }).join("");
+    sec.hidden = false;
+    if (location.hash === "#avisos") sec.scrollIntoView();
+  }
+
+  obter().then(l => {
+    const lista = ativos(l);
+    if (!lista.length) return;
+    faixa(lista);
+    const sec = document.getElementById("avisos");
+    if (sec) cartoes(sec, lista);
+  }).catch(() => {});
+})();
