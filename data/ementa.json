@@ -1,0 +1,68 @@
+{
+  "atualizado": "2026-11-18T16:57:15Z",
+  "fonte": "SIGA / Nortake",
+  "semanas": [
+    {
+      "inicio": "2026-11-16",
+      "fim": "2026-11-20",
+      "pdf": "https://node1.siga.edubox.pt/Ementas_Public/285/2138/0062b37a-b4e4-4578-a793-7dbe9cf2c52b.pdf",
+      "dias": [
+        {
+          "data": "2026-11-16",
+          "sopa": "Creme de alho francês e cenoura",
+          "prato": "Arroz com salmão, cenoura, ervilhas e cogumelos",
+          "vegetariano": "Arroz com feijão frade, cenoura, ervilhas e cogumelos",
+          "horticolas": "Brócolos, cenoura e repolho cozidos",
+          "sobremesa": "Gelatina",
+          "proteina": "peixe",
+          "sem_aulas": false,
+          "nota": ""
+        },
+        {
+          "data": "2026-11-17",
+          "sopa": "Sopa de couve portuguesa e brócolos",
+          "prato": "Coxas de frango assadas. Massa esparguete cozida",
+          "vegetariano": "Ervilhas guisadas com tomate e cenoura. Massa esparguete cozida",
+          "horticolas": "Salada de alface",
+          "sobremesa": "Fruta da época",
+          "proteina": "carne",
+          "sem_aulas": false,
+          "nota": ""
+        },
+        {
+          "data": "2026-11-18",
+          "sopa": "Sopa de curgete e ervilhas",
+          "prato": "Tilápia no forno com azeite e alho. Arroz com repolho, cenoura e feijão verde",
+          "vegetariano": "Feijão preto estufado. Arroz com repolho, cenoura e feijão verde",
+          "horticolas": "Salada de alface e tomate",
+          "sobremesa": "Fruta da época",
+          "proteina": "peixe",
+          "sem_aulas": false,
+          "nota": ""
+        },
+        {
+          "data": "2026-11-19",
+          "sopa": "Sopa de couve-flor e cenoura",
+          "prato": "Jardineira de frango (frango, batata, cenoura, ervilhas e pimento estufado)",
+          "vegetariano": "Jardineira de feijão vermelho (feijão vermelho, batata, cenoura e pimento)",
+          "horticolas": "Couve-flor, feijão verde e cenoura salteados",
+          "sobremesa": "Fruta da época",
+          "proteina": "carne",
+          "sem_aulas": false,
+          "nota": ""
+        },
+        {
+          "data": "2026-11-20",
+          "sopa": "Creme de repolho e grão-de-bico",
+          "prato": "Barras de pescada no forno. Massa de cotovelos com brócolos, cenoura e milho",
+          "vegetariano": "Croquetes de lentilhas no forno. Massa de cotovelos com brócolos, cenoura e milho",
+          "horticolas": "Salada de alface e pepino",
+          "sobremesa": "Fruta da época",
+          "proteina": "peixe",
+          "sem_aulas": false,
+          "nota": ""
+        }
+      ]
+    }
+  ]
+}

@@ -12,8 +12,9 @@
 const VOTACAO_FECHA = new Date("2026-10-26T00:00:00Z");
 
 function doPost(e) {
-  limparCache();
   const dados = JSON.parse(e.postData.contents);
+  if (dados.evento === "ementa_voto") return guardarVotoEmenta(dados);
+  limparCache();
   if (dados.evento === "votacao") return guardarVoto(dados);
   if (dados.evento === "responsavel") return guardarResponsavel(dados);
   if (dados.evento === "foto") return mudarFoto(dados);
@@ -212,6 +213,7 @@ function doGet(e) {
   if (e && e.parameter && e.parameter.acao === "apoiantes") return json(apoiantes());
   if (e && e.parameter && e.parameter.acao === "metas") return json(metas());
   if (e && e.parameter && e.parameter.acao === "site") return json(site());
+  if (e && e.parameter && e.parameter.acao === "ementa_votos") return json(votosEmenta(e.parameter.semana));
   return json({ ok: true });
 }
 
@@ -879,4 +881,65 @@ function limpezaAntiga(soVer) {
     if (!soVer && vazias > 0) mov.deleteRows(ult + 21, vazias); }
   if (!soVer) { limparCache(); arrumarSheet(); }
   Logger.log(log.join("\n"));
+}
+
+// ---------- Ementa da cantina: 👍/👎 (página ementa.html, 18/11/2026) ----------
+// Folha "ementa_votos": uma linha por telemóvel (voterId) e por dia. Votar outra vez muda o voto.
+// Aceita dias até 7 dias para trás e até 7 dias para a frente (pode votar-se nos dias da semana que aí vêm).
+function abaEmentaVotos() {
+  const folha = SpreadsheetApp.getActiveSpreadsheet();
+  const aba = folha.getSheetByName("ementa_votos") || folha.insertSheet("ementa_votos");
+  if (aba.getLastRow() === 0) aba.appendRow(["timestamp", "data", "voto", "prato", "proteina", "voterId"]);
+  return aba;
+}
+
+function guardarVotoEmenta(dados) {
+  const data = String(dados.data || "");
+  const voto = Number(dados.voto);
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(data) || (voto !== 1 && voto !== -1) || !dados.voterId) return json({ ok: false, erro: "dados" });
+  const ate = Utilities.formatDate(new Date(Date.now() + 7 * 864e5), "Europe/Lisbon", "yyyy-MM-dd");
+  const desde = Utilities.formatDate(new Date(Date.now() - 7 * 864e5), "Europe/Lisbon", "yyyy-MM-dd");
+  if (data > ate || data < desde) return json({ ok: false, erro: "data" });
+
+  const lock = LockService.getScriptLock();
+  lock.waitLock(10000);
+  try {
+    const aba = abaEmentaVotos();
+    const id = limpar(dados.voterId, 60);
+    const linha = [new Date(), "'" + data, voto, limpar(dados.prato, 200), limpar(dados.proteina, 20), id];
+    const valores = aba.getLastRow() > 1 ? aba.getRange(2, 2, aba.getLastRow() - 1, 5).getDisplayValues() : [];
+    const i = valores.findIndex(r => r[0] === data && r[4] === id);
+    if (i >= 0) aba.getRange(i + 2, 1, 1, linha.length).setValues([linha]);
+    else aba.appendRow(linha);
+  } finally {
+    lock.releaseLock();
+  }
+  CacheService.getScriptCache().remove("ementa_votos");
+  return json({ ok: true });
+}
+
+// Totais por dia de uma semana: { "2026-11-16": { up: 30, down: 7 }, ... }. Sem nomes nem ids.
+function votosEmenta(semana) {
+  const cache = CacheService.getScriptCache();
+  const guardado = cache.get("ementa_votos");
+  const todos = guardado ? JSON.parse(guardado) : contarVotosEmenta();
+  if (!guardado) cache.put("ementa_votos", JSON.stringify(todos), 300);
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(String(semana || ""))) return todos;
+  const r = {}, inicio = new Date(semana + "T12:00:00Z");
+  for (let n = 0; n < 7; n++) {
+    const d = Utilities.formatDate(new Date(inicio.getTime() + n * 864e5), "UTC", "yyyy-MM-dd");
+    if (todos[d]) r[d] = todos[d];
+  }
+  return r;
+}
+
+function contarVotosEmenta() {
+  const aba = abaEmentaVotos(), r = {};
+  if (aba.getLastRow() < 2) return r;
+  aba.getRange(2, 2, aba.getLastRow() - 1, 2).getDisplayValues().forEach(([data, voto]) => {
+    if (!data) return;
+    const t = r[data] = r[data] || { up: 0, down: 0 };
+    if (Number(voto) === 1) t.up++; else if (Number(voto) === -1) t.down++;
+  });
+  return r;
 }
