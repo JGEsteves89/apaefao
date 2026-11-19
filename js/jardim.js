@@ -381,6 +381,15 @@ document.getElementById("jardim-ir").onclick = () => procurar(true);
 const FRASES = ["Apanhaste-me! Boa!", "Uau, és um detetive!", "Ah! Viste-me!", "Que olhos de águia!", "Hihi, encontraste-me!"];
 const POSES = { bracos: 520 / 566, ola: 520 / 613, aponta: 420 / 521, pensa: 420 / 532, salta: 420 / 517 };
 const ESCONDE = ["bracos", "ola", "aponta", "pensa"];
+// Adereços do fundo onde a Lumi se esconde (cercas com arbustos). As imagens são os mesmos traços do fundo,
+// desenhados por cima da Lumi: ela fica atrás da cerca e só espreita por cima.
+// x0..y1 = caixa da imagem; xa..xb = onde a Lumi pode ficar; linha = topo da cerca (o que fica por cima esconde-se).
+const ADERECOS = [
+  { nome: "cerca-1", x0: 0,    y0: 540, x1: 285,  y1: 672, xa: 50,   xb: 185,  linha: 600 },
+  { nome: "cerca-2", x0: 410,  y0: 535, x1: 740,  y1: 672, xa: 490,  xb: 665,  linha: 585 },
+  { nome: "cerca-3", x0: 1405, y0: 540, x1: 1770, y1: 672, xa: 1520, xb: 1705, linha: 585 },
+  { nome: "cerca-4", x0: 1925, y0: 545, x1: 2172, y1: 672, xa: 1990, xb: 2125, linha: 600 },
+];
 const PALAVROES = ["merda", "caralh", "foda", "fodi", "puta", "cabrao", "porra", "bosta", "cona", "piroca", "paneleir", "rabeta"];
 const CHAVE_JOGO = "apaef-lumi";
 function lerJogo() { try { return JSON.parse(localStorage.getItem(CHAVE_JOGO)) || {}; } catch (e) { return {}; } }
@@ -428,6 +437,13 @@ function comecarJogo() {
   jogo.alvo = novo("button", "lumi-alvo"); jogo.alvo.type = "button"; jogo.alvo.setAttribute("aria-label", "Lumi"); jogo.alvo.hidden = true;
   jogo.alvo.addEventListener("click", e => { e.stopPropagation(); if (!arrastou) achou(); });
   mundo.append(jogo.lumi, jogo.alvo);
+  jogo.aderecos = ADERECOS.map(a => {
+    const img = novo("img", "lumi-adereco"); img.src = `img/jardim/aderecos/${a.nome}.svg`; img.alt = ""; img.draggable = false;
+    img.style.cssText = `left:${a.x0}px;top:${a.y0}px;width:${a.x1 - a.x0}px;height:${a.y1 - a.y0}px`;
+    const depois = flores.filter(f => f.y > a.y1).sort((f, g) => f.y - g.y)[0];
+    mundo.insertBefore(img, depois ? depois.el : jogo.alvo);
+    return img;
+  });
   // A Lumi aparece grande, diz que se vai esconder, e desaparece.
   const v = vistaMundo(), alto = 170 / minS;
   colocar({ x: (v.x0 + v.x1) / 2, y: Math.min(705, v.y1 - 20 / cam.s), alto, ver: 1, pose: "ola", frente: true });
@@ -448,11 +464,14 @@ function colocar(p) {
   L.className = "lumi-escondida" + (p.frente ? " frente" : "");
   L.style.cssText = `left:${p.x}px;top:${p.y}px;height:${p.alto * p.ver}px;--alto:${p.alto}px`;
   // Fica atrás das flores que estão mais à frente (mais abaixo no jardim).
-  const depois = p.frente ? null : flores.filter(f => f.y > p.y).sort((a, b) => a.y - b.y)[0];
-  mundo.insertBefore(L, depois ? depois.el : jogo.alvo);
-  // Zona de toque: 50% maior do que a Lumi, e nunca menor do que um dedo (56 px no ecrã).
-  const min = 56 / cam.s, h = p.alto * p.ver;
-  jogo.alvo.style.cssText = `left:${p.x}px;top:${p.y - h / 2}px;width:${Math.max(min, w * 1.5)}px;height:${Math.max(min, h * 1.5)}px`;
+  // Atrás de um adereço: fica logo antes dele (o adereço tapa-a). Senão: atrás das flores mais à frente.
+  const depois = p.frente ? null : p.adereco ? jogo.aderecos[p.adereco.i] : flores.filter(f => f.y > p.y).sort((a, b) => a.y - b.y)[0];
+  mundo.insertBefore(L, depois ? (depois.el || depois) : jogo.alvo);
+  // Zona de toque: 50% maior do que a parte que se vê, e nunca menor do que um dedo (56 px no ecrã).
+  const atras = p.adereco && !p.frente, min = 56 / cam.s;
+  const hv = atras ? p.alto * p.vis : p.alto * p.ver;                  // a parte que se vê
+  const cy = atras ? p.adereco.linha - hv / 2 : p.y - hv / 2;
+  jogo.alvo.style.cssText = `left:${p.x}px;top:${cy}px;width:${Math.max(min, w * 1.5)}px;height:${Math.max(min, hv * 1.5)}px`;
   jogo.p = p;
 }
 
@@ -461,9 +480,13 @@ function novoNivel() {
   const n = ++jogo.n;
   const alto = Math.max(45, 140 * Math.pow(.9, n - 1)) / minS;        // altura no ecrã sem zoom: 140 px, −10% por nível, mínimo 45 px
   const ver = n <= 3 ? 1 : n <= 5 ? .7 : n <= 8 ? .55 : .45;         // nunca mais de 55% tapada
-  const lugar = escolherLugar(n, alto, ver);
+  // Do nível 2 em diante, metade das vezes esconde-se atrás de uma cerca (se houver uma boa).
+  const cerca = n >= 2 && Math.random() < .5 ? escolherAdereco(n, alto) : null;
+  const lugar = cerca || escolherLugar(n, alto, ver);
   jogo.ultimo = lugar; jogo.falhas = 0; jogo.mostrarSeta = false;
-  colocar({ ...lugar, alto, ver, pose: ESCONDE[(n - 1) % ESCONDE.length], frente: n <= 3 });
+  const pose = ESCONDE[(n - 1) % ESCONDE.length];
+  if (cerca) colocar({ ...cerca, alto, ver: 1, pose, frente: false });
+  else colocar({ ...lugar, alto, ver, pose, frente: n <= 3 });
   jogo.alvo.hidden = false; jogo.alvo.classList.remove("brilha"); jogo.fase = "procura";
   // Ajudas: 15 s abana, 25 s brilha, 35 s seta. Nos níveis altos demoram mais (até ao dobro).
   const k = Math.min(2, 1 + (n - 1) / 3);
@@ -496,6 +519,23 @@ function escolherLugar(n, alto, ver) {
     return { x, y };
   }
   return { x: (v.x0 + v.x1) / 2, y: Math.min(700, v.y1 - 20 / cam.s) };
+}
+
+// Atrás de uma cerca: os pés ficam escondidos e só se vê a parte de cima ("vis"): 60% → 40% com os níveis.
+function escolherAdereco(n, alto) {
+  const W = vista.clientWidth, H = vista.clientHeight, r = Math.random;
+  const vis = n <= 3 ? .6 : n <= 6 ? .5 : .4, w = alto * .85;
+  const opcoes = ADERECOS.map((a, i) => ({ ...a, i })).filter(a => {
+    if (jogo.ultimo && jogo.ultimo.adereco && jogo.ultimo.adereco.i === a.i) return false;   // não repete a mesma cerca
+    if (alto * (1 - vis) > a.y1 - a.linha - 6) return false;                                   // os pés não podem sair por baixo
+    if (n <= 3) { const sx0 = cam.x + a.xa * cam.s, sx1 = cam.x + a.xb * cam.s, sy = cam.y + (a.linha - alto * vis) * cam.s;
+      if (sx0 < 16 || sx1 > W - 16 || sy < 70 || cam.y + a.linha * cam.s > H - 16) return false; }   // primeiros níveis: no ecrã
+    return true;
+  });
+  if (!opcoes.length) return null;
+  const a = opcoes[Math.floor(r() * opcoes.length)];
+  const x = a.xa + w / 2 + r() * Math.max(0, a.xb - a.xa - w);
+  return { x: Math.min(x, a.xb), y: a.linha + alto * (1 - vis), vis, adereco: a };
 }
 
 function abanar() { const L = jogo.lumi; L.classList.remove("abana"); void L.offsetWidth; L.classList.add("abana"); }
@@ -559,7 +599,7 @@ function jogoTela() {
 function acabarJogo() {
   const vezes = jogo.vezes;
   limparTimers();
-  [jogo.hud, jogo.balao, jogo.seta, jogo.lumi, jogo.alvo].forEach(e => e.remove());
+  [jogo.hud, jogo.balao, jogo.seta, jogo.lumi, jogo.alvo, ...jogo.aderecos].forEach(e => e.remove());
   vista.classList.remove("a-jogar");
   jogo = null;
   if (vezes > 0) setTimeout(() => ecraFim(vezes), 60);
