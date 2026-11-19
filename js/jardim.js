@@ -8,16 +8,16 @@ const MUNDO = { W: 2172, H: 724, fundo: "img/jardim/fundo.webp" };
 
 // Níveis: cabeça (px do fundo), caule, espaço entre flores, disco do miolo (raio / largura da cabeça).
 const NIVEIS = {
-  sol:      { nome: "Sol",      frase: "Os grandes amigos da escola", cab: 76, caule: 4, alto: 80, dist: 130, variantes: 3, r: .2 },
-  girassol: { nome: "Girassol", frase: "Ajudaram muito",              cab: 44, caule: 3, alto: 50, dist: 76,  variantes: 4, r: .24 },
-  flor:     { nome: "Flor",     frase: "Ajudaram a crescer",          cab: 30, caule: 2, alto: 34, dist: 50,  variantes: 8, r: .23 },
-  botao:    { nome: "Botão",    frase: "Toda a ajuda conta",          cab: 22, caule: 1, alto: 22, dist: 36,  variantes: 8, r: .21 },
+  sol:      { nome: "Sol",      frase: "Os grandes amigos da escola", cab: 100, caule: 4, alto: 100, dist: 175, variantes: 3, r: .2 },
+  girassol: { nome: "Girassol", frase: "Ajudaram muito",              cab: 62, caule: 3, alto: 64, dist: 104,  variantes: 4, r: .24 },
+  flor:     { nome: "Flor",     frase: "Ajudaram a crescer",          cab: 44, caule: 2, alto: 44, dist: 70,  variantes: 8, r: .23 },
+  botao:    { nome: "Botão",    frase: "Toda a ajuda conta",          cab: 32, caule: 1, alto: 30, dist: 50,  variantes: 8, r: .21 },
 };
 const ORDEM = ["sol", "girassol", "flor", "botao"];
 
 // Onde se pode plantar (ponto onde o caule toca na relva). Coordenadas da imagem de fundo.
 const ZONAS = {
-  sol:      [{ x: [760, 1420], y: [405, 470] }],
+  sol:      [{ x: [700, 1480], y: [420, 500] }],
   girassol: [{ x: [240, 1960], y: [370, 500] }],
   flor:     [{ x: [60, 2110],  y: [425, 610] }],
   botao:    [{ x: [30, 2140],  y: [490, 716] }],
@@ -91,7 +91,7 @@ let flores = [], cam = { s: 1, x: 0, y: 0 }, minS = 1, maxS = 4, aberta = null;
 
 // Com poucas flores o jardim fica vazio: as flores crescem. Com ~80 ou mais ficam no tamanho normal.
 // Os lugares não mudam (só o tamanho), por isso ninguém salta de sítio quando entram flores novas.
-const fatorTamanho = n => Math.min(1.7, Math.max(1, Math.sqrt(80 / Math.max(n, 1))));
+const fatorTamanho = n => Math.min(1.4, Math.max(1, Math.sqrt(80 / Math.max(n, 1))));
 
 function plantar(lista) {
   const por = gerarLugares(), ocup = {}, F = fatorTamanho(lista.length);
@@ -226,7 +226,7 @@ function mostrarNomes() {
   const ordem = flores.slice().sort((f, g) => ORDEM.indexOf(f.nv) - ORDEM.indexOf(g.nv) || g.y - f.y);
   for (const f of ordem) {
     const cabPx = f.cab * cam.s, x = cam.x + f.x * cam.s, topo = cam.y + (f.y - f.alto - f.cab * .1) * cam.s;
-    const quer = cabPx >= (f.nv === "sol" ? 30 : 40) || f === aberta || f.achada;
+    const quer = cabPx >= (f.nv === "sol" ? 30 : 46) || f === aberta || f.achada;
     const n = f.nomeEl;
     if (!quer || x < -60 || x > W + 60 || topo < -20 || topo > H + 20) { n.hidden = true; continue; }
     n.hidden = false; n.style.left = x + "px"; n.style.top = topo + "px";
