@@ -406,17 +406,6 @@ const SONS = {
   risinho: () => [880, 988, 880, 1047, 880].forEach((f, i) => nota(f, i * .08, .09, "square", .05)),
   puf: () => nota(420, 0, .22, "sine", .18, 140),
 };
-// Voz do telemóvel, só se houver voz de Portugal.
-let voz = null;
-function acharVoz() { if ("speechSynthesis" in window) voz = speechSynthesis.getVoices().find(v => /^pt[-_]PT/i.test(v.lang)) || null; }
-if ("speechSynthesis" in window) { acharVoz(); speechSynthesis.addEventListener?.("voiceschanged", acharVoz); }
-function falar(t) {
-  if (!som || !voz) return;
-  speechSynthesis.cancel();
-  const u = new SpeechSynthesisUtterance(t); u.voice = voz; u.lang = voz.lang; u.pitch = 1.6; u.rate = 1.05;
-  speechSynthesis.speak(u);
-}
-
 function timer(ms, fn) { jogo.timers.push(setTimeout(fn, ms)); }
 function limparTimers() { jogo.timers.forEach(clearTimeout); jogo.timers = []; }
 function botaoSom() { const b = jogo.hud.querySelector(".lumi-som"); b.textContent = som ? "🔊" : "🔇"; b.setAttribute("aria-label", som ? "Tirar o som" : "Pôr o som"); }
@@ -431,7 +420,6 @@ function comecarJogo() {
   jogo.hud = novo("div", "lumi-hud", '<span class="lumi-conta" aria-live="polite">⭐ <b>0</b></span><button type="button" class="lumi-som"></button>');
   jogo.hud.querySelector(".lumi-som").onclick = e => {
     e.stopPropagation(); som = !som; gravarJogo({ som }); botaoSom();
-    if (!som && "speechSynthesis" in window) speechSynthesis.cancel();
   };
   jogo.balao = novo("p", "lumi-balao"); jogo.balao.hidden = true;
   jogo.seta = novo("span", "lumi-seta", "➜"); jogo.seta.hidden = true;
@@ -512,7 +500,7 @@ function escolherLugar(n, alto, ver) {
 
 function abanar() { const L = jogo.lumi; L.classList.remove("abana"); void L.offsetWidth; L.classList.add("abana"); }
 
-function dizer(t) { jogo.balao.textContent = t; jogo.balao.hidden = false; jogoTela(); falar(t.replace("…", "")); }
+function dizer(t) { jogo.balao.textContent = t; jogo.balao.hidden = false; jogoTela(); }
 
 function achou() {
   if (!jogo || jogo.fase !== "procura") return;
@@ -577,7 +565,6 @@ function acabarJogo() {
   limparTimers();
   [jogo.hud, jogo.balao, jogo.seta, jogo.lumi, jogo.alvo].forEach(e => e.remove());
   vista.classList.remove("a-jogar");
-  if ("speechSynthesis" in window) speechSynthesis.cancel();
   jogo = null;
   if (vezes > 0) setTimeout(() => ecraFim(vezes), 60);
 }
@@ -607,7 +594,7 @@ function ecraFim(vezes) {
   document.body.appendChild(d);
   const nome = d.querySelector("#lf-nome"), erro = d.querySelector(".lf-erro");
   nome.value = lerJogo().nome || "";
-  confetti(); SONS.plim(); falar(`Encontraste-me ${vezesTxt(vezes)}! Como te chamas?`);
+  confetti(); SONS.plim();
   const fecharFim = () => { d.remove(); document.removeEventListener("keydown", esc); };
   const esc = e => { if (e.key === "Escape") fecharFim(); };
   document.addEventListener("keydown", esc);
