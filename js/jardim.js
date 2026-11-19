@@ -244,16 +244,19 @@ function abrir(f) {
   flores.forEach(g => g.el.classList.toggle("aberta", g === f));
   const emoji = EMOJI[a.tipo] || "coracao";
   const imagem = a.logo ? `<img src="${escapar(a.logo)}" alt="">` : `<img class="so-emoji" src="img/jardim/emojis/${emoji}.webp" alt="">`;
-  const link = a.maps_url ? `<a class="botao-amarelo" href="${escapar(a.maps_url)}" target="_blank" rel="noopener">${textoLink(a.maps_url)} ›</a>` : "";
-  cartao.innerHTML = `<button class="fechar" type="button" aria-label="Fechar">✕</button>
-    <div class="jc-topo"><span class="jc-logo">${imagem}</span>
-    <div><h3>${escapar(a.nome)}</h3><span class="jc-nivel n-${f.nv}">${N.nome} · ${N.frase}</span></div></div>${link}`;
+  const url = a.maps_url ? escapar(a.maps_url) : "";
+  // Imagem grande; tocar nela leva ao site / mapa do apoiante.
+  const foto = url ? `<a class="jc-foto" href="${url}" target="_blank" rel="noopener" aria-label="${escapar(a.nome)}: ${textoLink(a.maps_url)}">${imagem}</a>`
+                   : `<span class="jc-foto">${imagem}</span>`;
+  const link = url ? `<a class="botao-amarelo" href="${url}" target="_blank" rel="noopener">${textoLink(a.maps_url)} ›</a>` : "";
+  cartao.innerHTML = `<button class="fechar" type="button" aria-label="Fechar">✕</button>${foto}
+    <h3>${escapar(a.nome)}</h3><span class="jc-nivel n-${f.nv}">${N.nome} · ${N.frase}</span>${link}`;
   cartao.querySelector(".fechar").onclick = e => { e.stopPropagation(); fechar(); };
   cartao.hidden = false;
   // Se a flor está pequena ou na beira, aproxima um pouco.
   const cabPx = f.cab * cam.s, sx = cam.x + f.x * cam.s, sy = cam.y + f.y * cam.s;
   const movel = vista.clientWidth < 600;
-  if (movel || cabPx < 34 || sx < 40 || sx > vista.clientWidth - 40 || sy < 80 || sy > vista.clientHeight) voar(centrarEm(f.x, f.y - f.alto, Math.max(cam.s, 46 / f.cab), movel ? .28 : .5));
+  if (movel || cabPx < 34 || sx < 40 || sx > vista.clientWidth - 40 || sy < 80 || sy > vista.clientHeight) voar(centrarEm(f.x, f.y - f.alto, Math.max(cam.s, 46 / f.cab), movel ? .2 : .5));
   aplicar();
 }
 function fechar() { aberta = null; cartao.hidden = true; flores.forEach(g => g.el.classList.remove("aberta")); pedirNomes(); }
@@ -276,7 +279,7 @@ function procurar(ir) {
   const f = flores.find(g => normal(g.a.nome).startsWith(q)) || flores.find(g => normal(g.a.nome).includes(q));
   if (!f) { msg.textContent = "Ainda não está no jardim. Queres plantar a tua flor?"; pedirNomes(); return; }
   msg.textContent = ""; f.achada = true; f.el.classList.add("achada");
-  if (ir) { voar(centrarEm(f.x, f.y - f.alto, Math.max(minS * 2.2, 60 / f.cab), vista.clientWidth < 600 ? .28 : .5)); setTimeout(() => abrir(f), MOVIMENTO ? 680 : 0); }
+  if (ir) { voar(centrarEm(f.x, f.y - f.alto, Math.max(minS * 2.2, 60 / f.cab), vista.clientWidth < 600 ? .2 : .5)); setTimeout(() => abrir(f), MOVIMENTO ? 680 : 0); }
   else pedirNomes();
 }
 procura.addEventListener("input", () => procurar(false));

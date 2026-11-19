@@ -55,9 +55,9 @@
 .jardim-carregar { position: absolute; inset: 0; display: grid; place-items: center; font-weight: 800; color: #fff; text-shadow: 0 1px 2px #0006; z-index: 4; }
 
 /* Cartão da flor */
-.jardim-cartao { position: absolute; z-index: 5; width: min(380px, calc(100% - 16px)); background: var(--cartao); border: 3px solid var(--tinta); border-radius: 18px;
+.jardim-cartao { position: absolute; z-index: 5; width: min(400px, calc(100% - 16px)); text-align: center; background: var(--cartao); border: 3px solid var(--tinta); border-radius: 18px;
   box-shadow: 4px 4px 0 var(--tinta); padding: 16px; cursor: default; }
-.jardim-cartao .fechar { position: absolute; top: 6px; right: 8px; border: 0; background: none; font-size: 22px; width: 44px; height: 44px; cursor: pointer; }
+.jardim-cartao .fechar { position: absolute; top: 6px; right: 8px; z-index: 2; border: 2px solid var(--tinta); border-radius: 50%; background: var(--cartao); font-size: 22px; width: 44px; height: 44px; cursor: pointer; }
 .jc-topo { display: flex; gap: 14px; align-items: center; padding-right: 26px; }
 .jc-logo { flex: none; width: 120px; height: 120px; border-radius: 50%; border: 2px solid var(--tinta); background: #fff; overflow: hidden; display: grid; place-items: center; }
 .jc-logo img { width: 100%; height: 100%; object-fit: contain; padding: 6%; }
@@ -80,3 +80,11 @@
 @media (prefers-reduced-motion: reduce) { .flor .cabeca, .flor.achada .cabeca { animation: none; } }
 @media (max-width: 600px) { .jardim-vista { height: 68vh; border-radius: 18px; } .jardim-dica { font-size: 12px; }
   .jc-logo { width: 96px; height: 96px; } .jardim-cartao h3 { font-size: 21px; } }
+
+/* Cartão: imagem grande em cima (toca para abrir o site) */
+.jc-foto { display: grid; place-items: center; height: 230px; margin: 0 0 12px; border: 2px solid var(--tinta); border-radius: 14px; background: #fff; overflow: hidden; }
+a.jc-foto { cursor: pointer; transition: transform .15s; }
+a.jc-foto:hover { transform: scale(1.02); }
+.jc-foto img { width: 100%; height: 100%; object-fit: contain; padding: 4%; }
+.jc-foto img.so-emoji { width: 55%; height: auto; padding: 0; }
+@media (max-width: 600px) { .jc-foto { height: 180px; } }
