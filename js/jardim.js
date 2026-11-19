@@ -4,7 +4,7 @@
 // Lugares: gerados sempre iguais (semente fixa) e escolhidos pelo nome → cada flor fica sempre no mesmo sítio.
 
 (() => {
-const MUNDO = { W: 2172, H: 724, fundo: "img/jardim/fundo.webp" };
+const MUNDO = { W: 2172, H: 724, fundo: "img/jardim/fundo.svg" };
 
 // Níveis: cabeça (px do fundo), caule, espaço entre flores, disco do miolo (raio / largura da cabeça).
 const NIVEIS = {
@@ -117,7 +117,7 @@ function plantar(lista) {
     el.innerHTML = `<img class="caule" src="img/jardim/flores/caule-${N.caule}.webp" alt="" draggable="false">
       <span class="cabeca"><img src="img/jardim/flores/${f.nv}-${f.v}.webp" alt="" draggable="false">
       <img class="emoji" src="img/jardim/emojis/${emoji}.webp" alt="" draggable="false" style="--r:${N.r}"></span>`;
-    el.addEventListener("click", e => { if (arrastou) return; e.stopPropagation(); if (jogo) { jogoFlor(f, e); return; } enquadrar(); abrir(f); });
+    el.addEventListener("click", e => { if (arrastou) return; e.stopPropagation(); enquadrar(); abrir(f); });
     f.el = el; mundo.appendChild(el);
     const n = document.createElement("span"); n.className = "jnome n-" + f.nv; n.textContent = f.a.nome; f.nomeEl = n; nomes.appendChild(n);
   });
@@ -243,7 +243,7 @@ function centroMundo() { return { x: (vista.clientWidth / 2 - cam.x) / cam.s, y:
 // Em ecrã inteiro: céu em cima. Ao sair: volta a cor do site e obriga o Safari a voltar a ler as cores.
 const metaTema = document.querySelector('meta[name="theme-color"]'), temaSite = metaTema ? metaTema.content : "";
 function tema(cor) { if (metaTema) metaTema.content = cor; }
-function entrarCheio(semHistoria) {
+function entrarCheio(semHistoria, semJogo) {
   if (cheio) return;
   tema("#59b9ff");
   const c = centroMundo(), s = cam.s;
@@ -252,6 +252,7 @@ function entrarCheio(semHistoria) {
   limites(); cam = centrarEm(c.x, c.y, Math.max(s, minS)); aplicar();
   if (!semHistoria) history.pushState({ jardim: "cheio" }, "");
   vista.focus({ preventScroll: true });
+  if (!semJogo) comecarJogo();
 }
 function sairCheio(daHistoria) {
   if (!cheio) return;
@@ -269,7 +270,7 @@ botaoCheio.onclick = e => { e.stopPropagation(); cheio ? sairCheio() : entrarChe
 addEventListener("popstate", () => { if (cheio) sairCheio(true); });
 vista.addEventListener("dblclick", e => { const r = vista.getBoundingClientRect(); zoomEm(1.8, e.clientX - r.left, e.clientY - r.top); });
 vista.addEventListener("click", e => {
-  if (jogo) { if (!arrastou && !e.target.closest("button")) jogoFalhou(e); return; }
+  if (jogo && !arrastou && !aberta && !e.target.closest("button")) { jogoFalhou(e); return; }
   if (!arrastou && aberta) fechar();
 });
 document.getElementById("zoom-mais").onclick = e => { e.stopPropagation(); zoomEm(1.6, vista.clientWidth / 2, vista.clientHeight / 2); };
@@ -338,7 +339,7 @@ function posicionarCartao() {
 const procura = document.getElementById("jardim-procura"), msg = document.getElementById("jardim-procura-msg");
 const resultados = document.getElementById("jardim-resultados");
 function irPara(f) {
-  if (vista.clientWidth < 600 || matchMedia("(pointer: coarse)").matches) entrarCheio(); else enquadrar();
+  if (vista.clientWidth < 600 || matchMedia("(pointer: coarse)").matches) entrarCheio(false, true); else enquadrar();
   // A lista fica aberta, para poder escolher outra.
   resultados.querySelectorAll('button').forEach(b => b.classList.toggle('ativo', b.querySelector('span').textContent === f.a.nome));
   flores.forEach(g => { g.achada = g === f; g.el.classList.toggle("achada", g === f); });
@@ -375,13 +376,13 @@ document.getElementById("jardim-ir").onclick = () => procurar(true);
 // Guia: notas/projetos/website/jogo-onde-esta-a-lumi-best-practices.md
 // A Lumi esconde-se; cada vez que a encontras, esconde-se melhor (mais pequena, mais tapada, mais longe).
 // Nunca há "errado": se a criança demora, a Lumi abana, depois brilha, depois aparece uma seta.
+// Começa sozinho ao abrir o ecrã inteiro ("Passear no jardim"). Tocar numa flor continua a abrir o cartão.
 // No fim (ao sair do ecrã inteiro) pede o primeiro nome para os recordes. Só aparece no site depois de a APAEF aprovar.
 const FRASES = ["Apanhaste-me! Boa!", "Uau, és um detetive!", "Ah! Viste-me!", "Que olhos de águia!", "Hihi, encontraste-me!"];
 const POSES = { bracos: 520 / 566, ola: 520 / 613, aponta: 420 / 521, pensa: 420 / 532, salta: 420 / 517 };
 const ESCONDE = ["bracos", "ola", "aponta", "pensa"];
 const PALAVROES = ["merda", "caralh", "foda", "fodi", "puta", "cabrao", "porra", "bosta", "cona", "piroca", "paneleir", "rabeta"];
 const CHAVE_JOGO = "apaef-lumi";
-const botaoJogo = document.getElementById("lumi-jogar");
 function lerJogo() { try { return JSON.parse(localStorage.getItem(CHAVE_JOGO)) || {}; } catch (e) { return {}; } }
 function gravarJogo(o) { try { localStorage.setItem(CHAVE_JOGO, JSON.stringify(Object.assign(lerJogo(), o))); } catch (e) {} }
 let som = lerJogo().som !== false, recordesSite = [];
@@ -414,7 +415,6 @@ function comecarJogo() {
   if (!flores.length || jogo) return;
   audio();                                  // no iPhone o som só funciona depois de um toque
   if (aberta) fechar();
-  entrarCheio();
   jogo = { n: 0, vezes: 0, timers: [], falhas: 0, ultimo: null, fase: "intro", frase: "" };
   vista.classList.add("a-jogar");
   jogo.hud = novo("div", "lumi-hud", '<span class="lumi-conta" aria-live="polite">⭐ <b>0</b></span><button type="button" class="lumi-som"></button>');
@@ -431,9 +431,9 @@ function comecarJogo() {
   // A Lumi aparece grande, diz que se vai esconder, e desaparece.
   const v = vistaMundo(), alto = 170 / minS;
   colocar({ x: (v.x0 + v.x1) / 2, y: Math.min(705, v.y1 - 20 / cam.s), alto, ver: 1, pose: "ola", frente: true });
-  dizer("Vou esconder-me! Conta comigo: 1, 2, 3…");
-  timer(3000, () => { jogo.lumi.classList.add("some"); jogo.balao.hidden = true; });
-  timer(3500, novoNivel);
+  dizer("Vou esconder-me! Será que consegues encontrar-me?");
+  timer(3200, () => { jogo.lumi.classList.add("some"); jogo.balao.hidden = true; });
+  timer(3700, novoNivel);
 }
 
 function vistaMundo() {
@@ -523,10 +523,6 @@ function jogoFalhou(e) {
   if (!jogo || jogo.fase !== "procura") return;
   puf(e.clientX, e.clientY); SONS.puf();
   if (++jogo.falhas >= 3) { jogo.falhas = 0; abanar(); SONS.risinho(); }
-}
-function jogoFlor(f, e) {
-  f.el.classList.remove("abana"); void f.el.offsetWidth; f.el.classList.add("abana");
-  jogoFalhou(e);
 }
 function puf(cx, cy) {
   if (!MOVIMENTO) return;
@@ -627,7 +623,6 @@ function mostrarRecordes() {
   ol.innerHTML = top.map((r, i) => `<li${r.meu ? ' class="meu"' : ""}><span class="lr-pos">${["🥇", "🥈", "🥉"][i] || i + 1}</span>
     <span><b>${escapar(r.nome)}</b>: encontrou a Lumi ${vezesTxt(r.vezes)}${r.estado ? ` <small>(${r.estado})</small>` : ""}</span></li>`).join("");
 }
-botaoJogo.onclick = comecarJogo;
 
 // ---------- arrancar ----------
 async function arrancar() {
@@ -636,7 +631,6 @@ async function arrancar() {
   if (!lista) return;
   plantar(lista.filter(a => a.publicar));
   inicio();
-  botaoJogo.disabled = false;
   try { const d = await dadosSite(); recordesSite = Array.isArray(d.recordes) ? d.recordes : []; } catch (e) {}
   mostrarRecordes();
   // ?flor=nome abre logo a flor (para partilhar).

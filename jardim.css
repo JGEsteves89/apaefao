@@ -131,11 +131,6 @@ a.jc-foto:hover { transform: scale(1.02); }
 html.jardim-cheio-aberto, html.jardim-cheio-aberto body { overflow: hidden; overscroll-behavior: none; }
 
 /* ---------- Jogo "Onde está a Lumi?" ---------- */
-.lumi-jogar-p { margin: 12px 0 0; }
-.lumi-jogar { display: inline-flex; align-items: center; gap: 8px; min-height: 54px; font: inherit; font-weight: 800; font-size: 19px; background: var(--sol);
-  border: 2px solid var(--tinta); border-radius: 999px; padding: 4px 22px 4px 6px; box-shadow: 3px 3px 0 var(--tinta); cursor: pointer; }
-.lumi-jogar img { width: 46px; height: 46px; object-fit: contain; }
-.lumi-jogar:disabled { opacity: .5; cursor: default; }
 .a-jogar .jardim-lumi, .a-jogar .jardim-dica { display: none; }
 
 /* A Lumi escondida: só se vê a parte de cima ("ver"); o resto fica na relva */
