@@ -114,8 +114,8 @@ function plantar(lista) {
     el.setAttribute("aria-label", `${f.a.nome} (${N.nome})`);
     el.style.cssText = `left:${f.x}px;top:${f.y}px;--cab:${f.cab.toFixed(1)}px;--alto:${f.alto.toFixed(1)}px;--d:${-(hash(f.a.nome) % 50) / 10}s`;
     const emoji = EMOJI[f.a.tipo] || "coracao";
-    el.innerHTML = `<img class="caule" src="img/jardim/flores/caule-${N.caule}.webp" alt="" draggable="false">
-      <span class="cabeca"><img src="img/jardim/flores/${f.nv}-${f.v}.webp" alt="" draggable="false">
+    el.innerHTML = `<img class="caule" src="img/jardim/flores/caule-${N.caule}.svg" alt="" draggable="false">
+      <span class="cabeca"><img src="img/jardim/flores/${f.nv}-${f.v}.svg" alt="" draggable="false">
       <img class="emoji" src="img/jardim/emojis/${emoji}.webp" alt="" draggable="false" style="--r:${N.r}"></span>`;
     el.addEventListener("click", e => { if (arrastou) return; e.stopPropagation(); enquadrar(); abrir(f); });
     f.el = el; mundo.appendChild(el);
@@ -315,7 +315,7 @@ function abrir(f) {
                    : `<span class="jc-foto">${imagem}</span>`;
   const link = url ? `<a class="botao-amarelo" href="${url}" target="_blank" rel="noopener">${textoLink(a.maps_url)} ›</a>` : "";
   cartao.innerHTML = `<button class="fechar" type="button" aria-label="Fechar">✕</button>${foto}
-    <h3>${escapar(a.nome)}</h3><span class="jc-nivel n-${f.nv}"><img src="img/jardim/flores/${f.nv}-1.webp" alt="">${N.nome}<i>·</i>${N.ajuda}</span>${link}`;
+    <h3>${escapar(a.nome)}</h3><span class="jc-nivel n-${f.nv}"><img src="img/jardim/flores/${f.nv}-1.svg" alt="">${N.nome}<i>·</i>${N.ajuda}</span>${link}`;
   cartao.querySelector(".fechar").onclick = e => { e.stopPropagation(); fechar(); };
   cartao.hidden = false;
   // Se a flor está pequena ou na beira, aproxima um pouco.
@@ -360,7 +360,7 @@ function procurar(ir) {
   if (achadas.length === 1) { if (ir) irPara(achadas[0]); else pedirNomes(); return; }
   achadas.forEach(f => {
     const li = document.createElement("li"), b = document.createElement("button");
-    b.type = "button"; b.innerHTML = `<img src="img/jardim/flores/${f.nv}-1.webp" alt=""><span></span>`;
+    b.type = "button"; b.innerHTML = `<img src="img/jardim/flores/${f.nv}-1.svg" alt=""><span></span>`;
     b.querySelector("span").textContent = f.a.nome;
     b.onclick = () => irPara(f);
     li.appendChild(b); resultados.appendChild(li);
