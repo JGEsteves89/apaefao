@@ -181,6 +181,12 @@ function tamanhoApoiante(valor) {
   return v >= 50 ? "grande" : v >= 35 ? "alto" : v >= 25 ? "largo" : "pequeno";
 }
 
+// Nível no jardim (jardim.html): pelo total do ano. O valor nunca sai da Sheet.
+function nivelApoiante(valor) {
+  const v = parseFloat(String(valor).replace(",", ".")) || 0;
+  return v >= 250 ? "sol" : v >= 100 ? "girassol" : v >= 25 ? "flor" : "botao";
+}
+
 function apoiantes() {
   const cache = CacheService.getScriptCache();
   const guardado = cache.get("apoiantes");
@@ -201,7 +207,7 @@ function apoiantes() {
       c.maps_url = c.maps_url || (/^https:\/\//.test(link) ? link : "");
     });
   const lista = Object.values(porNome).map(c => ({
-    nome: c.nome, tipo: c.tipo, tamanho: tamanhoApoiante(c.valor), logo: c.logo, maps_url: c.maps_url, publicar: true,
+    nome: c.nome, tipo: c.tipo, tamanho: tamanhoApoiante(c.valor), nivel: nivelApoiante(c.valor), logo: c.logo, maps_url: c.maps_url, publicar: true,
   }));
   cache.put("apoiantes", JSON.stringify(lista), 21600);
   return lista;
