@@ -88,3 +88,8 @@ a.jc-foto:hover { transform: scale(1.02); }
 .jc-foto img { width: 100%; height: 100%; object-fit: contain; padding: 4%; }
 .jc-foto img.so-emoji { width: 55%; height: auto; padding: 0; }
 @media (max-width: 600px) { .jc-foto { height: 180px; } }
+
+/* Nível no cartão: ícone da flor + texto numa linha */
+.jardim-cartao .jc-nivel { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; font-size: 15px; padding: 4px 14px 4px 6px; }
+.jc-nivel img { width: 28px; height: 28px; object-fit: contain; }
+.jc-nivel i { font-style: normal; opacity: .5; }

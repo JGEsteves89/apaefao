@@ -8,10 +8,10 @@ const MUNDO = { W: 2172, H: 724, fundo: "img/jardim/fundo.webp" };
 
 // Níveis: cabeça (px do fundo), caule, espaço entre flores, disco do miolo (raio / largura da cabeça).
 const NIVEIS = {
-  sol:      { nome: "Sol",      frase: "Os grandes amigos da escola", cab: 100, caule: 4, alto: 100, dist: 175, variantes: 3, r: .2 },
-  girassol: { nome: "Girassol", frase: "Ajudaram muito",              cab: 62, caule: 3, alto: 64, dist: 104,  variantes: 4, r: .24 },
-  flor:     { nome: "Flor",     frase: "Ajudaram a crescer",          cab: 44, caule: 2, alto: 44, dist: 70,  variantes: 8, r: .23 },
-  botao:    { nome: "Botão",    frase: "Toda a ajuda conta",          cab: 32, caule: 1, alto: 30, dist: 50,  variantes: 8, r: .21 },
+  sol:      { nome: "Sol",      frase: "Os grandes amigos da escola", ajuda: "Nível de ajuda: enorme", cab: 100, caule: 4, alto: 100, dist: 175, variantes: 3, r: .2 },
+  girassol: { nome: "Girassol", frase: "Ajudaram muito", ajuda: "Nível de ajuda: muito",              cab: 62, caule: 3, alto: 64, dist: 104,  variantes: 4, r: .24 },
+  flor:     { nome: "Flor",     frase: "Ajudaram a crescer", ajuda: "Nível de ajuda: bastante",          cab: 44, caule: 2, alto: 44, dist: 70,  variantes: 8, r: .23 },
+  botao:    { nome: "Botão",    frase: "Toda a ajuda conta", ajuda: "Toda a ajuda conta",          cab: 32, caule: 1, alto: 30, dist: 50,  variantes: 8, r: .21 },
 };
 const ORDEM = ["sol", "girassol", "flor", "botao"];
 
@@ -250,7 +250,7 @@ function abrir(f) {
                    : `<span class="jc-foto">${imagem}</span>`;
   const link = url ? `<a class="botao-amarelo" href="${url}" target="_blank" rel="noopener">${textoLink(a.maps_url)} ›</a>` : "";
   cartao.innerHTML = `<button class="fechar" type="button" aria-label="Fechar">✕</button>${foto}
-    <h3>${escapar(a.nome)}</h3><span class="jc-nivel n-${f.nv}">${N.nome} · ${N.frase}</span>${link}`;
+    <h3>${escapar(a.nome)}</h3><span class="jc-nivel n-${f.nv}"><img src="img/jardim/flores/${f.nv}-1.webp" alt="">${N.nome}<i>·</i>${N.ajuda}</span>${link}`;
   cartao.querySelector(".fechar").onclick = e => { e.stopPropagation(); fechar(); };
   cartao.hidden = false;
   // Se a flor está pequena ou na beira, aproxima um pouco.
