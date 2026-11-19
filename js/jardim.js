@@ -486,8 +486,8 @@ function novoNivel() {
   const n = ++jogo.n;
   // A dificuldade sobe aos poucos até ao nível 30; depois fica igual (o jogo continua).
   const t = (Math.min(n, NIVEL_MAX) - 1) / (NIVEL_MAX - 1);            // 0 no nível 1 → 1 no nível 30
-  const alto = 140 * Math.pow(40 / 140, t) / minS;                    // altura no ecrã sem zoom: 140 px → 40 px
-  const ver = n <= 3 ? 1 : .8 - .4 * t;                               // parte que se vê: 80% → 40%
+  const alto = 140 * Math.pow(70 / 140, t) / minS;                    // altura no ecrã sem zoom: 140 px → 70 px
+  const ver = n <= 3 ? 1 : .85 - .25 * t;                             // parte que se vê: 85% → 60%
   // Do nível 2 em diante, metade das vezes esconde-se atrás de uma cerca (se houver uma boa).
   const cerca = n >= 2 && Math.random() < .5 ? escolherAdereco(n, alto) : null;
   const lugar = cerca || escolherLugar(n, alto, ver);
@@ -496,12 +496,12 @@ function novoNivel() {
   if (cerca) colocar({ ...cerca, alto, ver: 1, pose, frente: false });
   else colocar({ ...lugar, alto, ver, pose, frente: n <= 3 });
   jogo.alvo.hidden = false; jogo.alvo.classList.remove("brilha"); jogo.fase = "procura";
-  // Ajudas: 15 s abana, 25 s brilha, 35 s seta. Nos níveis altos demoram mais (até ao dobro).
-  const k = 1 + t;                                                    // ajudas mais tarde: até ao dobro no nível 30
+  // Ajudas: 12 s abana, 20 s brilha, 28 s seta (se estiver fora do ecrã).
+  const k = 1 + .3 * t;                                               // ajudas um pouco mais tarde: até +30% no nível 30
   const abanaSempre = () => { abanar(); SONS.risinho(); timer(7000, abanaSempre); };
-  timer(15000 * k, abanaSempre);
-  timer(25000 * k, () => jogo.alvo.classList.add("brilha"));
-  timer(35000 * k, () => { jogo.mostrarSeta = true; jogoTela(); });
+  timer(12000 * k, abanaSempre);
+  timer(20000 * k, () => jogo.alvo.classList.add("brilha"));
+  timer(28000 * k, () => { jogo.mostrarSeta = true; jogoTela(); });
   jogoTela();
 }
 
@@ -513,7 +513,7 @@ function escolherLugar(n, alto, ver) {
     let x, y;
     if (n === 1) { x = v.x0 + vw * (.3 + .4 * r()); y = 560 + r() * 130; }        // relva aberta, no meio do ecrã
     else {
-      const lista = n >= 6 && amarelas.length && r() < .7 ? amarelas : flores;    // amarelo com amarelo = camuflagem
+      const lista = n >= 6 && amarelas.length && r() < .35 ? amarelas : flores;    // amarelo com amarelo = camuflagem
       const f = lista[Math.floor(r() * lista.length)];
       x = f.x + (r() < .5 ? -1 : 1) * (f.cab * .5 + w * .45);
       y = f.y + (n <= 3 ? 6 + r() * 20 : -4 + r() * 14);
@@ -523,7 +523,7 @@ function escolherLugar(n, alto, ver) {
     const sx = cam.x + x * cam.s, sy = cam.y + y * cam.s, meia = w * cam.s / 2;
     const noEcra = sx > meia + 16 && sx < W - meia - 16 && sy - h * cam.s > 70 && sy < H - 16;
     if (n <= 3 && !noEcra) continue;                                 // primeiros níveis: no ecrã
-    if (n <= 8 && (sx < -W * .8 || sx > W * 1.8)) continue;          // até ao nível 8: um pouco ao lado; depois em qualquer sítio
+    if (sx < -W * (n <= 8 ? .8 : 1.2) || sx > W * (n <= 8 ? 1.8 : 2.2)) continue;   // nunca muito longe do ecrã
     return { x, y };
   }
   return { x: (v.x0 + v.x1) / 2, y: Math.min(700, v.y1 - 20 / cam.s) };
@@ -532,7 +532,7 @@ function escolherLugar(n, alto, ver) {
 // Atrás de uma cerca: os pés ficam escondidos e só se vê a parte de cima ("vis"): 60% → 40% com os níveis.
 function escolherAdereco(n, alto) {
   const W = vista.clientWidth, H = vista.clientHeight, r = Math.random;
-  const vis = .6 - .25 * (Math.min(n, NIVEL_MAX) - 1) / (NIVEL_MAX - 1), w = alto * .85;   // 60% → 35%
+  const vis = .65 - .15 * (Math.min(n, NIVEL_MAX) - 1) / (NIVEL_MAX - 1), w = alto * .85;   // 65% → 50%
   const opcoes = ADERECOS.map((a, i) => ({ ...a, i })).filter(a => {
     if (jogo.ultimo && jogo.ultimo.adereco && jogo.ultimo.adereco.i === a.i) return false;   // não repete a mesma cerca
     if (alto * (1 - vis) > a.y1 - a.linha - 6) return false;                                   // os pés não podem sair por baixo
