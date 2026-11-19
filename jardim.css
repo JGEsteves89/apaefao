@@ -12,7 +12,7 @@
 
 /* A janela do jardim */
 .jardim-vista { position: relative; height: min(72vh, 660px); min-height: 360px; overflow: hidden; border: 3px solid var(--tinta); border-radius: 22px;
-  box-shadow: 5px 5px 0 var(--tinta); background: #5fb2f2; touch-action: none; user-select: none; -webkit-user-select: none; cursor: grab; outline: none; }
+  box-shadow: 5px 5px 0 var(--tinta); background: #5fb2f2; touch-action: pan-y; user-select: none; -webkit-user-select: none; cursor: grab; outline: none; }
 .jardim-vista:focus-visible { box-shadow: 5px 5px 0 var(--tinta), 0 0 0 4px #1f6feb; }
 .jardim-vista.a-arrastar { cursor: grabbing; }
 .jardim-mundo { position: absolute; left: 0; top: 0; width: 2172px; height: 724px; transform-origin: 0 0; will-change: transform; }
@@ -112,3 +112,20 @@ a.jc-foto:hover { transform: scale(1.02); }
 .jardim-resultados img { width: 26px; height: 26px; object-fit: contain; }
 .jardim-resultados[hidden] { display: none; }
 .jardim-resultados button.ativo { background: var(--sol); }
+
+/* ---------- Telemóvel: gestos e ecrã inteiro ---------- */
+.jardim-dica .so-dedo { display: none; }
+@media (hover: none) and (pointer: coarse) { .jardim-dica .so-rato { display: none; } .jardim-dica .so-dedo { display: inline; } }
+.jardim-cheio-botao { position: absolute; left: 10px; top: 10px; z-index: 6; font: inherit; font-weight: 800; font-size: 15px; min-height: 44px;
+  background: var(--sol); border: 2px solid var(--tinta); border-radius: 999px; padding: 6px 16px; box-shadow: 2px 2px 0 var(--tinta); cursor: pointer; }
+.jardim-aviso-gesto { position: absolute; inset: 50% auto auto 50%; transform: translate(-50%, -50%); z-index: 7; margin: 0; pointer-events: none;
+  max-width: 80%; text-align: center; background: rgba(31, 26, 20, .85); color: #fff; font-weight: 800; font-size: 16px; line-height: 1.3;
+  border-radius: 14px; padding: 12px 16px; }
+.jardim-aviso-gesto[hidden] { display: none; }
+/* Ecrã inteiro (também no iPhone: a caixa ocupa o ecrã e a página fica parada) */
+.jardim-vista.cheio { position: fixed; inset: 0; width: 100vw; height: 100vh; height: 100dvh; max-height: none; min-height: 0; z-index: 9999;
+  border: 0; border-radius: 0; box-shadow: none; touch-action: none; overscroll-behavior: none; }
+.jardim-vista.cheio .jardim-dica { display: none; }
+.jardim-vista.cheio .jardim-cheio-botao { top: max(10px, env(safe-area-inset-top)); left: max(10px, env(safe-area-inset-left)); background: var(--cartao); }
+.jardim-vista.cheio .jardim-zoom { top: max(10px, env(safe-area-inset-top)); right: max(10px, env(safe-area-inset-right)); }
+html.jardim-cheio-aberto, html.jardim-cheio-aberto body { overflow: hidden; overscroll-behavior: none; }

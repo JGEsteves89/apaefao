@@ -26,7 +26,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css?v=20261119b">
-  <link rel="stylesheet" href="jardim.css?v=8">
+  <link rel="stylesheet" href="jardim.css?v=9">
   <link rel="preload" as="image" href="img/jardim/fundo.webp?v=2">
   <link rel="preconnect" href="https://script.google.com">
   <link rel="preconnect" href="https://script.googleusercontent.com" crossorigin>
@@ -88,7 +88,9 @@
       <div class="jardim-nomes" id="jardim-nomes" aria-hidden="true"></div>
       <div class="jardim-zoom"><button id="zoom-mais" type="button" aria-label="Aproximar">+</button><button id="zoom-menos" type="button" aria-label="Afastar">−</button></div>
       <div class="jardim-cartao" id="jardim-cartao" role="dialog" aria-live="polite" hidden></div>
-      <p class="jardim-dica">Arrasta para passear · toca numa flor</p>
+      <button class="jardim-cheio-botao" id="jardim-cheio" type="button" aria-label="Passear no jardim em ecrã inteiro">⛶ Passear no jardim</button>
+      <p class="jardim-aviso-gesto" id="jardim-aviso-gesto" role="status" hidden></p>
+      <p class="jardim-dica"><span class="so-rato">Arrasta para passear · toca numa flor</span><span class="so-dedo">Toca numa flor · dois dedos para passear</span></p>
       <p class="jardim-carregar" id="jardim-carregar">A plantar as flores…</p>
       <div id="jardim-aviso"></div>
     </div>
@@ -123,7 +125,7 @@
   <script src="js/config.js"></script>
   <script src="js/comum.js?v=20261119b"></script>
   <script src="js/lumi-cenas.js"></script>
-  <script src="js/jardim.js?v=8"></script>
+  <script src="js/jardim.js?v=9"></script>
   <!-- Contador de visitas (GoatCounter: sem cookies) -->
   <script data-goatcounter="https://apaefao.goatcounter.com/count"
           async src="//gc.zgo.at/count.js"></script>

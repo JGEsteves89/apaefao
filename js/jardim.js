@@ -117,7 +117,7 @@ function plantar(lista) {
     el.innerHTML = `<img class="caule" src="img/jardim/flores/caule-${N.caule}.webp" alt="" draggable="false">
       <span class="cabeca"><img src="img/jardim/flores/${f.nv}-${f.v}.webp" alt="" draggable="false">
       <img class="emoji" src="img/jardim/emojis/${emoji}.webp" alt="" draggable="false" style="--r:${N.r}"></span>`;
-    el.addEventListener("click", e => { if (arrastou) return; e.stopPropagation(); abrir(f); });
+    el.addEventListener("click", e => { if (arrastou) return; e.stopPropagation(); enquadrar(); abrir(f); });
     f.el = el; mundo.appendChild(el);
     const n = document.createElement("span"); n.className = "jnome n-" + f.nv; n.textContent = f.a.nome; f.nomeEl = n; nomes.appendChild(n);
   });
@@ -169,26 +169,52 @@ function inicio() {
   cam = centrarEm(MUNDO.W / 2, MUNDO.H / 2, minS); aplicar();
 }
 
-// Arrastar (rato e dedo) e pinça (dois dedos).
-const toques = new Map(); let arrastou = false, ini = null;
+// ---------- gestos ----------
+// Na página (telemóvel): 1 dedo faz scroll à página; 2 dedos passeiam e fazem zoom; tocar numa flor abre-a.
+// Em ecrã inteiro ("Passear no jardim"): 1 dedo passeia. No PC: arrastar com o rato passeia;
+// a roda do rato desce a página e Ctrl/⌘ + roda faz zoom (em ecrã inteiro, a roda faz zoom).
+let cheio = false;
+const toques = new Map(); let arrastou = false, ini = null, avisado = false, enquadrado = false;
+const MAC = /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent);
+const avisoGesto = document.getElementById("jardim-aviso-gesto");
+let avisoT = 0;
+function avisar(texto) {
+  avisoGesto.textContent = texto; avisoGesto.hidden = false;
+  clearTimeout(avisoT); avisoT = setTimeout(() => { avisoGesto.hidden = true; }, 1600);
+}
+// Se o jardim está cortado no ecrã, a página desliza para o mostrar inteiro (só uma vez, só se for preciso).
+function enquadrar() {
+  if (cheio || enquadrado) return;
+  const r = vista.getBoundingClientRect(), H = innerHeight;
+  if (r.top >= 0 && r.bottom <= H) return;
+  enquadrado = true;
+  scrollBy({ top: r.top - Math.max(8, (H - r.height) / 2), behavior: MOVIMENTO ? "smooth" : "auto" });
+}
 vista.addEventListener("pointerdown", e => {
-  if (e.target.closest(".jardim-zoom, .jardim-cartao")) return;
-  toques.set(e.pointerId, { x: e.clientX, y: e.clientY });
-  arrastou = false; ini = { cam: { ...cam }, toques: new Map(toques) };
-  vista.classList.add("ja-mexeu");
-  cancelAnimationFrame(voo); vista.classList.add("a-arrastar");
+  if (e.target.closest(".jardim-zoom, .jardim-cartao, .jardim-cheio-botao")) return;
+  toques.set(e.pointerId, { x: e.clientX, y: e.clientY, tipo: e.pointerType });
+  arrastou = false; avisado = false; ini = { cam: { ...cam }, toques: new Map(toques) };
+  cancelAnimationFrame(voo);
+  if (toques.size >= 2 || e.pointerType !== "touch" || cheio) { vista.classList.add("ja-mexeu", "a-arrastar"); }
+  if (toques.size >= 2) enquadrar();
 });
+// 2 dedos na página: o browser não faz scroll nem zoom à página (o jardim é que mexe).
+vista.addEventListener("touchmove", e => { if (e.touches.length >= 2 || cheio) e.preventDefault(); }, { passive: false });
 addEventListener("pointermove", e => {
   if (!toques.has(e.pointerId)) return;
-  toques.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  toques.set(e.pointerId, { x: e.clientX, y: e.clientY, tipo: e.pointerType });
   const r = vista.getBoundingClientRect(), pts = [...toques.values()], ant = [...ini.toques.values()];
   if (pts.length === 1 && ant.length >= 1) {
-    const dx = pts[0].x - ant[0].x, dy = pts[0].y - ant[0].y;
-    if (Math.abs(dx) + Math.abs(dy) > 6) arrastou = true;
+    const dx = pts[0].x - ant[0].x, dy = pts[0].y - ant[0].y, longe = Math.abs(dx) + Math.abs(dy) > 8;
+    if (e.pointerType === "touch" && !cheio) {          // 1 dedo na página: não mexe no jardim
+      if (longe) { arrastou = true; if (!avisado) { avisado = true; avisar("Usa dois dedos para passear, ou toca em ⛶ Passear no jardim"); } }
+      return;
+    }
+    if (longe) arrastou = true;
     if (arrastou) { cam.x = ini.cam.x + dx; cam.y = ini.cam.y + dy; aplicar(); }
   } else if (pts.length >= 2 && ant.length >= 2) {
     arrastou = true;
-    const d0 = Math.hypot(ant[0].x - ant[1].x, ant[0].y - ant[1].y), d1 = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
+    const d0 = Math.hypot(ant[0].x - ant[1].x, ant[0].y - ant[1].y) || 1, d1 = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
     const c0 = { x: (ant[0].x + ant[1].x) / 2 - r.left, y: (ant[0].y + ant[1].y) / 2 - r.top };
     const c1 = { x: (pts[0].x + pts[1].x) / 2 - r.left, y: (pts[0].y + pts[1].y) / 2 - r.top };
     const s = Math.min(maxS, Math.max(minS, ini.cam.s * d1 / d0));
@@ -203,9 +229,35 @@ function fim(e) {
 }
 addEventListener("pointerup", fim); addEventListener("pointercancel", fim);
 vista.addEventListener("wheel", e => {
+  if (!cheio && !e.ctrlKey && !e.metaKey) { avisar(`Usa ${MAC ? "⌘" : "Ctrl"} + roda para aproximar`); return; }   // a página desce
   e.preventDefault(); const r = vista.getBoundingClientRect();
   zoomEm(Math.exp(-e.deltaY * .0018), e.clientX - r.left, e.clientY - r.top);
 }, { passive: false });
+
+// ---------- ecrã inteiro ("Passear no jardim") ----------
+// No iPhone não há ecrã inteiro para uma caixa: a caixa passa a ocupar o ecrã (position: fixed) e a página fica parada.
+const botaoCheio = document.getElementById("jardim-cheio");
+function centroMundo() { return { x: (vista.clientWidth / 2 - cam.x) / cam.s, y: (vista.clientHeight / 2 - cam.y) / cam.s }; }
+function entrarCheio(semHistoria) {
+  if (cheio) return;
+  const c = centroMundo(), s = cam.s;
+  cheio = true; document.documentElement.classList.add("jardim-cheio-aberto"); vista.classList.add("cheio", "ja-mexeu");
+  botaoCheio.textContent = "✕ Sair"; botaoCheio.setAttribute("aria-label", "Sair do ecrã inteiro");
+  limites(); cam = centrarEm(c.x, c.y, Math.max(s, minS)); aplicar();
+  if (!semHistoria) history.pushState({ jardim: "cheio" }, "");
+  vista.focus({ preventScroll: true });
+}
+function sairCheio(daHistoria) {
+  if (!cheio) return;
+  const c = centroMundo(), s = cam.s;
+  cheio = false; document.documentElement.classList.remove("jardim-cheio-aberto"); vista.classList.remove("cheio");
+  botaoCheio.textContent = "⛶ Passear no jardim"; botaoCheio.setAttribute("aria-label", "Passear no jardim em ecrã inteiro");
+  limites(); cam = centrarEm(c.x, c.y, s); aplicar();
+  if (!daHistoria && history.state && history.state.jardim) history.back();
+  enquadrado = false;
+}
+botaoCheio.onclick = e => { e.stopPropagation(); cheio ? sairCheio() : entrarCheio(); };
+addEventListener("popstate", () => { if (cheio) sairCheio(true); });
 vista.addEventListener("dblclick", e => { const r = vista.getBoundingClientRect(); zoomEm(1.8, e.clientX - r.left, e.clientY - r.top); });
 vista.addEventListener("click", () => { if (!arrastou && aberta) fechar(); });
 document.getElementById("zoom-mais").onclick = e => { e.stopPropagation(); zoomEm(1.6, vista.clientWidth / 2, vista.clientHeight / 2); };
@@ -215,7 +267,7 @@ vista.addEventListener("keydown", e => {
   if (m) { e.preventDefault(); cam.x += m[0]; cam.y += m[1]; aplicar(); }
   if (e.key === "+" || e.key === "=") zoomEm(1.4, vista.clientWidth / 2, vista.clientHeight / 2);
   if (e.key === "-") zoomEm(1 / 1.4, vista.clientWidth / 2, vista.clientHeight / 2);
-  if (e.key === "Escape" && aberta) fechar();
+  if (e.key === "Escape") { if (aberta) fechar(); else if (cheio) sairCheio(); }
 });
 
 // ---------- nomes (aparecem quando a flor já é grande no ecrã; não se tapam) ----------
@@ -274,6 +326,7 @@ function posicionarCartao() {
 const procura = document.getElementById("jardim-procura"), msg = document.getElementById("jardim-procura-msg");
 const resultados = document.getElementById("jardim-resultados");
 function irPara(f) {
+  if (vista.clientWidth < 600 || matchMedia("(pointer: coarse)").matches) entrarCheio(); else enquadrar();
   // A lista fica aberta, para poder escolher outra.
   resultados.querySelectorAll('button').forEach(b => b.classList.toggle('ativo', b.querySelector('span').textContent === f.a.nome));
   flores.forEach(g => { g.achada = g === f; g.el.classList.toggle("achada", g === f); });
