@@ -97,3 +97,9 @@ a.jc-foto:hover { transform: scale(1.02); }
 /* Flor escolhida (ou procurada) passa para a frente de todas */
 .flor.aberta, .flor.achada { z-index: 50; }
 .flor:hover, .flor:focus-visible { z-index: 40; }
+
+/* Imagem do cartão inteira (fotos ao alto não são cortadas); por trás, a mesma foto desfocada */
+.jc-foto { position: relative; display: block; }
+.jc-foto img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; padding: 0; }
+.jc-foto img.desfocada { object-fit: cover; filter: blur(18px) brightness(.9); transform: scale(1.2); }
+.jc-foto img.so-emoji { inset: 15% 22%; width: 56%; height: 70%; }

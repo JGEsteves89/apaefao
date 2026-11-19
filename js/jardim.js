@@ -243,7 +243,7 @@ function abrir(f) {
   aberta = f; const a = f.a, N = NIVEIS[f.nv];
   flores.forEach(g => g.el.classList.toggle("aberta", g === f));
   const emoji = EMOJI[a.tipo] || "coracao";
-  const imagem = a.logo ? `<img src="${escapar(a.logo)}" alt="">` : `<img class="so-emoji" src="img/jardim/emojis/${emoji}.webp" alt="">`;
+  const imagem = a.logo ? `<img class="desfocada" src="${escapar(a.logo)}" alt="" aria-hidden="true"><img src="${escapar(a.logo)}" alt="">` : `<img class="so-emoji" src="img/jardim/emojis/${emoji}.webp" alt="">`;
   const url = a.maps_url ? escapar(a.maps_url) : "";
   // Imagem grande; tocar nela leva ao site / mapa do apoiante.
   const foto = url ? `<a class="jc-foto" href="${url}" target="_blank" rel="noopener" aria-label="${escapar(a.nome)}: ${textoLink(a.maps_url)}">${imagem}</a>`
