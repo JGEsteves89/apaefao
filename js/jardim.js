@@ -238,8 +238,13 @@ vista.addEventListener("wheel", e => {
 // No iPhone não há ecrã inteiro para uma caixa: a caixa passa a ocupar o ecrã (position: fixed) e a página fica parada.
 const botaoCheio = document.getElementById("jardim-cheio");
 function centroMundo() { return { x: (vista.clientWidth / 2 - cam.x) / cam.s, y: (vista.clientHeight / 2 - cam.y) / cam.s }; }
+// O Safari do iPhone pinta as barras de cima e de baixo com a cor da página / do "theme-color".
+// Em ecrã inteiro: céu em cima. Ao sair: volta a cor do site e obriga o Safari a voltar a ler as cores.
+const metaTema = document.querySelector('meta[name="theme-color"]'), temaSite = metaTema ? metaTema.content : "";
+function tema(cor) { if (metaTema) metaTema.content = cor; }
 function entrarCheio(semHistoria) {
   if (cheio) return;
+  tema("#59b9ff");
   const c = centroMundo(), s = cam.s;
   cheio = true; document.documentElement.classList.add("jardim-cheio-aberto"); vista.classList.add("cheio", "ja-mexeu");
   botaoCheio.textContent = "✕ Sair"; botaoCheio.setAttribute("aria-label", "Sair do ecrã inteiro");
@@ -251,6 +256,8 @@ function sairCheio(daHistoria) {
   if (!cheio) return;
   const c = centroMundo(), s = cam.s;
   cheio = false; document.documentElement.classList.remove("jardim-cheio-aberto"); vista.classList.remove("cheio");
+  tema(temaSite);
+  requestAnimationFrame(() => { scrollBy(0, 1); requestAnimationFrame(() => scrollBy(0, -1)); });
   botaoCheio.textContent = "⛶ Passear no jardim"; botaoCheio.setAttribute("aria-label", "Passear no jardim em ecrã inteiro");
   limites(); cam = centrarEm(c.x, c.y, s); aplicar();
   if (!daHistoria && history.state && history.state.jardim) history.back();

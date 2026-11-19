@@ -123,7 +123,7 @@ a.jc-foto:hover { transform: scale(1.02); }
   border-radius: 14px; padding: 12px 16px; }
 .jardim-aviso-gesto[hidden] { display: none; }
 /* Ecrã inteiro (também no iPhone: a caixa ocupa o ecrã e a página fica parada) */
-.jardim-vista.cheio { position: fixed; inset: 0; width: 100vw; height: 100vh; height: 100dvh; max-height: none; min-height: 0; z-index: 9999;
+.jardim-vista.cheio { background: linear-gradient(#59b9ff 0 50%, #8ea00f 50% 100%); position: fixed; inset: 0; width: 100vw; height: 100vh; height: 100dvh; max-height: none; min-height: 0; z-index: 9999;
   border: 0; border-radius: 0; box-shadow: none; touch-action: none; overscroll-behavior: none; }
 .jardim-vista.cheio .jardim-dica { display: none; }
 .jardim-vista.cheio .jardim-cheio-botao { top: max(10px, env(safe-area-inset-top)); left: max(10px, env(safe-area-inset-left)); background: var(--cartao); }
