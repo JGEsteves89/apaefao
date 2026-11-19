@@ -15,7 +15,10 @@
   box-shadow: 5px 5px 0 var(--tinta); background: #5fb2f2; touch-action: pan-y; user-select: none; -webkit-user-select: none; cursor: grab; outline: none; }
 .jardim-vista:focus-visible { box-shadow: 5px 5px 0 var(--tinta), 0 0 0 4px #1f6feb; }
 .jardim-vista.a-arrastar { cursor: grabbing; }
-.jardim-mundo { position: absolute; left: 0; top: 0; width: 2172px; height: 724px; transform-origin: 0 0; will-change: transform; }
+.jardim-mundo { position: absolute; left: 0; top: 0; width: 2172px; height: 724px; transform-origin: 0 0; }
+/* will-change só enquanto se arrasta: com ele sempre ligado, o browser guarda o jardim como uma imagem
+   do tamanho normal e estica-a no zoom (o vetor fica desfocado). Sem ele, volta a desenhar nítido. */
+.jardim-vista.a-arrastar .jardim-mundo { will-change: transform; }
 .jardim-mundo > .fundo { position: absolute; inset: 0; width: 100%; height: 100%; display: block; pointer-events: none; }
 
 /* Uma flor: o ponto (left, top) é onde o caule toca na relva */
