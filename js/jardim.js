@@ -272,15 +272,35 @@ function posicionarCartao() {
 
 // ---------- procurar ----------
 const procura = document.getElementById("jardim-procura"), msg = document.getElementById("jardim-procura-msg");
+const resultados = document.getElementById("jardim-resultados");
+function irPara(f) {
+  // A lista fica aberta, para poder escolher outra.
+  resultados.querySelectorAll('button').forEach(b => b.classList.toggle('ativo', b.querySelector('span').textContent === f.a.nome));
+  flores.forEach(g => { g.achada = g === f; g.el.classList.toggle("achada", g === f); });
+  voar(centrarEm(f.x, f.y - f.alto, Math.max(minS * 2.2, 60 / f.cab), vista.clientWidth < 600 ? .2 : .5));
+  setTimeout(() => abrir(f), MOVIMENTO ? 680 : 0);
+}
+// Procura em todas as palavras do nome. Vários resultados → lista para escolher; todos ficam marcados no jardim.
 function procurar(ir) {
   const q = normal(procura.value.trim());
   flores.forEach(f => { f.achada = false; f.el.classList.remove("achada"); });
+  resultados.hidden = true; resultados.innerHTML = "";
   if (q.length < 2) { msg.textContent = ""; pedirNomes(); return; }
-  const f = flores.find(g => normal(g.a.nome).startsWith(q)) || flores.find(g => normal(g.a.nome).includes(q));
-  if (!f) { msg.textContent = "Ainda não está no jardim. Queres plantar a tua flor?"; pedirNomes(); return; }
-  msg.textContent = ""; f.achada = true; f.el.classList.add("achada");
-  if (ir) { voar(centrarEm(f.x, f.y - f.alto, Math.max(minS * 2.2, 60 / f.cab), vista.clientWidth < 600 ? .2 : .5)); setTimeout(() => abrir(f), MOVIMENTO ? 680 : 0); }
-  else pedirNomes();
+  const achadas = flores.filter(g => normal(g.a.nome).includes(q))
+    .sort((f, g) => (normal(g.a.nome).startsWith(q) - normal(f.a.nome).startsWith(q)) || ORDEM.indexOf(f.nv) - ORDEM.indexOf(g.nv) || f.a.nome.localeCompare(g.a.nome, "pt"));
+  if (!achadas.length) { msg.textContent = "Ainda não está no jardim. Queres plantar a tua flor?"; pedirNomes(); return; }
+  msg.textContent = achadas.length > 1 ? `${achadas.length} flores encontradas. Escolhe uma:` : "";
+  achadas.forEach(f => { f.achada = true; f.el.classList.add("achada"); });
+  if (achadas.length === 1) { if (ir) irPara(achadas[0]); else pedirNomes(); return; }
+  achadas.forEach(f => {
+    const li = document.createElement("li"), b = document.createElement("button");
+    b.type = "button"; b.innerHTML = `<img src="img/jardim/flores/${f.nv}-1.webp" alt=""><span></span>`;
+    b.querySelector("span").textContent = f.a.nome;
+    b.onclick = () => irPara(f);
+    li.appendChild(b); resultados.appendChild(li);
+  });
+  resultados.hidden = false;
+  if (ir) irPara(achadas[0]); else pedirNomes();
 }
 procura.addEventListener("input", () => procurar(false));
 procura.addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); procurar(true); } });
