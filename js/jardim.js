@@ -89,8 +89,12 @@ const vista = document.getElementById("jardim-vista"), mundo = document.getEleme
 const nomes = document.getElementById("jardim-nomes"), cartao = document.getElementById("jardim-cartao");
 let flores = [], cam = { s: 1, x: 0, y: 0 }, minS = 1, maxS = 4, aberta = null;
 
+// Com poucas flores o jardim fica vazio: as flores crescem. Com ~80 ou mais ficam no tamanho normal.
+// Os lugares não mudam (só o tamanho), por isso ninguém salta de sítio quando entram flores novas.
+const fatorTamanho = n => Math.min(1.7, Math.max(1, Math.sqrt(80 / Math.max(n, 1))));
+
 function plantar(lista) {
-  const por = gerarLugares(), ocup = {};
+  const por = gerarLugares(), ocup = {}, F = fatorTamanho(lista.length);
   ORDEM.forEach(nv => ocup[nv] = new Set());
   lista.forEach((a, ordem) => {
     const nv = NIVEIS[a.nivel] ? a.nivel : (DO_TAMANHO[a.tamanho] || "botao");
@@ -101,7 +105,7 @@ function plantar(lista) {
     ocup[nv].add(i);
     const l = lugares[i], N = NIVEIS[nv], p = persp(l.y) * [1, .88, .78][l.ronda];
     const v = hash(a.nome + "v") % N.variantes + 1;
-    flores.push({ a, nv, x: l.x, y: l.y, cab: N.cab * p, alto: N.alto * p, v, ordem });
+    flores.push({ a, nv, x: l.x, y: l.y, cab: N.cab * p * F, alto: N.alto * p * F, v, ordem });
   });
   // Os de trás primeiro (os da frente tapam os de trás).
   flores.sort((f, g) => f.y - g.y).forEach(f => {
@@ -155,9 +159,9 @@ function voar(alvo, ms = 650) {
     if (k < 1) voo = requestAnimationFrame(passo); };
   voo = requestAnimationFrame(passo);
 }
-function centrarEm(wx, wy, s) {
+function centrarEm(wx, wy, s, alturaY = .5) {
   const w = vista.clientWidth, h = vista.clientHeight; s = Math.min(maxS, Math.max(minS, s));
-  return { s, x: w / 2 - wx * s, y: h / 2 - wy * s };
+  return { s, x: w / 2 - wx * s, y: h * alturaY - wy * s };
 }
 function inicio() {
   limites();
@@ -226,7 +230,8 @@ function mostrarNomes() {
     const n = f.nomeEl;
     if (!quer || x < -60 || x > W + 60 || topo < -20 || topo > H + 20) { n.hidden = true; continue; }
     n.hidden = false; n.style.left = x + "px"; n.style.top = topo + "px";
-    const w = n.offsetWidth, h = n.offsetHeight, r = [x - w / 2, topo, x + w / 2, topo + h];
+    const w = n.offsetWidth, h = n.offsetHeight, cx = Math.min(Math.max(x, w / 2 + 4), W - w / 2 - 4), r = [cx - w / 2, topo, cx + w / 2, topo + h];
+    n.style.left = cx + "px";
     const choca = postos.some(q => r[0] < q[2] + 2 && r[2] + 2 > q[0] && r[1] < q[3] + 1 && r[3] + 1 > q[1]);
     if (choca && f !== aberta && !f.achada) { n.hidden = true; continue; }
     postos.push(r);
@@ -247,13 +252,15 @@ function abrir(f) {
   cartao.hidden = false;
   // Se a flor está pequena ou na beira, aproxima um pouco.
   const cabPx = f.cab * cam.s, sx = cam.x + f.x * cam.s, sy = cam.y + f.y * cam.s;
-  if (cabPx < 34 || sx < 40 || sx > vista.clientWidth - 40 || sy < 80 || sy > vista.clientHeight) voar(centrarEm(f.x, f.y - f.alto, Math.max(cam.s, 46 / f.cab)));
+  const movel = vista.clientWidth < 600;
+  if (movel || cabPx < 34 || sx < 40 || sx > vista.clientWidth - 40 || sy < 80 || sy > vista.clientHeight) voar(centrarEm(f.x, f.y - f.alto, Math.max(cam.s, 46 / f.cab), movel ? .28 : .5));
   aplicar();
 }
 function fechar() { aberta = null; cartao.hidden = true; flores.forEach(g => g.el.classList.remove("aberta")); pedirNomes(); }
 function posicionarCartao() {
   const f = aberta, W = vista.clientWidth, H = vista.clientHeight, w = cartao.offsetWidth, h = cartao.offsetHeight;
   const cx = cam.x + f.x * cam.s, cy = cam.y + (f.y - f.alto) * cam.s, raio = f.cab * cam.s / 2;
+  if (W < 600) { cartao.style.left = "8px"; cartao.style.top = (H - h - 8) + "px"; return; }   // telemóvel: em baixo, largura toda
   let x = cx + raio + 10, y = cy - h / 2;
   if (x + w > W - 8) x = cx - raio - 10 - w;
   if (x < 8) { x = Math.min(Math.max(8, cx - w / 2), W - w - 8); y = cy + raio + 26; if (y + h > H - 8) y = cy - raio - h - 10; }
@@ -269,7 +276,7 @@ function procurar(ir) {
   const f = flores.find(g => normal(g.a.nome).startsWith(q)) || flores.find(g => normal(g.a.nome).includes(q));
   if (!f) { msg.textContent = "Ainda não está no jardim. Queres plantar a tua flor?"; pedirNomes(); return; }
   msg.textContent = ""; f.achada = true; f.el.classList.add("achada");
-  if (ir) { voar(centrarEm(f.x, f.y - f.alto, Math.max(minS * 2.2, 60 / f.cab))); setTimeout(() => abrir(f), MOVIMENTO ? 680 : 0); }
+  if (ir) { voar(centrarEm(f.x, f.y - f.alto, Math.max(minS * 2.2, 60 / f.cab), vista.clientWidth < 600 ? .28 : .5)); setTimeout(() => abrir(f), MOVIMENTO ? 680 : 0); }
   else pedirNomes();
 }
 procura.addEventListener("input", () => procurar(false));
