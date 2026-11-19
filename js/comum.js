@@ -308,19 +308,27 @@ function vistas(caixa) {
     return DIAS[d.getUTCDay()] + " " + data.slice(8, 10) + "/" + data.slice(5, 7) + ", " + hh;
   }
 
+  // Barra do topo: um aviso de cada vez, com a cor dele (urgente = vermelho). Com vários, troca a cada 5 s.
   function faixa(lista) {
-    const a = lista[0], urgente = lista.some(x => x.nivel === "urgente");
     const naInicial = document.getElementById("avisos");
-    const texto = lista.length > 1
-      ? `<b>${lista.length} avisos:</b> ${escapar(a.titulo)}`
-      : `<b>${escapar(a.titulo)}:</b> ${escapar(a.atualizacoes[0].texto)}`;
     const f = document.createElement("div");
-    f.className = "aviso-faixa " + (urgente ? "urgente" : "info " + a.cor);
     f.setAttribute("role", "region");
     f.setAttribute("aria-label", "Aviso");
-    f.innerHTML = `<span class="aviso-ico" aria-hidden="true">${urgente ? "!" : "i"}</span>
-      <p><span class="aviso-txt">${texto}</span> <a href="${naInicial ? "#avisos" : "/#avisos"}">Ver&nbsp;→</a></p>`;
+    const mostra = i => {
+      const a = lista[i], urgente = a.nivel === "urgente";
+      const conta = lista.length > 1 ? ` <span class="aviso-conta">${i + 1}/${lista.length}</span>` : "";
+      f.className = "aviso-faixa " + (urgente ? "urgente" : "info " + a.cor);
+      f.innerHTML = `<span class="aviso-ico" aria-hidden="true">${urgente ? "!" : "i"}</span>
+        <p><span class="aviso-txt"><b>${escapar(a.titulo)}:</b> ${escapar(a.atualizacoes[0].texto)}</span>${conta} <a href="${naInicial ? "#avisos" : "/#avisos"}">Ver&nbsp;→</a></p>`;
+    };
+    mostra(0);
     document.body.prepend(f);
+    if (lista.length > 1 && MOVIMENTO) {
+      let i = 0, pausa = false;
+      f.addEventListener("mouseenter", () => pausa = true);
+      f.addEventListener("mouseleave", () => pausa = false);
+      setInterval(() => { if (!pausa) mostra(i = (i + 1) % lista.length); }, 5000);
+    }
   }
 
   function cartoes(sec, lista) {

@@ -1125,6 +1125,7 @@ header.topo .menu { order: 2; margin-left: auto; align-items: center; }
 .cor-3 { --cor: #c2366f; } .cor-4 { --cor: #b35a00; } .cor-5 { --cor: #137f80; }
 .aviso-faixa.info { background: var(--cor, #2468b4); color: #fff; }
 .aviso-faixa.info .aviso-ico { background: #fff; color: var(--cor, #2468b4); }
+.aviso-conta { font-size: 13px; font-weight: 800; opacity: .85; white-space: nowrap; }
 @media (max-width: 640px) { .aviso-faixa { justify-content: flex-start; font-size: 14px; } }
 .avisos { margin: 18px 0 8px; scroll-margin-top: 16px; display: grid; gap: 14px; }
 .aviso-cartao { background: #fff; border: 3px solid var(--vermelho); border-radius: var(--raio); box-shadow: 4px 4px 0 var(--vermelho); padding: 16px 18px; }
