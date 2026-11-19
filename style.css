@@ -1120,12 +1120,16 @@ header.topo .menu { order: 2; margin-left: auto; align-items: center; }
 .aviso-faixa b { font-weight: 900; }
 .aviso-faixa a { color: inherit; font-weight: 900; text-decoration: underline; white-space: nowrap; }
 .aviso-ico { flex: none; width: 24px; height: 24px; border-radius: 50%; background: #fff; color: var(--vermelho); font-weight: 900; display: grid; place-items: center; font-size: 15px; }
-.aviso-faixa.info { background: var(--sol); color: var(--tinta); }
-.aviso-faixa.info .aviso-ico { background: var(--tinta); color: var(--sol); }
+/* Avisos "info": cores dos óculos da Lumi, uma por aviso (cor-0 a cor-5, repete). Vermelho fica só para urgente. */
+.cor-0 { --cor: #2468b4; } .cor-1 { --cor: #2a7d45; } .cor-2 { --cor: #7a4bb0; }
+.cor-3 { --cor: #c2366f; } .cor-4 { --cor: #b35a00; } .cor-5 { --cor: #137f80; }
+.aviso-faixa.info { background: var(--cor, #2468b4); color: #fff; }
+.aviso-faixa.info .aviso-ico { background: #fff; color: var(--cor, #2468b4); }
 @media (max-width: 640px) { .aviso-faixa { justify-content: flex-start; font-size: 14px; } }
 .avisos { margin: 18px 0 8px; scroll-margin-top: 16px; display: grid; gap: 14px; }
 .aviso-cartao { background: #fff; border: 3px solid var(--vermelho); border-radius: var(--raio); box-shadow: 4px 4px 0 var(--vermelho); padding: 16px 18px; }
-.aviso-cartao.info { background: var(--sol-claro); border-color: var(--sol-escuro); box-shadow: 4px 4px 0 var(--sol-escuro); }
+.aviso-cartao.info { --c: var(--cor, #2468b4); background: color-mix(in srgb, var(--c) 9%, #fff); border-color: var(--c); box-shadow: 4px 4px 0 var(--c); }
+.aviso-cartao.info h2 { color: var(--c); }
 .aviso-cartao h2 { font-size: 24px; margin: 0 0 4px; }
 .aviso-quando { font-weight: 800; margin: 0; }
 .aviso-agora { font-size: 18px; font-weight: 800; margin: 10px 0 2px; line-height: 1.4; }

@@ -315,7 +315,7 @@ function vistas(caixa) {
       ? `<b>${lista.length} avisos:</b> ${escapar(a.titulo)}`
       : `<b>${escapar(a.titulo)}:</b> ${escapar(a.atualizacoes[0].texto)}`;
     const f = document.createElement("div");
-    f.className = "aviso-faixa " + (urgente ? "urgente" : "info");
+    f.className = "aviso-faixa " + (urgente ? "urgente" : "info " + a.cor);
     f.setAttribute("role", "region");
     f.setAttribute("aria-label", "Aviso");
     f.innerHTML = `<span class="aviso-ico" aria-hidden="true">${urgente ? "!" : "i"}</span>
@@ -326,7 +326,7 @@ function vistas(caixa) {
   function cartoes(sec, lista) {
     sec.innerHTML = lista.map(a => {
       const [novo, ...antes] = a.atualizacoes;
-      return `<article class="aviso-cartao ${a.nivel === "urgente" ? "urgente" : "info"}">
+      return `<article class="aviso-cartao ${a.nivel === "urgente" ? "urgente" : "info " + a.cor}">
         <h2>${escapar(a.titulo)}</h2>
         ${a.quando ? `<p class="aviso-quando">${escapar(a.quando)}</p>` : ""}
         <p class="aviso-agora">${escapar(novo.texto)}</p>
@@ -343,6 +343,9 @@ function vistas(caixa) {
     // urgente primeiro; depois o evento mais perto primeiro
     const lista = ativos(l).sort((a, b) => (a.nivel === b.nivel ? 0 : a.nivel === "urgente" ? -1 : 1) || (a.ate < b.ate ? -1 : a.ate > b.ate ? 1 : 0));
     if (!lista.length) return;
+    // Avisos "info": cada um com uma cor dos óculos da Lumi (azul, verde, roxo, rosa, laranja, turquesa), e repete. Vermelho = só urgente.
+    let n = 0;
+    lista.forEach(x => { x.cor = x.nivel === "urgente" ? "" : "cor-" + (n++ % 6); });
     faixa(lista);
     const sec = document.getElementById("avisos");
     if (sec) cartoes(sec, lista);
