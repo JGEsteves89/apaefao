@@ -14,6 +14,7 @@ const VOTACAO_FECHA = new Date("2026-10-26T00:00:00Z");
 function doPost(e) {
   const dados = JSON.parse(e.postData.contents);
   if (dados.evento === "ementa_voto") return guardarVotoEmenta(dados);
+  if (dados.evento === "recorde") return guardarRecorde(dados);
   limparCache();
   if (dados.evento === "votacao") return guardarVoto(dados);
   if (dados.evento === "responsavel") return guardarResponsavel(dados);
@@ -531,6 +532,7 @@ function site() {
   };
   dados.metas = metas();
   dados.apoiantes = apoiantes();
+  dados.recordes = recordes();
   cache.put("site", JSON.stringify(dados), 21600);
   return dados;
 }
@@ -1160,4 +1162,31 @@ function confirmarDatas() {
   mudar("agenda", "titulo", /^dia da fam[ií]lia/i, { quando: "Sábado, 15 mai", confirmar: "" });
   limparCache();
   Logger.log(feito.join("\n"));
+}
+
+
+// Jogo "Onde está a Lumi?" (jardim.html): recordes. Uma linha por jogo, só com o primeiro nome.
+// Só aparece no site quem tiver "sim" na coluna "publicar" (a APAEF vê primeiro). Top 10 do mês.
+const PALAVROES = ["merda", "caralh", "foda", "fodi", "puta", "cabrao", "porra", "bosta", "cona", "piroca", "paneleir", "rabeta"];
+function abaRecordes() {
+  const livro = SpreadsheetApp.getActiveSpreadsheet();
+  let aba = livro.getSheetByName("recordes");
+  if (!aba) { aba = livro.insertSheet("recordes"); aba.appendRow(["data", "nome", "vezes", "publicar"]); aba.setFrozenRows(1); }
+  return aba;
+}
+function guardarRecorde(d) {
+  const nome = String(d.nome || "").trim(), vezes = Math.floor(Number(d.vezes));
+  const simples = nome.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+  if (/^[A-Za-zÀ-ÖØ-öø-ÿ]{2,12}$/.test(nome) && vezes >= 1 && vezes <= 500 && !PALAVROES.some(p => simples.indexOf(p) >= 0))
+    abaRecordes().appendRow([new Date(), nome, vezes, ""]);
+  return ContentService.createTextOutput("ok");
+}
+function recordes() {
+  const aba = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("recordes");
+  if (!aba || aba.getLastRow() < 2) return [];
+  const mes = Utilities.formatDate(new Date(), "Europe/Lisbon", "yyyy-MM");
+  return aba.getDataRange().getValues().slice(1)
+    .filter(l => l[0] instanceof Date && Utilities.formatDate(l[0], "Europe/Lisbon", "yyyy-MM") === mes && sim(l[3]))
+    .map(l => ({ nome: limpar(l[1], 12), vezes: Number(l[2]) || 0 }))
+    .sort((a, b) => b.vezes - a.vezes).slice(0, 10);
 }

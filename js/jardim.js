@@ -87,7 +87,7 @@ function gerarLugares() {
 // ---------- montar o jardim ----------
 const vista = document.getElementById("jardim-vista"), mundo = document.getElementById("jardim-mundo");
 const nomes = document.getElementById("jardim-nomes"), cartao = document.getElementById("jardim-cartao");
-let flores = [], cam = { s: 1, x: 0, y: 0 }, minS = 1, maxS = 4, aberta = null;
+let flores = [], cam = { s: 1, x: 0, y: 0 }, minS = 1, maxS = 4, aberta = null, jogo = null;
 
 // Com poucas flores o jardim fica vazio: as flores crescem. Com ~80 ou mais ficam no tamanho normal.
 // Os lugares não mudam (só o tamanho), por isso ninguém salta de sítio quando entram flores novas.
@@ -117,7 +117,7 @@ function plantar(lista) {
     el.innerHTML = `<img class="caule" src="img/jardim/flores/caule-${N.caule}.webp" alt="" draggable="false">
       <span class="cabeca"><img src="img/jardim/flores/${f.nv}-${f.v}.webp" alt="" draggable="false">
       <img class="emoji" src="img/jardim/emojis/${emoji}.webp" alt="" draggable="false" style="--r:${N.r}"></span>`;
-    el.addEventListener("click", e => { if (arrastou) return; e.stopPropagation(); enquadrar(); abrir(f); });
+    el.addEventListener("click", e => { if (arrastou) return; e.stopPropagation(); if (jogo) { jogoFlor(f, e); return; } enquadrar(); abrir(f); });
     f.el = el; mundo.appendChild(el);
     const n = document.createElement("span"); n.className = "jnome n-" + f.nv; n.textContent = f.a.nome; f.nomeEl = n; nomes.appendChild(n);
   });
@@ -144,6 +144,7 @@ function aplicar() {
   document.getElementById("zoom-mais").disabled = cam.s >= maxS * .99;
   pedirNomes();
   if (aberta) posicionarCartao();
+  if (jogo) jogoTela();
 }
 function zoomEm(fator, px, py) {
   const s0 = cam.s, s1 = Math.min(maxS, Math.max(minS, s0 * fator));
@@ -191,7 +192,7 @@ function enquadrar() {
   scrollBy({ top: r.top - Math.max(8, (H - r.height) / 2), behavior: MOVIMENTO ? "smooth" : "auto" });
 }
 vista.addEventListener("pointerdown", e => {
-  if (e.target.closest(".jardim-zoom, .jardim-cartao, .jardim-cheio-botao")) return;
+  if (e.target.closest(".jardim-zoom, .jardim-cartao, .jardim-cheio-botao, .lumi-hud")) return;
   toques.set(e.pointerId, { x: e.clientX, y: e.clientY, tipo: e.pointerType });
   arrastou = false; avisado = false; ini = { cam: { ...cam }, toques: new Map(toques) };
   cancelAnimationFrame(voo);
@@ -254,6 +255,7 @@ function entrarCheio(semHistoria) {
 }
 function sairCheio(daHistoria) {
   if (!cheio) return;
+  if (jogo) acabarJogo();          // sair do ecrã inteiro acaba o jogo
   const c = centroMundo(), s = cam.s;
   cheio = false; document.documentElement.classList.remove("jardim-cheio-aberto"); vista.classList.remove("cheio");
   tema(temaSite);
@@ -266,7 +268,10 @@ function sairCheio(daHistoria) {
 botaoCheio.onclick = e => { e.stopPropagation(); cheio ? sairCheio() : entrarCheio(); };
 addEventListener("popstate", () => { if (cheio) sairCheio(true); });
 vista.addEventListener("dblclick", e => { const r = vista.getBoundingClientRect(); zoomEm(1.8, e.clientX - r.left, e.clientY - r.top); });
-vista.addEventListener("click", () => { if (!arrastou && aberta) fechar(); });
+vista.addEventListener("click", e => {
+  if (jogo) { if (!arrastou && !e.target.closest("button")) jogoFalhou(e); return; }
+  if (!arrastou && aberta) fechar();
+});
 document.getElementById("zoom-mais").onclick = e => { e.stopPropagation(); zoomEm(1.6, vista.clientWidth / 2, vista.clientHeight / 2); };
 document.getElementById("zoom-menos").onclick = e => { e.stopPropagation(); zoomEm(1 / 1.6, vista.clientWidth / 2, vista.clientHeight / 2); };
 vista.addEventListener("keydown", e => {
@@ -366,6 +371,277 @@ procura.addEventListener("input", () => procurar(false));
 procura.addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); procurar(true); } });
 document.getElementById("jardim-ir").onclick = () => procurar(true);
 
+// ---------- jogo "Onde está a Lumi?" ----------
+// Guia: notas/projetos/website/jogo-onde-esta-a-lumi-best-practices.md
+// A Lumi esconde-se; cada vez que a encontras, esconde-se melhor (mais pequena, mais tapada, mais longe).
+// Nunca há "errado": se a criança demora, a Lumi abana, depois brilha, depois aparece uma seta.
+// No fim (ao sair do ecrã inteiro) pede o primeiro nome para os recordes. Só aparece no site depois de a APAEF aprovar.
+const FRASES = ["Apanhaste-me! Boa!", "Uau, és um detetive!", "Ah! Viste-me!", "Que olhos de águia!", "Hihi, encontraste-me!"];
+const POSES = { bracos: 520 / 566, ola: 520 / 613, aponta: 420 / 521, pensa: 420 / 532, salta: 420 / 517 };
+const ESCONDE = ["bracos", "ola", "aponta", "pensa"];
+const PALAVROES = ["merda", "caralh", "foda", "fodi", "puta", "cabrao", "porra", "bosta", "cona", "piroca", "paneleir", "rabeta"];
+const CHAVE_JOGO = "apaef-lumi";
+const botaoJogo = document.getElementById("lumi-jogar");
+function lerJogo() { try { return JSON.parse(localStorage.getItem(CHAVE_JOGO)) || {}; } catch (e) { return {}; } }
+function gravarJogo(o) { try { localStorage.setItem(CHAVE_JOGO, JSON.stringify(Object.assign(lerJogo(), o))); } catch (e) {} }
+let som = lerJogo().som !== false, recordesSite = [];
+const novo = (tag, cls, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; };
+
+// Sons feitos pelo código (sem ficheiros).
+let ac = null;
+function audio() {
+  if (!som) return null;
+  try { ac = ac || new (window.AudioContext || window.webkitAudioContext)(); if (ac.state === "suspended") ac.resume(); } catch (e) { return null; }
+  return ac;
+}
+function nota(f, quando, dur, tipo = "sine", vol = .2, ate) {
+  const a = audio(); if (!a) return;
+  const o = a.createOscillator(), g = a.createGain(), t = a.currentTime + quando;
+  o.type = tipo; o.frequency.setValueAtTime(f, t); if (ate) o.frequency.exponentialRampToValueAtTime(ate, t + dur);
+  g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(vol, t + .01); g.gain.exponentialRampToValueAtTime(.001, t + dur);
+  o.connect(g).connect(a.destination); o.start(t); o.stop(t + dur + .02);
+}
+const SONS = {
+  plim: () => [523, 659, 784, 1047].forEach((f, i) => nota(f, i * .09, .4, "triangle", .25)),
+  risinho: () => [880, 988, 880, 1047, 880].forEach((f, i) => nota(f, i * .08, .09, "square", .05)),
+  puf: () => nota(420, 0, .22, "sine", .18, 140),
+};
+// Voz do telemóvel, só se houver voz de Portugal.
+let voz = null;
+function acharVoz() { if ("speechSynthesis" in window) voz = speechSynthesis.getVoices().find(v => /^pt[-_]PT/i.test(v.lang)) || null; }
+if ("speechSynthesis" in window) { acharVoz(); speechSynthesis.addEventListener?.("voiceschanged", acharVoz); }
+function falar(t) {
+  if (!som || !voz) return;
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(t); u.voice = voz; u.lang = voz.lang; u.pitch = 1.6; u.rate = 1.05;
+  speechSynthesis.speak(u);
+}
+
+function timer(ms, fn) { jogo.timers.push(setTimeout(fn, ms)); }
+function limparTimers() { jogo.timers.forEach(clearTimeout); jogo.timers = []; }
+function botaoSom() { const b = jogo.hud.querySelector(".lumi-som"); b.textContent = som ? "🔊" : "🔇"; b.setAttribute("aria-label", som ? "Tirar o som" : "Pôr o som"); }
+
+function comecarJogo() {
+  if (!flores.length || jogo) return;
+  audio();                                  // no iPhone o som só funciona depois de um toque
+  if (aberta) fechar();
+  entrarCheio();
+  jogo = { n: 0, vezes: 0, timers: [], falhas: 0, ultimo: null, fase: "intro", frase: "" };
+  vista.classList.add("a-jogar");
+  jogo.hud = novo("div", "lumi-hud", '<span class="lumi-conta" aria-live="polite">⭐ <b>0</b></span><button type="button" class="lumi-som"></button>');
+  jogo.hud.querySelector(".lumi-som").onclick = e => {
+    e.stopPropagation(); som = !som; gravarJogo({ som }); botaoSom();
+    if (!som && "speechSynthesis" in window) speechSynthesis.cancel();
+  };
+  jogo.balao = novo("p", "lumi-balao"); jogo.balao.hidden = true;
+  jogo.seta = novo("span", "lumi-seta", "➜"); jogo.seta.hidden = true;
+  vista.append(jogo.hud, jogo.balao, jogo.seta); botaoSom();
+  jogo.lumi = novo("span", "lumi-escondida", '<img alt="" draggable="false">');
+  jogo.alvo = novo("button", "lumi-alvo"); jogo.alvo.type = "button"; jogo.alvo.setAttribute("aria-label", "Lumi"); jogo.alvo.hidden = true;
+  jogo.alvo.addEventListener("click", e => { e.stopPropagation(); if (!arrastou) achou(); });
+  mundo.append(jogo.lumi, jogo.alvo);
+  // A Lumi aparece grande, diz que se vai esconder, e desaparece.
+  const v = vistaMundo(), alto = 170 / minS;
+  colocar({ x: (v.x0 + v.x1) / 2, y: Math.min(705, v.y1 - 20 / cam.s), alto, ver: 1, pose: "ola", frente: true });
+  dizer("Vou esconder-me! Conta comigo: 1, 2, 3…");
+  timer(3000, () => { jogo.lumi.classList.add("some"); jogo.balao.hidden = true; });
+  timer(3500, novoNivel);
+}
+
+function vistaMundo() {
+  const W = vista.clientWidth, H = vista.clientHeight;
+  return { x0: -cam.x / cam.s, x1: (W - cam.x) / cam.s, y0: -cam.y / cam.s, y1: (H - cam.y) / cam.s };
+}
+
+// Põe a Lumi no ponto (x, y) = onde os pés tocam na relva. "ver" = parte que se vê (o resto fica escondido na relva).
+function colocar(p) {
+  const L = jogo.lumi, img = L.querySelector("img"), w = p.alto * POSES[p.pose];
+  img.src = `img/mascote/${p.pose}.webp`;
+  L.className = "lumi-escondida" + (p.frente ? " frente" : "");
+  L.style.cssText = `left:${p.x}px;top:${p.y}px;height:${p.alto * p.ver}px;--alto:${p.alto}px`;
+  // Fica atrás das flores que estão mais à frente (mais abaixo no jardim).
+  const depois = p.frente ? null : flores.filter(f => f.y > p.y).sort((a, b) => a.y - b.y)[0];
+  mundo.insertBefore(L, depois ? depois.el : jogo.alvo);
+  // Zona de toque: 50% maior do que a Lumi, e nunca menor do que um dedo (56 px no ecrã).
+  const min = 56 / cam.s, h = p.alto * p.ver;
+  jogo.alvo.style.cssText = `left:${p.x}px;top:${p.y - h / 2}px;width:${Math.max(min, w * 1.5)}px;height:${Math.max(min, h * 1.5)}px`;
+  jogo.p = p;
+}
+
+function novoNivel() {
+  if (!jogo) return;
+  const n = ++jogo.n;
+  const alto = Math.max(45, 140 * Math.pow(.9, n - 1)) / minS;        // altura no ecrã sem zoom: 140 px, −10% por nível, mínimo 45 px
+  const ver = n <= 3 ? 1 : n <= 5 ? .7 : n <= 8 ? .55 : .45;         // nunca mais de 55% tapada
+  const lugar = escolherLugar(n, alto, ver);
+  jogo.ultimo = lugar; jogo.falhas = 0; jogo.mostrarSeta = false;
+  colocar({ ...lugar, alto, ver, pose: ESCONDE[(n - 1) % ESCONDE.length], frente: n <= 3 });
+  jogo.alvo.hidden = false; jogo.alvo.classList.remove("brilha"); jogo.fase = "procura";
+  // Ajudas: 15 s abana, 25 s brilha, 35 s seta. Nos níveis altos demoram mais (até ao dobro).
+  const k = Math.min(2, 1 + (n - 1) / 3);
+  const abanaSempre = () => { abanar(); SONS.risinho(); timer(7000, abanaSempre); };
+  timer(15000 * k, abanaSempre);
+  timer(25000 * k, () => jogo.alvo.classList.add("brilha"));
+  timer(35000 * k, () => { jogo.mostrarSeta = true; jogoTela(); });
+  jogoTela();
+}
+
+function escolherLugar(n, alto, ver) {
+  const W = vista.clientWidth, H = vista.clientHeight, r = Math.random, v = vistaMundo(), vw = v.x1 - v.x0;
+  const h = alto * ver, w = alto * .85;
+  const amarelas = flores.filter(f => f.nv === "girassol" || f.nv === "sol");
+  for (let t = 0; t < 400; t++) {
+    let x, y;
+    if (n === 1) { x = v.x0 + vw * (.3 + .4 * r()); y = 560 + r() * 130; }        // relva aberta, no meio do ecrã
+    else {
+      const lista = n >= 6 && amarelas.length && r() < .7 ? amarelas : flores;    // amarelo com amarelo = camuflagem
+      const f = lista[Math.floor(r() * lista.length)];
+      x = f.x + (r() < .5 ? -1 : 1) * (f.cab * .5 + w * .45);
+      y = f.y + (n <= 3 ? 6 + r() * 20 : -4 + r() * 14);
+    }
+    if (y < 420 || y > 716 || x < w || x > MUNDO.W - w || y - h < 60) continue;
+    if (jogo.ultimo && Math.hypot(x - jogo.ultimo.x, y - jogo.ultimo.y) < 250) continue;
+    const sx = cam.x + x * cam.s, sy = cam.y + y * cam.s, meia = w * cam.s / 2;
+    const noEcra = sx > meia + 16 && sx < W - meia - 16 && sy - h * cam.s > 70 && sy < H - 16;
+    if (n <= 3 && !noEcra) continue;                                 // primeiros níveis: no ecrã
+    if (n <= 5 && (sx < -W * .8 || sx > W * 1.8)) continue;          // depois: um pouco ao lado
+    return { x, y };
+  }
+  return { x: (v.x0 + v.x1) / 2, y: Math.min(700, v.y1 - 20 / cam.s) };
+}
+
+function abanar() { const L = jogo.lumi; L.classList.remove("abana"); void L.offsetWidth; L.classList.add("abana"); }
+
+function dizer(t) { jogo.balao.textContent = t; jogo.balao.hidden = false; jogoTela(); falar(t.replace("…", "")); }
+
+function achou() {
+  if (!jogo || jogo.fase !== "procura") return;
+  jogo.fase = "festa"; limparTimers(); jogo.mostrarSeta = false; jogo.alvo.hidden = true;
+  jogo.vezes++;
+  const conta = jogo.hud.querySelector(".lumi-conta");
+  conta.querySelector("b").textContent = jogo.vezes; conta.classList.remove("pula"); void conta.offsetWidth; conta.classList.add("pula");
+  colocar({ ...jogo.p, ver: 1, pose: "salta", frente: true }); jogo.alvo.hidden = true;
+  jogo.lumi.classList.add("apanhada");
+  confetti(); SONS.plim();
+  let f; do f = FRASES[Math.floor(Math.random() * FRASES.length)]; while (f === jogo.frase); jogo.frase = f;
+  dizer(f);
+  timer(2200, () => dizer("Agora vou esconder-me melhor!"));
+  timer(4200, () => { jogo.lumi.classList.add("some"); jogo.balao.hidden = true; });
+  timer(4700, novoNivel);
+}
+
+// Toque fora da Lumi: pétalas e um "puf". Nunca "errado". Três seguidos → a Lumi abana.
+function jogoFalhou(e) {
+  if (!jogo || jogo.fase !== "procura") return;
+  puf(e.clientX, e.clientY); SONS.puf();
+  if (++jogo.falhas >= 3) { jogo.falhas = 0; abanar(); SONS.risinho(); }
+}
+function jogoFlor(f, e) {
+  f.el.classList.remove("abana"); void f.el.offsetWidth; f.el.classList.add("abana");
+  jogoFalhou(e);
+}
+function puf(cx, cy) {
+  if (!MOVIMENTO) return;
+  const r = vista.getBoundingClientRect(), cores = ["#ffd84a", "#ff9fb2", "#ffffff", "#9fd86b"];
+  for (let i = 0; i < 7; i++) {
+    const p = novo("span", "lumi-petala"), a = i / 7 * Math.PI * 2, d = 30 + Math.random() * 25;
+    p.style.cssText = `left:${cx - r.left}px;top:${cy - r.top}px;background:${cores[i % 4]}`;
+    vista.appendChild(p);
+    p.animate([{ transform: "translate(-50%,-50%) scale(1)", opacity: 1 },
+      { transform: `translate(calc(-50% + ${Math.cos(a) * d}px), calc(-50% + ${Math.sin(a) * d}px)) scale(.4) rotate(120deg)`, opacity: 0 }],
+      { duration: 500, easing: "ease-out" }).onfinish = () => p.remove();
+  }
+}
+
+// Balão por cima da Lumi e seta na borda do ecrã (quando ela está fora).
+function jogoTela() {
+  if (!jogo || !jogo.p) return;
+  const W = vista.clientWidth, H = vista.clientHeight, p = jogo.p, h = p.alto * p.ver;
+  const sx = cam.x + p.x * cam.s, topo = cam.y + (p.y - h) * cam.s, meio = cam.y + (p.y - h / 2) * cam.s;
+  if (!jogo.balao.hidden) {
+    const bw = jogo.balao.offsetWidth, bh = jogo.balao.offsetHeight;
+    jogo.balao.style.left = Math.min(Math.max(sx, bw / 2 + 8), W - bw / 2 - 8) + "px";
+    jogo.balao.style.top = Math.min(Math.max(64, topo - bh - 10), H - bh - 8) + "px";
+  }
+  const fora = sx < 0 || sx > W || meio < 0 || meio > H;
+  jogo.seta.hidden = !(jogo.mostrarSeta && jogo.fase === "procura" && fora);
+  if (!jogo.seta.hidden) {
+    const ax = Math.min(Math.max(sx, 40), W - 40), ay = Math.min(Math.max(meio, 90), H - 40);
+    jogo.seta.style.left = ax + "px"; jogo.seta.style.top = ay + "px";
+    jogo.seta.style.setProperty("--a", Math.atan2(meio - ay, sx - ax) + "rad");
+  }
+}
+
+function acabarJogo() {
+  const vezes = jogo.vezes;
+  limparTimers();
+  [jogo.hud, jogo.balao, jogo.seta, jogo.lumi, jogo.alvo].forEach(e => e.remove());
+  vista.classList.remove("a-jogar");
+  if ("speechSynthesis" in window) speechSynthesis.cancel();
+  jogo = null;
+  if (vezes > 0) setTimeout(() => ecraFim(vezes), 60);
+}
+
+// ---------- fim do jogo: o nome e os recordes ----------
+const vezesTxt = n => `${n} ${n === 1 ? "vez" : "vezes"}`;
+function limparNome(t) {
+  const s = String(t).trim();
+  if (!/^[A-Za-zÀ-ÖØ-öø-ÿ]{2,12}$/.test(s)) return "";
+  if (PALAVROES.some(p => normal(s).includes(p))) return "";
+  return s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
+}
+function ecraFim(vezes) {
+  const d = novo("div", "lumi-fim");
+  d.setAttribute("role", "dialog"); d.setAttribute("aria-modal", "true"); d.setAttribute("aria-labelledby", "lf-titulo");
+  d.innerHTML = `<form class="lf-caixa">
+    <img class="lf-lumi" src="img/mascote/salta.webp" alt="">
+    <h2 id="lf-titulo">Encontraste a Lumi <b>${vezesTxt(vezes)}!</b></h2>
+    <label class="lf-pergunta" for="lf-nome">Como te chamas?</label>
+    <input id="lf-nome" maxlength="12" autocomplete="off" autocapitalize="words" spellcheck="false" placeholder="O teu nome">
+    <small>Só o primeiro nome ou uma alcunha.</small>
+    <label class="lf-adulto"><input type="checkbox" id="lf-adulto"><span>Sou adulto e autorizo mostrar este nome nos recordes do site.</span></label>
+    <p class="lf-erro" aria-live="polite"></p>
+    <div class="lf-botoes"><button type="submit" class="lf-guardar">Guardar</button><button type="button" class="lf-nao">Não guardar</button></div>
+    <p class="lf-nota">Mostramos só o primeiro nome, depois de a APAEF ver. Não guardamos mais nada.</p>
+  </form>`;
+  document.body.appendChild(d);
+  const nome = d.querySelector("#lf-nome"), erro = d.querySelector(".lf-erro");
+  nome.value = lerJogo().nome || "";
+  confetti(); SONS.plim(); falar(`Encontraste-me ${vezesTxt(vezes)}! Como te chamas?`);
+  const fecharFim = () => { d.remove(); document.removeEventListener("keydown", esc); };
+  const esc = e => { if (e.key === "Escape") fecharFim(); };
+  document.addEventListener("keydown", esc);
+  d.querySelector(".lf-nao").onclick = fecharFim;
+  d.querySelector("form").onsubmit = e => {
+    e.preventDefault();
+    const n = limparNome(nome.value);
+    if (!n) { erro.textContent = "Escreve só o primeiro nome (só letras)."; nome.focus(); return; }
+    const publico = d.querySelector("#lf-adulto").checked;
+    const lista = (lerJogo().recordes || []).concat({ nome: n, vezes, data: hojeISO(), publico }).slice(-30);
+    gravarJogo({ nome: n, recordes: lista });
+    if (publico) enviar("recorde", { nome: n, vezes });
+    fecharFim(); mostrarRecordes();
+    const sec = document.getElementById("lumi-recordes");
+    if (!sec.hidden) sec.scrollIntoView({ behavior: MOVIMENTO ? "smooth" : "auto", block: "center" });
+  };
+}
+// Top 10 do mês: os aprovados na Sheet + os deste telemóvel (marcados).
+function mostrarRecordes() {
+  const sec = document.getElementById("lumi-recordes"), ol = document.getElementById("lumi-lista");
+  const mes = hojeISO().slice(0, 7);
+  const todos = recordesSite.map(r => ({ nome: r.nome, vezes: r.vezes }));
+  (lerJogo().recordes || []).filter(m => String(m.data).startsWith(mes)).forEach(m => {
+    const igual = todos.find(r => !r.meu && r.nome === m.nome && r.vezes === m.vezes);
+    if (igual) igual.meu = true;
+    else todos.push({ nome: m.nome, vezes: m.vezes, meu: true, estado: m.publico ? "a aguardar" : "só neste telemóvel" });
+  });
+  const top = todos.sort((a, b) => b.vezes - a.vezes).slice(0, 10);
+  sec.hidden = !top.length;
+  ol.innerHTML = top.map((r, i) => `<li${r.meu ? ' class="meu"' : ""}><span class="lr-pos">${["🥇", "🥈", "🥉"][i] || i + 1}</span>
+    <span><b>${escapar(r.nome)}</b>: encontrou a Lumi ${vezesTxt(r.vezes)}${r.estado ? ` <small>(${r.estado})</small>` : ""}</span></li>`).join("");
+}
+botaoJogo.onclick = comecarJogo;
+
 // ---------- arrancar ----------
 async function arrancar() {
   const lista = await carregarDados("apoiantes", document.getElementById("jardim-aviso"));
@@ -373,6 +649,9 @@ async function arrancar() {
   if (!lista) return;
   plantar(lista.filter(a => a.publicar));
   inicio();
+  botaoJogo.disabled = false;
+  try { const d = await dadosSite(); recordesSite = Array.isArray(d.recordes) ? d.recordes : []; } catch (e) {}
+  mostrarRecordes();
   // ?flor=nome abre logo a flor (para partilhar).
   const pedida = new URLSearchParams(location.search).get("flor");
   if (pedida) { procura.value = pedida; procurar(true); }

@@ -129,3 +129,76 @@ a.jc-foto:hover { transform: scale(1.02); }
 .jardim-vista.cheio .jardim-cheio-botao { top: max(10px, env(safe-area-inset-top)); left: max(10px, env(safe-area-inset-left)); background: var(--cartao); }
 .jardim-vista.cheio .jardim-zoom { top: max(10px, env(safe-area-inset-top)); right: max(10px, env(safe-area-inset-right)); }
 html.jardim-cheio-aberto, html.jardim-cheio-aberto body { overflow: hidden; overscroll-behavior: none; }
+
+/* ---------- Jogo "Onde está a Lumi?" ---------- */
+.lumi-jogar-p { margin: 12px 0 0; }
+.lumi-jogar { display: inline-flex; align-items: center; gap: 8px; min-height: 54px; font: inherit; font-weight: 800; font-size: 19px; background: var(--sol);
+  border: 2px solid var(--tinta); border-radius: 999px; padding: 4px 22px 4px 6px; box-shadow: 3px 3px 0 var(--tinta); cursor: pointer; }
+.lumi-jogar img { width: 46px; height: 46px; object-fit: contain; }
+.lumi-jogar:disabled { opacity: .5; cursor: default; }
+.a-jogar .jardim-lumi, .a-jogar .jardim-dica { display: none; }
+
+/* A Lumi escondida: só se vê a parte de cima ("ver"); o resto fica na relva */
+.lumi-escondida { position: absolute; transform: translate(-50%, -100%); overflow: hidden; pointer-events: none; transition: opacity .4s, scale .4s; }
+.lumi-escondida img { display: block; height: var(--alto); width: auto; max-width: none; transform-origin: 50% 90%; }
+.lumi-escondida.frente { z-index: 45; overflow: visible; }
+.lumi-escondida.abana img { animation: lumi-abana .45s ease 2; }
+.lumi-escondida.apanhada img { animation: lumi-salta .5s ease 3; filter: drop-shadow(0 6px 4px rgba(0, 0, 0, .2)); }
+.lumi-escondida.some { opacity: 0; scale: .3; }
+@keyframes lumi-abana { 0%, 100% { rotate: 0deg; } 25% { rotate: -10deg; } 75% { rotate: 10deg; } }
+@keyframes lumi-salta { 50% { translate: 0 -14%; } }
+.lumi-alvo { position: absolute; transform: translate(-50%, -50%); z-index: 60; padding: 0; border: 0; background: none; border-radius: 50%; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.lumi-alvo[hidden] { display: none; }
+.lumi-alvo.brilha { animation: lumi-brilha 1.1s ease-in-out infinite; }
+@keyframes lumi-brilha { 0%, 100% { box-shadow: inset 0 0 0 3px rgba(255, 216, 74, .9), 0 0 0 0 rgba(255, 216, 74, 0); }
+  50% { box-shadow: inset 0 0 0 4px #fff, 0 0 0 14px rgba(255, 216, 74, .5); } }
+
+/* Contador, som, balão, seta e pétalas */
+.lumi-hud { position: absolute; top: max(10px, env(safe-area-inset-top)); left: 50%; transform: translateX(-50%); z-index: 6; display: flex; gap: 8px; align-items: center; }
+.lumi-conta { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; background: var(--sol); border: 2px solid var(--tinta); border-radius: 999px;
+  padding: 4px 16px; font-weight: 800; font-size: 20px; box-shadow: 2px 2px 0 var(--tinta); }
+.lumi-conta.pula { animation: lumi-pula .45s ease; }
+@keyframes lumi-pula { 50% { scale: 1.3; } }
+.lumi-som { width: 44px; height: 44px; border: 2px solid var(--tinta); border-radius: 50%; background: var(--cartao); font-size: 20px; box-shadow: 2px 2px 0 var(--tinta); cursor: pointer; }
+.lumi-balao { position: absolute; z-index: 7; margin: 0; max-width: min(270px, 80%); transform: translateX(-50%); pointer-events: none; text-align: center;
+  background: #fff; border: 3px solid var(--tinta); border-radius: 18px; padding: 10px 14px; font-weight: 800; font-size: 19px; line-height: 1.2; box-shadow: 3px 3px 0 var(--tinta); }
+.lumi-balao[hidden], .lumi-seta[hidden] { display: none; }
+.lumi-seta { position: absolute; z-index: 7; width: 58px; height: 58px; margin: -29px 0 0 -29px; display: grid; place-items: center; pointer-events: none;
+  font-size: 32px; font-weight: 900; background: var(--sol); border: 3px solid var(--tinta); border-radius: 50%; box-shadow: 2px 2px 0 var(--tinta);
+  rotate: var(--a, 0rad); animation: lumi-pula 1s ease-in-out infinite; }
+.lumi-petala { position: absolute; z-index: 7; width: 13px; height: 13px; border-radius: 50% 0; border: 1px solid rgba(0, 0, 0, .25); pointer-events: none; }
+.flor.abana .cabeca { animation: lumi-abana .4s ease; }
+
+/* Fim do jogo: o nome */
+.lumi-fim { position: fixed; inset: 0; z-index: 10000; display: grid; place-items: center; padding: 16px; overflow: auto; background: rgba(31, 26, 20, .55); }
+.lf-caixa { width: min(420px, 100%); text-align: center; background: var(--cartao); border: 3px solid var(--tinta); border-radius: 22px; box-shadow: 5px 5px 0 var(--tinta); padding: 16px 20px; }
+.lf-lumi { height: 120px; width: auto; }
+.lf-caixa h2 { margin: 4px 0 14px; font-size: 25px; line-height: 1.2; }
+.lf-caixa h2 b { display: block; font-size: 1.5em; }
+.lf-pergunta { display: block; font-weight: 800; font-size: 21px; margin-bottom: 6px; }
+#lf-nome { width: 100%; font: inherit; font-size: 22px; font-weight: 800; text-align: center; border: 2px solid var(--tinta); border-radius: 14px; padding: 10px; background: #fff; }
+.lf-caixa small { display: block; color: var(--suave); font-weight: 700; margin: 4px 0 12px; }
+.lf-adulto { display: flex; gap: 10px; align-items: flex-start; text-align: left; font-weight: 700; font-size: 15px; cursor: pointer; }
+.lf-adulto input { flex: none; width: 22px; height: 22px; margin: 0; }
+.lf-erro { min-height: 20px; margin: 6px 0; color: #b3261e; font-weight: 800; }
+.lf-botoes { display: flex; gap: 10px; justify-content: center; }
+.lf-botoes button { min-height: 48px; font: inherit; font-weight: 800; font-size: 18px; border: 2px solid var(--tinta); border-radius: 999px; padding: 8px 20px; box-shadow: 3px 3px 0 var(--tinta); cursor: pointer; }
+.lf-guardar { background: var(--sol); }
+.lf-nao { background: var(--cartao); }
+.lf-nota { margin: 12px 0 0; font-size: 13px; color: var(--suave); }
+
+/* Lista de recordes */
+.lumi-recordes { max-width: 520px; margin: 4px auto 24px; background: var(--cartao); border: 3px solid var(--tinta); border-radius: 20px; box-shadow: 4px 4px 0 var(--tinta); padding: 14px 18px; }
+.lumi-recordes[hidden] { display: none; }
+.lumi-recordes h2 { margin: 0 0 8px; font-size: 22px; text-align: center; }
+.lumi-recordes ol { list-style: none; margin: 0; padding: 0; }
+.lumi-recordes li { display: flex; align-items: baseline; gap: 8px; padding: 6px 8px; border-radius: 12px; font-weight: 700; }
+.lumi-recordes li.meu { background: var(--sol-claro); }
+.lr-pos { flex: none; width: 28px; text-align: center; font-weight: 800; }
+.lumi-recordes small { color: var(--suave); }
+.lumi-recordes-nota { margin: 8px 0 0; font-size: 13px; color: var(--suave); text-align: center; }
+
+@media (prefers-reduced-motion: reduce) {
+  .lumi-escondida img, .lumi-alvo.brilha, .lumi-conta.pula, .lumi-seta, .flor.abana .cabeca { animation: none !important; }
+}
+@media (prefers-reduced-motion: reduce) { .lumi-alvo.brilha { box-shadow: inset 0 0 0 4px #fff, 0 0 0 10px rgba(255, 216, 74, .6); } }

@@ -26,7 +26,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css?v=20261119b">
-  <link rel="stylesheet" href="jardim.css?v=10">
+  <link rel="stylesheet" href="jardim.css?v=11">
   <link rel="preload" as="image" href="img/jardim/fundo.webp?v=2">
   <link rel="preconnect" href="https://script.google.com">
   <link rel="preconnect" href="https://script.googleusercontent.com" crossorigin>
@@ -81,6 +81,7 @@
       </form>
       <p class="jardim-procura-msg" id="jardim-procura-msg" aria-live="polite"></p>
       <ul class="jardim-resultados" id="jardim-resultados" hidden></ul>
+      <p class="lumi-jogar-p"><button class="lumi-jogar" id="lumi-jogar" type="button" disabled><img src="img/mascote/lupa.webp" alt="">Onde está a Lumi?</button></p>
     </div>
 
     <div class="jardim-vista" id="jardim-vista" tabindex="0" aria-label="Jardim dos apoiantes. Arrasta para passear, usa + e − para aproximar.">
@@ -102,6 +103,11 @@
       <span class="l-botao"><img src="img/jardim/flores/botao-1.webp" alt="">Botão <b data-conta="botao"></b></span>
     </div>
     <p class="jardim-lema"><b id="jardim-conta">…</b> flores no jardim. Quanto mais ajudas, maior a tua flor. Mas toda a ajuda floresce aqui.</p>
+    <section class="lumi-recordes" id="lumi-recordes" hidden>
+      <h2>Recordes da Lumi deste mês</h2>
+      <ol id="lumi-lista"></ol>
+      <p class="lumi-recordes-nota">Os nomes aparecem aqui depois de a APAEF ver.</p>
+    </section>
     <p class="jardim-acoes"><a class="chamada-ajuda" href="ajudar.html"><span class="ca-ico" aria-hidden="true">🌱</span><span><b>Planta a tua flor</b><small>Um prémio, bolos para a feira, roupa… Demora 1 minuto.</small></span><span class="seta" aria-hidden="true">›</span></a></p>
   </main>
 
@@ -125,7 +131,7 @@
   <script src="js/config.js"></script>
   <script src="js/comum.js?v=20261119b"></script>
   <script src="js/lumi-cenas.js"></script>
-  <script src="js/jardim.js?v=10"></script>
+  <script src="js/jardim.js?v=11"></script>
   <!-- Contador de visitas (GoatCounter: sem cookies) -->
   <script data-goatcounter="https://apaefao.goatcounter.com/count"
           async src="//gc.zgo.at/count.js"></script>
