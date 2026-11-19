@@ -381,6 +381,7 @@ document.getElementById("jardim-ir").onclick = () => procurar(true);
 const FRASES = ["Apanhaste-me! Boa!", "Uau, és um detetive!", "Ah! Viste-me!", "Que olhos de águia!", "Hihi, encontraste-me!"];
 const POSES = { bracos: 520 / 566, ola: 520 / 613, aponta: 420 / 521, pensa: 420 / 532, salta: 420 / 517 };
 const ESCONDE = ["bracos", "ola", "aponta", "pensa"];
+const NIVEL_MAX = 30;   // a dificuldade sobe até aqui
 // Adereços do fundo onde a Lumi se esconde (cercas com arbustos). As imagens são os mesmos traços do fundo,
 // desenhados por cima da Lumi: ela fica atrás da cerca e só espreita por cima.
 // x0..y1 = caixa da imagem; xa..xb = onde a Lumi pode ficar; linha = topo da cerca (o que fica por cima esconde-se).
@@ -444,12 +445,17 @@ function comecarJogo() {
     mundo.insertBefore(img, depois ? depois.el : jogo.alvo);
     return img;
   });
-  // A Lumi aparece grande, diz que se vai esconder, e desaparece.
-  const v = vistaMundo(), alto = 170 / minS;
-  colocar({ x: (v.x0 + v.x1) / 2, y: Math.min(705, v.y1 - 20 / cam.s), alto, ver: 1, pose: "ola", frente: true });
-  dizer("Vou esconder-me! Será que consegues encontrar-me?");
-  timer(3200, () => { jogo.lumi.classList.add("some"); jogo.balao.hidden = true; });
-  timer(3700, novoNivel);
+  // Cartão grande no meio: percebe-se logo que é um jogo. Conta 3, 2, 1 e começa (tocar começa já).
+  jogo.intro = novo("div", "lumi-intro", `<div class="li-caixa"><img src="img/mascote/ola.webp" alt="">
+    <h2>Onde está a Lumi?</h2><p>Vou esconder-me no jardim.<br>Consegues encontrar-me? <b>Toca em mim!</b></p>
+    <span class="li-conta" aria-hidden="true">3</span></div>`);
+  vista.appendChild(jogo.intro);
+  const conta = jogo.intro.querySelector(".li-conta");
+  const partida = () => { if (!jogo || !jogo.intro) return; limparTimers(); jogo.intro.remove(); jogo.intro = null; novoNivel(); };
+  jogo.intro.addEventListener("click", e => { e.stopPropagation(); partida(); });
+  timer(1200, () => conta.textContent = "2");
+  timer(2400, () => conta.textContent = "1");
+  timer(3600, partida);
 }
 
 function vistaMundo() {
@@ -478,8 +484,10 @@ function colocar(p) {
 function novoNivel() {
   if (!jogo) return;
   const n = ++jogo.n;
-  const alto = Math.max(45, 140 * Math.pow(.9, n - 1)) / minS;        // altura no ecrã sem zoom: 140 px, −10% por nível, mínimo 45 px
-  const ver = n <= 3 ? 1 : n <= 5 ? .7 : n <= 8 ? .55 : .45;         // nunca mais de 55% tapada
+  // A dificuldade sobe aos poucos até ao nível 30; depois fica igual (o jogo continua).
+  const t = (Math.min(n, NIVEL_MAX) - 1) / (NIVEL_MAX - 1);            // 0 no nível 1 → 1 no nível 30
+  const alto = 140 * Math.pow(40 / 140, t) / minS;                    // altura no ecrã sem zoom: 140 px → 40 px
+  const ver = n <= 3 ? 1 : .8 - .4 * t;                               // parte que se vê: 80% → 40%
   // Do nível 2 em diante, metade das vezes esconde-se atrás de uma cerca (se houver uma boa).
   const cerca = n >= 2 && Math.random() < .5 ? escolherAdereco(n, alto) : null;
   const lugar = cerca || escolherLugar(n, alto, ver);
@@ -489,7 +497,7 @@ function novoNivel() {
   else colocar({ ...lugar, alto, ver, pose, frente: n <= 3 });
   jogo.alvo.hidden = false; jogo.alvo.classList.remove("brilha"); jogo.fase = "procura";
   // Ajudas: 15 s abana, 25 s brilha, 35 s seta. Nos níveis altos demoram mais (até ao dobro).
-  const k = Math.min(2, 1 + (n - 1) / 3);
+  const k = 1 + t;                                                    // ajudas mais tarde: até ao dobro no nível 30
   const abanaSempre = () => { abanar(); SONS.risinho(); timer(7000, abanaSempre); };
   timer(15000 * k, abanaSempre);
   timer(25000 * k, () => jogo.alvo.classList.add("brilha"));
@@ -515,7 +523,7 @@ function escolherLugar(n, alto, ver) {
     const sx = cam.x + x * cam.s, sy = cam.y + y * cam.s, meia = w * cam.s / 2;
     const noEcra = sx > meia + 16 && sx < W - meia - 16 && sy - h * cam.s > 70 && sy < H - 16;
     if (n <= 3 && !noEcra) continue;                                 // primeiros níveis: no ecrã
-    if (n <= 5 && (sx < -W * .8 || sx > W * 1.8)) continue;          // depois: um pouco ao lado
+    if (n <= 8 && (sx < -W * .8 || sx > W * 1.8)) continue;          // até ao nível 8: um pouco ao lado; depois em qualquer sítio
     return { x, y };
   }
   return { x: (v.x0 + v.x1) / 2, y: Math.min(700, v.y1 - 20 / cam.s) };
@@ -524,7 +532,7 @@ function escolherLugar(n, alto, ver) {
 // Atrás de uma cerca: os pés ficam escondidos e só se vê a parte de cima ("vis"): 60% → 40% com os níveis.
 function escolherAdereco(n, alto) {
   const W = vista.clientWidth, H = vista.clientHeight, r = Math.random;
-  const vis = n <= 3 ? .6 : n <= 6 ? .5 : .4, w = alto * .85;
+  const vis = .6 - .25 * (Math.min(n, NIVEL_MAX) - 1) / (NIVEL_MAX - 1), w = alto * .85;   // 60% → 35%
   const opcoes = ADERECOS.map((a, i) => ({ ...a, i })).filter(a => {
     if (jogo.ultimo && jogo.ultimo.adereco && jogo.ultimo.adereco.i === a.i) return false;   // não repete a mesma cerca
     if (alto * (1 - vis) > a.y1 - a.linha - 6) return false;                                   // os pés não podem sair por baixo
@@ -599,7 +607,7 @@ function jogoTela() {
 function acabarJogo() {
   const vezes = jogo.vezes;
   limparTimers();
-  [jogo.hud, jogo.balao, jogo.seta, jogo.lumi, jogo.alvo, ...jogo.aderecos].forEach(e => e.remove());
+  [jogo.hud, jogo.balao, jogo.seta, jogo.lumi, jogo.alvo, jogo.intro, ...jogo.aderecos].forEach(e => e && e.remove());
   vista.classList.remove("a-jogar");
   jogo = null;
   if (vezes > 0) setTimeout(() => ecraFim(vezes), 60);
