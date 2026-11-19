@@ -93,3 +93,7 @@ a.jc-foto:hover { transform: scale(1.02); }
 .jardim-cartao .jc-nivel { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; font-size: 15px; padding: 4px 14px 4px 6px; }
 .jc-nivel img { width: 28px; height: 28px; object-fit: contain; }
 .jc-nivel i { font-style: normal; opacity: .5; }
+
+/* Flor escolhida (ou procurada) passa para a frente de todas */
+.flor.aberta, .flor.achada { z-index: 50; }
+.flor:hover, .flor:focus-visible { z-index: 40; }
