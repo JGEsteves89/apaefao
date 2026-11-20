@@ -311,10 +311,12 @@ function vistas(caixa) {
 
 // Avisos urgentes (greve, escola fechada, horário…): barra no topo de todas as páginas + cartão na página inicial.
 // Vêm da aba "avisos" da Sheet (?acao=avisos, cache de 60 s; não entra no ?acao=site, que guarda 6 h).
+// Rápido (20/11): mostra logo os avisos guardados no telemóvel (os que já acabaram saem pela data) e pede a Sheet em fundo.
+// Só redesenha se a Sheet trouxer algo diferente. Sem nada guardado (1.ª visita): espera pela Sheet.
 // Erro ou sem avisos: não mostra nada. Cada aviso só aparece nos 3 dias antes do evento (ver DIAS_ANTES). Teste com ?avisos-teste na morada (dados inventados, só neste ecrã).
 (function () {
   if (!ENDPOINT) return;
-  const CHAVE = "apaef-avisos-v1", FRESCO = 60 * 1000;
+  const CHAVE = "apaef-avisos-v1";
   const hoje = hojeISO();
   // Só aparece nos 3 dias antes (o dia do evento é o dia antes de "ate") e desaparece às 00:00 de "ate".
   // Ex.: ate = 21/11 (greve a 20/11) → aparece a 17/11.
@@ -332,14 +334,10 @@ function vistas(caixa) {
       { hora: iso(-2) + "T18:00", texto: "Anunciada greve do pessoal não docente para dia 20." }] }];
   }
 
-  function obter() {
-    if (/[?&]avisos-teste/.test(location.search)) return Promise.resolve(teste());
-    const c = lerCopia();
-    if (c && Date.now() - c.t < FRESCO) return Promise.resolve(c.d);
+  function pedir() {
     return fetch(ENDPOINT + "?acao=avisos", { signal: AbortSignal.timeout(8000) })
       .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
-      .then(d => { try { localStorage.setItem(CHAVE, JSON.stringify({ t: Date.now(), d })); } catch (e) {} return d; })
-      .catch(() => (c && ativos(c.d).length === (c.d || []).length ? c.d : []));   // cópia velha só se tudo ainda estiver ativo
+      .then(d => { try { localStorage.setItem(CHAVE, JSON.stringify({ t: Date.now(), d })); } catch (e) {} return d; });
   }
 
   // "2026-11-20T09:20" → "Hoje às 9h20" (cartão) / "Hoje, 9h20" (lista) / "Ontem, 18h00" / "Quarta 18/11, 18h00"
@@ -355,11 +353,18 @@ function vistas(caixa) {
   }
 
   // Barra do topo: um aviso de cada vez, com a cor dele (urgente = vermelho). Com vários, troca a cada 5 s.
+  // A barra é sempre a mesma: com dados novos só troca o texto (a página não salta).
+  let f = null, roda = 0;
   function faixa(lista) {
     const naInicial = document.getElementById("avisos");
-    const f = document.createElement("div");
-    f.setAttribute("role", "region");
-    f.setAttribute("aria-label", "Aviso");
+    clearInterval(roda);
+    if (!lista.length) { if (f) f.remove(); f = null; return; }
+    if (!f) {
+      f = document.createElement("div");
+      f.setAttribute("role", "region");
+      f.setAttribute("aria-label", "Aviso");
+      document.body.prepend(f);
+    }
     const mostra = i => {
       const a = lista[i], urgente = a.nivel === "urgente";
       const conta = lista.length > 1 ? ` <span class="aviso-conta">${i + 1}/${lista.length}</span>` : "";
@@ -368,16 +373,16 @@ function vistas(caixa) {
         <p><span class="aviso-txt"><b>${escapar(a.titulo)}:</b> ${escapar(a.atualizacoes[0].texto)}</span>${conta} <a href="${naInicial ? "#avisos" : "/#avisos"}">Ver&nbsp;→</a></p>`;
     };
     mostra(0);
-    document.body.prepend(f);
     if (lista.length > 1 && MOVIMENTO) {
-      let i = 0, pausa = false;
-      f.addEventListener("mouseenter", () => pausa = true);
-      f.addEventListener("mouseleave", () => pausa = false);
-      setInterval(() => { if (!pausa) mostra(i = (i + 1) % lista.length); }, 5000);
+      let i = 0;
+      f.onmouseenter = () => f.dataset.pausa = "1";
+      f.onmouseleave = () => delete f.dataset.pausa;
+      roda = setInterval(() => { if (!f.dataset.pausa) mostra(i = (i + 1) % lista.length); }, 5000);
     }
   }
 
-  function cartoes(sec, lista) {
+  function cartoes(sec, lista, deNovo) {
+    if (!lista.length) { sec.hidden = true; sec.innerHTML = ""; return; }
     sec.innerHTML = lista.map(a => {
       const [novo, ...antes] = a.atualizacoes;
       return `<article class="aviso-cartao ${a.nivel === "urgente" ? "urgente" : "info " + a.cor}">
@@ -390,18 +395,26 @@ function vistas(caixa) {
       </article>`;
     }).join("");
     sec.hidden = false;
-    if (location.hash === "#avisos") sec.scrollIntoView();
+    if (location.hash === "#avisos" && !deNovo) sec.scrollIntoView();
   }
 
-  obter().then(l => {
+  let mostrado = null;
+  function desenhar(l, deNovo) {
     // urgente primeiro; depois o evento mais perto primeiro
     const lista = ativos(l).sort((a, b) => (a.nivel === b.nivel ? 0 : a.nivel === "urgente" ? -1 : 1) || (a.ate < b.ate ? -1 : a.ate > b.ate ? 1 : 0));
-    if (!lista.length) return;
+    const marca = JSON.stringify(lista);
+    if (marca === mostrado) return;            // igual ao que está no ecrã: não mexe
+    mostrado = marca;
     // Avisos "info": cada um com uma cor dos óculos da Lumi (azul, verde, roxo, rosa, laranja, turquesa), e repete. Vermelho = só urgente.
     let n = 0;
     lista.forEach(x => { x.cor = x.nivel === "urgente" ? "" : "cor-" + (n++ % 6); });
     faixa(lista);
     const sec = document.getElementById("avisos");
-    if (sec) cartoes(sec, lista);
-  }).catch(() => {});
+    if (sec) cartoes(sec, lista, deNovo);
+  }
+
+  if (/[?&]avisos-teste/.test(location.search)) { desenhar(teste()); return; }
+  const c = lerCopia();
+  if (c) desenhar(c.d);                        // logo, sem esperar pela Sheet
+  pedir().then(d => desenhar(d, !!c)).catch(() => {});   // Sheet falhou: fica o guardado
 })();
