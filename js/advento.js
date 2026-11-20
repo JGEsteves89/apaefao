@@ -91,8 +91,7 @@ function desenharNumeros() {
       b.classList.add("passado"); b.setAttribute("aria-label", "Dia " + n + (pintou(n) ? ", já pintado" : ""));
       if (pintou(n)) b.insertAdjacentHTML("beforeend", '<span class="feito" aria-hidden="true">✓</span>');
     } else {
-      b.classList.add("futuro"); b.setAttribute("aria-label", "Dia " + n + ", ainda fechado");
-      b.insertAdjacentHTML("beforeend", '<span class="cadeado" aria-hidden="true">🔒</span>');
+      b.classList.add("futuro"); b.setAttribute("aria-label", "Dia " + n + ", ainda fechado");   // esbatido chega (sem cadeado)
     }
     b.addEventListener("click", () => aberto(n) ? abrir(n) : aindaNao(b, n));
     numeros.appendChild(b);
