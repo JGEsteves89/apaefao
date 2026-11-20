@@ -103,6 +103,13 @@ html.adv-aberto, html.adv-aberto body { overflow: hidden; }
 .adv-folha { flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; padding: 4px 12px; }
 .adv-folha svg { max-width: 100%; max-height: 100%; width: auto; height: auto; touch-action: none; user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent; }
 .adv-folha .zona { cursor: pointer; transform-box: fill-box; transform-origin: center; }
+/* Lupa (dedo carregado em cima do desenho): por cima do dedo, com uma cruz no ponto exato */
+.adv-lupa { position: fixed; z-index: 50; width: 120px; height: 120px; border-radius: 50%; overflow: hidden; pointer-events: none;
+  background: #fff; border: 3px solid var(--tinta); box-shadow: 0 4px 14px rgba(0,0,0,.3); }
+.adv-lupa svg { display: block; }
+.adv-lupa::before, .adv-lupa::after { content: ""; position: absolute; left: 50%; top: 50%; background: #1f1a14; box-shadow: 0 0 0 1.5px #fff; border-radius: 1px; }
+.adv-lupa::before { width: 18px; height: 2px; margin: -1px 0 0 -9px; }
+.adv-lupa::after { width: 2px; height: 18px; margin: -9px 0 0 -1px; }
 .adv-a-chegar { text-align: center; font: 700 24px/1.3 "Fredoka", sans-serif; }
 .adv-a-chegar img { display: block; margin: 0 auto 10px; }
 

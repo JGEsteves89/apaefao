@@ -250,8 +250,64 @@ async function abrir(n, semHistoria) {
   atual.pilha = passos.map(x => x[0] === "t" ? (tracos[k] ? { t: tracos[k++], z: x[1] != null ? m.zonas[x[1]] : undefined, antes: x[2] } : null) : (m.zonas[x[0]] ? { z: m.zonas[x[0]], antes: x[1] } : null)).filter(Boolean);
   m.svg.setAttribute("width", 600); m.svg.setAttribute("height", 800);   // tamanho próprio: o desenho cabe sem bordas a mais
   m.svg.setAttribute("role", "img"); m.svg.setAttribute("aria-label", m.info.titulo || "Desenho do dia " + n);
+  // Lupa: tudo o que se vê no desenho fica num <g>; a lupa mostra-o com <use> (vê logo a tinta nova).
+  const tudo = document.createElementNS(NS, "g"); tudo.id = "adv-tudo-" + (++nClip);
+  while (m.svg.firstChild) tudo.appendChild(m.svg.firstChild);
+  m.svg.appendChild(tudo); atual.tudo = tudo.id;
   folha.appendChild(m.svg);
-  m.svg.addEventListener("pointerdown", e => ferramenta === "pincel" ? comecarTraco(e) : pintarToque(e));
+  m.svg.addEventListener("pointerdown", e => ferramenta === "pincel" ? comecarTraco(e) : baldeToque(e));
+  m.svg.addEventListener("contextmenu", e => e.preventDefault());
+}
+
+// ---------- Lupa ----------
+// Dedo em cima do desenho mais de 300 ms → aparece uma lupa por cima do dedo, com uma cruz no ponto exato.
+// Balde: toque rápido pinta logo; dedo carregado → a lupa aparece, pode-se deslizar para acertar, e pinta ao levantar.
+// Pincel: pinta como sempre; ao fim de 300 ms a lupa aparece e segue o dedo. Desaparece ao levantar o dedo.
+const LUPA_D = 120, LUPA_ZOOM = 2.5, LUPA_ESPERA = 300;
+const lupa = document.createElement("div");
+lupa.className = "adv-lupa"; lupa.hidden = true; lupa.setAttribute("aria-hidden", "true");
+lupa.innerHTML = `<svg xmlns="${NS}" width="${LUPA_D}" height="${LUPA_D}"><rect width="600" height="800" fill="#fff"/><use/></svg>`;
+document.body.appendChild(lupa);
+function mostrarLupa(x, y) {
+  if (!atual || !atual.svg) return;
+  const caixa = atual.svg.getBoundingClientRect(), q = pontoSVG({ clientX: x, clientY: y });
+  if (!caixa.width || !q) return;
+  const lado = LUPA_D / (caixa.width / 600) / LUPA_ZOOM, s = lupa.firstChild;
+  s.setAttribute("viewBox", `${q[0] - lado / 2} ${q[1] - lado / 2} ${lado} ${lado}`);
+  const u = s.querySelector("use");
+  if (u.getAttribute("href") !== "#" + atual.tudo) u.setAttribute("href", "#" + atual.tudo);
+  // por cima do dedo; se não houver espaço em cima, fica por baixo
+  let cy = y - 110; if (cy - LUPA_D / 2 < 4) cy = y + 110;
+  const cx = Math.min(innerWidth - LUPA_D / 2 - 4, Math.max(LUPA_D / 2 + 4, x));
+  lupa.style.left = (cx - LUPA_D / 2) + "px"; lupa.style.top = (cy - LUPA_D / 2) + "px";
+  lupa.hidden = false;
+}
+function esconderLupa() { lupa.hidden = true; }
+// Balde: espera para saber se é toque rápido ou dedo carregado.
+function baldeToque(e) {
+  if (!atual || !atual.svg) return;
+  e.preventDefault();
+  const svg = atual.svg, x0 = e.clientX, y0 = e.clientY;
+  let x = x0, y = y0, comLupa = false;
+  try { svg.setPointerCapture(e.pointerId); } catch (z) {}
+  const abrirLupa = () => { if (!comLupa) { comLupa = true; mostrarLupa(x, y); } };
+  const espera = setTimeout(abrirLupa, LUPA_ESPERA);
+  const mexe = ev => {
+    if (ev.pointerId !== e.pointerId) return;
+    x = ev.clientX; y = ev.clientY;
+    if (!comLupa && Math.hypot(x - x0, y - y0) > 10) abrirLupa();   // a deslizar = a apontar
+    if (comLupa) mostrarLupa(x, y);
+  };
+  const fim = ev => {
+    if (ev.pointerId !== e.pointerId) return;
+    clearTimeout(espera); esconderLupa();
+    svg.removeEventListener("pointermove", mexe); svg.removeEventListener("pointerup", fim); svg.removeEventListener("pointercancel", fim);
+    if (ev.type === "pointercancel") return;
+    const alvo = comLupa ? document.elementFromPoint(x, y) : e.target;
+    const z = alvo && svg.contains(alvo) ? alvo.closest(".zona") : null;
+    if (z) pintarZona(z);
+  };
+  svg.addEventListener("pointermove", mexe); svg.addEventListener("pointerup", fim); svg.addEventListener("pointercancel", fim);
 }
 
 function cores() { return atual.zonas.map(z => z.getAttribute("fill") || "#fff"); }
@@ -290,8 +346,12 @@ function comecarTraco(e) {
   if (!inicio) return;
   const traco = novoTraco(atual.camada, corEscolhida, [inicio], tamanho);
   try { svg.setPointerCapture(e.pointerId); } catch (x) {}
+  let comLupa = false, ultimo = [e.clientX, e.clientY];
+  const espera = setTimeout(() => { comLupa = true; mostrarLupa(ultimo[0], ultimo[1]); }, LUPA_ESPERA);
   const mexe = ev => {
     if (ev.pointerId !== e.pointerId) return;
+    ultimo = [ev.clientX, ev.clientY];
+    if (comLupa) mostrarLupa(ev.clientX, ev.clientY);
     (ev.getCoalescedEvents ? ev.getCoalescedEvents() : [ev]).forEach(c => {
       const q = pontoSVG(c), u = traco.pontos[traco.pontos.length - 1];
       if (q && Math.hypot(q[0] - u[0], q[1] - u[1]) >= 3) traco.pontos.push(q);
@@ -300,6 +360,7 @@ function comecarTraco(e) {
   };
   const fim = ev => {
     if (ev.pointerId !== e.pointerId) return;
+    clearTimeout(espera); esconderLupa();
     svg.removeEventListener("pointermove", mexe); svg.removeEventListener("pointerup", fim); svg.removeEventListener("pointercancel", fim);
     atual.pilha.push({ t: traco });
     tocar(CORES.findIndex(c => c[0] === corEscolhida));
@@ -310,10 +371,7 @@ function comecarTraco(e) {
 const branco = c => !c || /^#f{3}(f{3})?$/i.test(c);
 const completo = () => atual.zonas.length > 0 && atual.zonas.every(z => !branco(z.getAttribute("fill")));
 
-function pintarToque(e) {
-  const z = e.target.closest(".zona");
-  if (!z) return;
-  e.preventDefault();
+function pintarZona(z) {
   const antes = z.getAttribute("fill") || "#fff";
   const comPincel = atual.camada.children.length > 0;   // há tinta do pincel: o balde tapa-a nesta zona
   if (!comPincel && antes.toLowerCase() === corEscolhida.toLowerCase()) return;
