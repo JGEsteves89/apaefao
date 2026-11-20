@@ -35,10 +35,15 @@ const espera = ms => new Promise(r => setTimeout(r, ms));
 // Lê um ficheiro de data/. Se falhar, deixa uma mensagem simpática no sítio.
 // Todos os dados do site vêm da Google Sheet (Apps Script, ?acao=site): um só pedido por página,
 // com agenda, noticias, documentos, links, orgaos, recreio, metas e apoiantes.
-// Para ser rápido: guarda a última resposta no telemóvel. Se tiver menos de 1 minuto, usa-a logo;
-// se for mais velha, espera pela Sheet (e só usa a guardada se a Sheet falhar). Atualiza sempre em fundo.
-const CHAVE_SITE = "apaef-site-v1", FRESCO_MS = 60 * 1000;   // 1 minuto (pedido do Jose, 18/11)
-let pedidoSite = null;
+// Para ser rápido (20/11, pedido do Jose): se há uma resposta guardada no telemóvel, a página mostra-a logo
+// e pede a Sheet em fundo. Quando a Sheet responde:
+//  - igual ao guardado → nada muda no ecrã;
+//  - diferente → só as partes que mudaram se redesenham, sem animações (ver aoMudar e semAnimar).
+// Sem resposta guardada (1.ª visita), espera pela Sheet.
+const CHAVE_SITE = "apaef-site-v1";
+// dadosLimpos = cópia que as páginas não mexem (algumas páginas juntam campos aos dados), para comparar.
+let pedidoSite = null, dadosLimpos = null;
+const ouvintesSite = [];
 function guardado() {
   try { return JSON.parse(localStorage.getItem(CHAVE_SITE) || "null"); } catch (e) { return null; }
 }
@@ -47,14 +52,55 @@ function pedirSite() {
     .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
     .then(d => { try { localStorage.setItem(CHAVE_SITE, JSON.stringify({ t: Date.now(), d })); } catch (e) {} return d; });
 }
+const assinatura = (d, nomes) => JSON.stringify(nomes.map(n => d ? d[n] : undefined));
 function dadosSite() {
   if (pedidoSite) return pedidoSite;
   const g = guardado(), rede = pedirSite();
-  if (g && Date.now() - g.t < FRESCO_MS) { rede.catch(() => {}); pedidoSite = Promise.resolve(g.d); }
-  else pedidoSite = rede.catch(e => { pedidoSite = null; if (g) return g.d; throw e; });
+  if (g && g.d) {
+    dadosLimpos = JSON.parse(JSON.stringify(g.d));
+    pedidoSite = Promise.resolve(g.d);
+    rede.then(novo => {
+      dadosLimpos = JSON.parse(JSON.stringify(novo)); pedidoSite = Promise.resolve(novo);
+      ouvintesSite.forEach(o => {
+        const s = assinatura(dadosLimpos, o.nomes);
+        if (s === o.visto) return;           // esta parte não mudou: não mexe
+        o.visto = s;
+        quandoLivre(() => o.fn(novo));
+      });
+    }).catch(() => {});                      // Sheet falhou: fica o guardado
+  } else {
+    pedidoSite = rede.then(d => { dadosLimpos = JSON.parse(JSON.stringify(d)); return d; }).catch(e => { pedidoSite = null; throw e; });
+  }
   return pedidoSite;
 }
 if (ENDPOINT && document.querySelector("[data-precisa-dados]")) dadosSite();   // começa logo
+
+// A página pede: "avisa-me se esta parte (ou partes) mudar". fn recebe todos os dados novos.
+// Chamar logo depois de desenhar, com os mesmos dados que desenhou.
+function aoMudar(nomes, fn) {
+  nomes = [].concat(nomes);
+  ouvintesSite.push({ nomes, fn, visto: assinatura(dadosLimpos, nomes) });
+}
+
+// Não mexe na página enquanto a pessoa está ocupada (janela aberta, jardim em ecrã inteiro).
+// Espera até ficar livre e só depois redesenha.
+function ocupado() {
+  return !!document.querySelector("dialog[open]") || document.documentElement.classList.contains("jardim-cheio-aberto")
+    || !!document.querySelector(".jardim-cartao:not([hidden])");
+}
+function quandoLivre(fn) {
+  if (!ocupado()) { fn(); return; }
+  const t = setInterval(() => { if (!ocupado()) { clearInterval(t); fn(); } }, 500);
+}
+
+// Redesenha sem animações: o que tem "anima" já entra visível e as transições ficam paradas durante a troca.
+function semAnimar(raiz, desenhar) {
+  raiz.classList.add("quieto");
+  desenhar();
+  if (raiz.classList.contains("anima")) raiz.classList.add("visivel");
+  raiz.querySelectorAll(".anima").forEach(e => e.classList.add("visivel", "ja-visto"));
+  requestAnimationFrame(() => requestAnimationFrame(() => raiz.classList.remove("quieto")));
+}
 
 function semDados(el) {
   if (el) el.innerHTML = '<p class="vazio"><img class="mascote-mini" src="img/mascote/pensa.webp" alt="" width="70" height="89">Não foi possível carregar. Tenta daqui a pouco 🙂</p>';

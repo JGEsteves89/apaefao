@@ -671,6 +671,19 @@ function mostrarRecordes() {
     <span><b>${escapar(r.nome)}</b>: encontrou a Lumi ${vezesTxt(r.vezes)}${r.estado ? ` <small>(${r.estado})</small>` : ""}</span></li>`).join("");
 }
 
+// Troca as flores pelas da lista nova, sem saltos: as flores ficam nos mesmos sítios (lugar escolhido pelo nome).
+function replantar(lista) {
+  mundo.querySelectorAll(".flor, .jardim-lumi").forEach(e => e.remove());
+  nomes.innerHTML = ""; flores = [];
+  plantar(lista);
+  if (procura.value.trim().length >= 2) {   // procura aberta: volta a marcar, sem as flores saltarem outra vez
+    vista.classList.add("sem-salto");
+    procurar(false);
+    procura.addEventListener("input", () => vista.classList.remove("sem-salto"), { once: true });
+  }
+  pedirNomes();
+}
+
 // ---------- arrancar ----------
 async function arrancar() {
   const lista = await carregarDados("apoiantes", document.getElementById("jardim-aviso"));
@@ -680,6 +693,9 @@ async function arrancar() {
   inicio();
   try { const d = await dadosSite(); recordesSite = Array.isArray(d.recordes) ? d.recordes : []; } catch (e) {}
   mostrarRecordes();
+  // Dados novos da Sheet: recordes logo; flores só com o jardim fechado (comum.js espera pelo ecrã inteiro e pelo cartão).
+  aoMudar("recordes", d => { recordesSite = Array.isArray(d.recordes) ? d.recordes : []; mostrarRecordes(); });
+  aoMudar("apoiantes", d => { if (Array.isArray(d.apoiantes)) replantar(d.apoiantes.filter(a => a.publicar)); });
   // ?flor=nome abre logo a flor (para partilhar).
   const pedida = new URLSearchParams(location.search).get("flor");
   if (pedida) { procura.value = pedida; procurar(true); }

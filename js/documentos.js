@@ -107,12 +107,17 @@ function cartaoDoc(d) {
   const arquivo = document.getElementById("arquivo");
   const lista = await carregarDados("documentos", arquivo);
   if (!lista) return;
+  desenhar(lista);
+  aoMudar("documentos", d => { if (Array.isArray(d.documentos)) semAnimar(document.querySelector("main") || document.body, () => desenhar(d.documentos)); });
+
+  function desenhar(lista) {
   const visiveis = lista.filter(d => !d.rascunho);
 
   const hoje = hojeMeiaNoite();
   const proxima = visiveis
     .filter(d => d.tipo === "convocatoria" && d.destaque && d.data && dataDe(d.data) >= hoje)
     .sort((a, b) => a.data < b.data ? -1 : 1)[0];
+  destaque.innerHTML = "";
   if (proxima) mostrarDestaque(destaque, proxima);
 
   arquivo.innerHTML = Object.keys(TIPOS).map(tipo => {
@@ -123,4 +128,5 @@ function cartaoDoc(d) {
   }).join("");
 
   aoAparecer();
+  }
 })();

@@ -52,6 +52,20 @@ async function carregarApoiantes(el) {
 async function faixaApoiantes(el) {
   const lista = await carregarApoiantes(el);
   if (!lista) return;
+  if (MOVIMENTO) el.addEventListener("click", e => { if (!e.target.closest("a")) el.classList.toggle("parado"); });
+  desenharFaixa(el, lista);
+  // Dados novos: troca a faixa, mas continua no mesmo ponto do movimento (sem saltar para o início).
+  aoMudar("apoiantes", d => {
+    if (!Array.isArray(d.apoiantes)) return;
+    const velha = el.querySelector(".faixa-apoiantes"), anim = velha && velha.getAnimations ? velha.getAnimations()[0] : null;
+    const t = anim ? anim.currentTime : null;
+    semAnimar(el, () => { if (velha) velha.remove(); desenharFaixa(el, d.apoiantes); });
+    const nova = el.querySelector(".faixa-apoiantes"), a2 = nova && nova.getAnimations ? nova.getAnimations()[0] : null;
+    if (a2 && t != null) a2.currentTime = t;
+  });
+}
+
+function desenharFaixa(el, lista) {
   const publicos = lista.filter(a => a.publicar);
   const faixa = document.createElement("div");
   faixa.className = "faixa-apoiantes";
@@ -66,7 +80,6 @@ async function faixaApoiantes(el) {
     });
     faixa.style.setProperty("--dur", publicos.length * 4 + "s");
     el.classList.add("a-andar");
-    el.addEventListener("click", e => { if (!e.target.closest("a")) el.classList.toggle("parado"); });
   }
   el.appendChild(faixa);
 }
@@ -98,6 +111,18 @@ async function grelhaApoiantes(el, contador) {
   const lista = await carregarApoiantes(el);
   parar();
   if (!lista) { contador.textContent = "0"; return; }
+  let taparBuraco = () => {};
+  addEventListener("resize", () => taparBuraco());
+  taparBuraco = desenharGrelha(el, contador, lista, false);
+  aoMudar("apoiantes", d => {
+    if (Array.isArray(d.apoiantes)) semAnimar(el, () => { taparBuraco = desenharGrelha(el, contador, d.apoiantes, true); });
+  });
+}
+
+// Desenha a grelha. Devolve a função que tapa o buraco da última linha (para o resize).
+// quieto = true: dados novos, sem animação (o contador vai logo para o número certo).
+function desenharGrelha(el, contador, lista, quieto) {
+  el.innerHTML = "";
   const publicos = lista.map((a, i) => [a, i]).filter(([a]) => a.publicar);
   const tamanho = a => CASAS[a.tamanho] ? a.tamanho : "pequeno";
 
@@ -117,6 +142,7 @@ async function grelhaApoiantes(el, contador) {
   // Se a última linha ficar com um buraco, o último cartão estica para o tapar.
   function taparBuraco() {
     const ultimo = el.lastElementChild;
+    if (!ultimo) return;
     ultimo.style.gridColumn = "";
     const colunas = getComputedStyle(el).gridTemplateColumns.split(" ").length;
     const casas = ordem.reduce((s, [a]) => s + CASAS[tamanho(a)], 0);
@@ -124,16 +150,16 @@ async function grelhaApoiantes(el, contador) {
     if (falta) ultimo.style.gridColumn = "span " + (falta + 1);
   }
   taparBuraco();
-  addEventListener("resize", taparBuraco);
 
   const alvo = publicos.length;
-  if (!MOVIMENTO) { contador.textContent = alvo; return; }
+  if (!MOVIMENTO || quieto) { contador.textContent = alvo; return taparBuraco; }
   const inicio = performance.now(), de = Number(contador.textContent) || 0;
   (function passo(t) {
     const p = Math.min(1, (t - inicio) / 600);
     contador.textContent = Math.round(de + (alvo - de) * p);
     if (p < 1) requestAnimationFrame(passo);
   })(inicio);
+  return taparBuraco;
 }
 
 document.querySelectorAll("[data-faixa-apoiantes]").forEach(el => faixaApoiantes(el));

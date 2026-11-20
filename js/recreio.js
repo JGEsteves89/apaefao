@@ -3,8 +3,10 @@
 
 // Antes/depois das zonas da escola, num só cartão: setas e pontos mudam de zona; dentro, arrasta-se para comparar
 // (a foto de hoje fica por cima, cortada até à pega; rato, dedo e setas do teclado, porque é um input range).
-function carrossel(el, areas) {
-  if (!areas || !areas.length) { el.hidden = true; return; }
+// comeco = zona onde começa (para manter a mesma zona quando chegam dados novos). Devolve () => zona atual.
+function carrossel(el, areas, comeco = 0) {
+  if (!areas || !areas.length) { el.hidden = true; return () => 0; }
+  el.hidden = false;
   el.innerHTML = `
     <div class="r-comp" style="--pos: 50%">
       <img class="r-comp-projeto" alt="">
@@ -37,7 +39,8 @@ function carrossel(el, areas) {
   el.querySelector(".seg").addEventListener("click", () => mostra(atual + 1));
   pontos.forEach((p, n) => p.addEventListener("click", () => mostra(n)));
   areas.forEach(a => { new Image().src = a.hoje; new Image().src = a.projeto; });
-  mostra(0);
+  mostra(Math.min(comeco, areas.length - 1));
+  return () => atual;
 }
 
 // Mapa do recreio: desenho nosso da escola, com a forma da planta geral da Greenplay (não é a planta, que não pode ser copiada).
@@ -94,12 +97,15 @@ const MAPA_SVG = `<svg viewBox="125 38 1415 1340" role="img" aria-label="Mapa da
   <text x="1080" y="1360" class="mapa-nota" transform="rotate(-3 1080 1360)">Gooolo! ⚽</text>
 </svg>`;
 
-function mapa(el, zonas, painel) {
-  if (!zonas || !zonas.length) { el.closest(".r-mapa-sec").hidden = true; return; }
+function mapa(el, zonas, painel, comeco = 0) {
+  if (!zonas || !zonas.length) { el.closest(".r-mapa-sec").hidden = true; return () => 0; }
+  el.closest(".r-mapa-sec").hidden = false;
+  let atual = 0;
   el.innerHTML = MAPA_SVG + zonas.map((z, i) =>
     `<button class="r-ponto" type="button" style="left:${z.x}%;top:${z.y}%" data-zona="${i}" aria-label="${z.num}: ${escapar(z.titulo)}">${z.num}</button>`).join("");
   const botoes = [...document.querySelectorAll(".r-mapa-sec [data-zona]")];
   const mostra = i => {
+    atual = i;
     const z = zonas[i];
     botoes.forEach(b => { const sim = Number(b.dataset.zona) === i; b.classList.toggle("ativo", sim); b.setAttribute("aria-pressed", sim); });
     const foto = z.hoje && z.projeto
@@ -112,12 +118,20 @@ function mapa(el, zonas, painel) {
     if (v) vistas(v);
   };
   botoes.forEach(b => b.addEventListener("click", () => mostra(Number(b.dataset.zona))));
-  mostra(0);
+  mostra(Math.min(comeco, zonas.length - 1));
+  return () => atual;
 }
 
 (async function () {
   const plano = await carregarDados("recreio", document.getElementById("r-areas"));
   if (!plano) return;
-  carrossel(document.getElementById("r-areas"), plano.areas);
-  mapa(document.getElementById("r-mapa"), plano.zonas, document.getElementById("r-zona"));
+  const areas = document.getElementById("r-areas"), mapaEl = document.getElementById("r-mapa"), painel = document.getElementById("r-zona");
+  let zonaCar = carrossel(areas, plano.areas), zonaMapa = mapa(mapaEl, plano.zonas, painel);
+  // Dados novos: redesenha sem animação e fica na mesma zona (carrossel e mapa).
+  aoMudar("recreio", d => {
+    if (!d.recreio) return;
+    const c = zonaCar(), m = zonaMapa();
+    semAnimar(areas, () => { zonaCar = carrossel(areas, d.recreio.areas, c); });
+    semAnimar(mapaEl.closest(".r-mapa-sec") || mapaEl, () => { zonaMapa = mapa(mapaEl, d.recreio.zonas, painel, m); });
+  });
 })();

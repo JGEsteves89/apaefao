@@ -154,8 +154,16 @@ function cartao(m, lista) {
 }
 
 // Barra e números animam quando o cartão aparece no ecrã.
-function animar(raiz) {
-  const els = raiz.querySelectorAll(".m-cartao");
+// vistos (dados novos da Sheet): ids dos cartões que a pessoa já viu. Esses ficam logo no valor final, sem animar;
+// os que ainda não apareceram no ecrã animam quando aparecerem, como antes.
+function animar(raiz, vistos) {
+  const todos = [...raiz.querySelectorAll(".m-cartao")];
+  const ja = vistos ? todos.filter(c => vistos.has(c.id)) : [];
+  ja.forEach(c => {
+    c.classList.add("visivel", "ja-visto");
+    c.querySelectorAll(".m-num").forEach(n => { n.textContent = Number(n.dataset.ate).toLocaleString("pt-PT", { useGrouping: "always" }); });
+  });
+  const els = todos.filter(c => !ja.includes(c));
   const correr = c => {
     c.classList.add("visivel");
     c.querySelectorAll(".m-num").forEach(n => {
@@ -431,7 +439,7 @@ function cartaoFase(f) {
 
 
 // Metas a angariar agora: as metas normais "a angariar" e as fases do recreio abertas, por prioridade.
-function desenharMetas() {
+function desenharMetas(quieto) {
   // Cada meta tem o seu cartão (também as do recreio): os pais escolhem o baloiço OU a estrutura (16/11, Jose).
   const meus = minhas();
   const normais = PUBLICAS.filter(m => m.estado === "a angariar");
@@ -443,7 +451,7 @@ function desenharMetas() {
   lista.forEach(x => grelha.appendChild(x.f ? cartaoFase(x.f) : cartao(x.m, PUBLICAS)));
   grelha.closest("section").hidden = !lista.length;
   galerias(grelha);
-  animar(grelha);
+  animar(grelha, quieto);
 }
 
 (async function () {
@@ -453,29 +461,48 @@ function desenharMetas() {
     document.getElementById("m-ativas").innerHTML = '<p class="metas-sub">Não conseguimos carregar as metas agora. Experimenta daqui a pouco.</p>';
     return;
   }
-  PUBLICAS = lista.filter(m => m.publicar);
-  const publicas = PUBLICAS;
   if (DEMO) {
     const aviso = document.createElement("p");
     aviso.className = "m-demo";
     aviso.textContent = "Modo demonstração: MB WAY e Multibanco são simulados. Nenhum pagamento é feito.";
     document.querySelector(".metas-pagina").prepend(aviso);
   }
+  desenharTudo(lista, false);
+
+  // Dados novos (metas ou recreio): redesenha em silêncio. Se a janela "Quero ajudar" estiver aberta, espera que feche.
+  aoMudar(["metas", "recreio"], d => {
+    const nova = Array.isArray(d.metas) ? d.metas : d.metas && d.metas.metas;
+    if (!Array.isArray(nova)) return;
+    if (d.recreio) PLANO = d.recreio;
+    const raiz = document.querySelector(".metas-pagina") || document.body;
+    const vistos = new Set([...raiz.querySelectorAll(".m-cartao.visivel")].map(c => c.id));
+    raiz.classList.add("quieto");
+    desenharTudo(nova, vistos);
+    requestAnimationFrame(() => requestAnimationFrame(() => raiz.classList.remove("quieto")));
+  });
+
+  // Desenha as metas a angariar, as seguintes e as feitas.
+  // quieto = ids dos cartões já vistos (dados novos): esses não animam outra vez, e não há confetes (ficam para a próxima visita).
+  function desenharTudo(lista, quieto) {
+  PUBLICAS = lista.filter(m => m.publicar);
+  const publicas = PUBLICAS;
   // Se sobrar dinheiro, vai para a meta seguinte por prioridade (salvo "proxima" na Sheet).
   const fila = publicas.filter(m => m.estado === "a angariar" && m.custo).sort(porPrio).concat(publicas.filter(m => m.estado === "a seguir").sort(porPrio));
   fila.forEach((m, i) => { if (!m.proxima && fila[i + 1]) m.proxima = fila[i + 1].id; });
 
-  desenharMetas();
+  desenharMetas(quieto);
   const seguir = publicas.filter(m => m.estado === "a seguir").sort(porPrio);
   const sg = document.getElementById("m-seguir");
-  if (sg) { seguir.forEach(m => sg.appendChild(seguinte(m))); document.getElementById("m-seguir-sec").hidden = !seguir.length; galerias(sg); }
+  if (sg) { sg.innerHTML = ""; seguir.forEach(m => sg.appendChild(seguinte(m))); document.getElementById("m-seguir-sec").hidden = !seguir.length; galerias(sg); }
   const feitas = publicas.filter(PAGA);
   const el = document.getElementById("m-feitas-lista");
+  el.innerHTML = "";
   feitas.forEach(m => el.appendChild(feita(m)));
   el.closest("section").hidden = !feitas.length;
   galerias(el);
-  animar(el);
-  festejar(publicas);
+  animar(el, quieto);
+  if (!quieto) festejar(publicas);
+  }
 
   // Ajudar uma fase do recreio: o dinheiro vai para a primeira meta aberta dessa fase.
   const abrirFase = num => {
@@ -488,7 +515,7 @@ function desenharMetas() {
 
   document.addEventListener("click", e => {
     const b = e.target.closest(".m-ajudar");
-    if (b) abrirDialogo(publicas.find(m => m.id === b.dataset.meta));
+    if (b) abrirDialogo(PUBLICAS.find(m => m.id === b.dataset.meta));
     const fb = e.target.closest("[data-fase]");
     if (fb) abrirFase(fb.dataset.fase);
     const t = e.target.closest(".m-metodos button");

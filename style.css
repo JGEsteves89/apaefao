@@ -179,6 +179,9 @@ footer .creditos { font-size: 12px; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition: none !important; animation: none !important; scroll-behavior: auto !important; }
 }
+/* Dados novos da Sheet redesenhados em silêncio (comum.js → semAnimar): sem transições nem animações de entrada. */
+.quieto, .quieto *, .quieto *::before, .quieto *::after { transition: none !important; }
+.ja-visto .m-selo { animation: none !important; }
 
 /* Ideias novas numa data */
 .minhas-ideias { list-style: none; margin: 6px 0 0; padding: 0; }

@@ -4,8 +4,12 @@
   const turmas = document.getElementById("turmas");
   const d = await carregarDados("orgaos", flores);
   if (!d) return;
-
   const nomeDe = p => p.publicar && p.nome ? p.nome : "";
+  desenhar(d);
+  aoMudar("orgaos", n => { if (n.orgaos) semAnimar(document.querySelector("main") || document.body, () => desenhar(n.orgaos)); });
+
+  function desenhar(d) {
+  flores.innerHTML = "";
 
   d.orgaos.forEach(o => {
     const n = o.membros.length;
@@ -34,4 +38,5 @@
     </div>`).join("");
 
   aoAparecer();
+  }
 })();

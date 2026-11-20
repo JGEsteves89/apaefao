@@ -4,7 +4,10 @@
   const el = document.getElementById("links");
   const lista = await carregarDados("links", el);
   if (!lista) return;
+  desenhar(lista);
+  aoMudar("links", d => { if (Array.isArray(d.links)) semAnimar(el, () => desenhar(d.links)); });
 
+  function desenhar(lista) {
   const categorias = [...new Set(lista.map(l => l.categoria || "Outros"))];
   el.innerHTML = categorias.map(cat => `
     <h2 class="categoria">${escapar(cat)}</h2>
@@ -21,4 +24,5 @@
           </${tag}>`;
       }).join("")}
     </div>`).join("");
+  }
 })();

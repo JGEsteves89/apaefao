@@ -5,7 +5,10 @@
   const el = document.getElementById("noticias");
   const lista = await carregarDados("noticias", el);
   if (!lista) return;
+  desenhar(lista);
+  aoMudar("noticias", d => { if (Array.isArray(d.noticias)) semAnimar(el, () => desenhar(d.noticias)); });
 
+  function desenhar(lista) {
   el.innerHTML = lista.filter(n => n.data <= hojeISO()).sort((a, b) => a.data < b.data ? 1 : -1).map(n => `
     <li class="noticia anima">
       <span class="ponto" aria-hidden="true"></span>
@@ -20,4 +23,5 @@
 
   ativarGalerias(el);
   aoAparecer();
+  }
 })();

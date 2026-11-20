@@ -25,6 +25,11 @@ function cartaoEvento(e, classe) {
 document.querySelectorAll("[data-agenda]").forEach(async el => {
   const lista = await carregarDados("agenda", el);
   if (!lista) return;
+  desenharAgenda(el, lista);
+  aoMudar("agenda", d => { if (Array.isArray(d.agenda)) semAnimar(el, () => desenharAgenda(el, d.agenda)); });
+});
+
+function desenharAgenda(el, lista) {
   const hoje = new Date(); hoje.setHours(0, 0, 0, 0);
   const limite = Number(el.dataset.limite) || 0;
   let destaque = false, mostrados = 0;
@@ -41,4 +46,4 @@ document.querySelectorAll("[data-agenda]").forEach(async el => {
     b.closest(".evento-cartao").classList.add("aberto");
   }));
   ativarGalerias(el);
-});
+}

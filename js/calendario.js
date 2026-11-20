@@ -7,23 +7,27 @@
   if (!el) return;
   const dados = await carregarDados("calendario", el, () => dadosSite());
   if (!dados) return;
-  const cal = calendarioDe(dados);
+  let cal = calendarioDe(dados);
   if (!cal) return semDados(el);
 
   const p = new URLSearchParams(location.search).get("hoje");
   const HOJE = /^\d{4}-\d{2}-\d{2}$/.test(p || "") ? diaDe(p) : diaDe(hojeISO());
   const HOJE_S = calIso(HOJE);
-  const { feriados } = cal;
   const e_ = escapar;
   const maiuscula = t => t[0].toUpperCase() + t.slice(1);
   const nomeDia = d => `${CAL_DIAS[d.getDay()]}, ${d.getDate()} de ${CAL_MESES[d.getMonth()]}`;
   const semEscola = t => t === "ferias" || t === "feriado" || t === "verao";
 
   // Meses do ano letivo: do mês do 1.º dia de aulas até ao mês a seguir ao último (ex.: set 2026 – jul 2027).
-  const INICIO = diaDe(cal.primeiro), FIM = diaDe(cal.ultimo);
-  const MES_MIN = new Date(INICIO.getFullYear(), INICIO.getMonth(), 1);
-  const MES_MAX = new Date(FIM.getFullYear(), FIM.getMonth() + 1, 1);
-  const anoLetivo = `${INICIO.getFullYear()}/${String(FIM.getFullYear()).slice(2)}`;
+  let INICIO, FIM, MES_MIN, MES_MAX, anoLetivo, feriados;
+  function limitesAno() {
+    INICIO = diaDe(cal.primeiro); FIM = diaDe(cal.ultimo);
+    MES_MIN = new Date(INICIO.getFullYear(), INICIO.getMonth(), 1);
+    MES_MAX = new Date(FIM.getFullYear(), FIM.getMonth() + 1, 1);
+    anoLetivo = `${INICIO.getFullYear()}/${String(FIM.getFullYear()).slice(2)}`;
+    feriados = cal.feriados;
+  }
+  limitesAno();
 
   let comeco = new Date(HOJE.getFullYear(), HOJE.getMonth(), 1);
   if (comeco < MES_MIN) comeco = MES_MIN;
@@ -182,4 +186,15 @@
     if (b.dataset.ir) el.scrollIntoView({ behavior: MOVIMENTO ? "smooth" : "auto" });
   });
   desenhar();
+
+  // Dados novos (datas da escola ou agenda): redesenha no mesmo mês, dia e vista, sem animação.
+  aoMudar(["calendario", "agenda"], d => {
+    const novo = calendarioDe(d);
+    if (!novo) return;
+    cal = novo; limitesAno();
+    const foco = document.activeElement && el.contains(document.activeElement) ? document.activeElement : null;
+    const sel = foco && (foco.dataset.d ? `[data-d="${foco.dataset.d}"]` : foco.dataset.nav !== undefined ? `[data-nav="${foco.dataset.nav}"]` : foco.dataset.vista ? `[data-vista="${foco.dataset.vista}"]` : null);
+    semAnimar(el, desenhar);
+    if (sel) { const f = el.querySelector(sel); if (f) f.focus({ preventScroll: true }); }
+  });
 })();
