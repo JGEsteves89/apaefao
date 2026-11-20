@@ -188,6 +188,7 @@ async function abrir(n, semHistoria) {
   const m = montar(texto, guardadas);
   atual.svg = m.svg; atual.zonas = m.zonas; atual.info = m.info;
   atual.festejado = completo();
+  atual.pilha = (ler(CHAVE_PASSOS, {})[n] || []).filter(([i]) => m.zonas[i]).map(([i, antes]) => ({ z: m.zonas[i], antes }));
   m.svg.setAttribute("width", 600); m.svg.setAttribute("height", 800);   // tamanho próprio: o desenho cabe sem bordas a mais
   m.svg.setAttribute("role", "img"); m.svg.setAttribute("aria-label", m.info.titulo || "Desenho do dia " + n);
   folha.appendChild(m.svg);
@@ -195,7 +196,12 @@ async function abrir(n, semHistoria) {
 }
 
 function cores() { return atual.zonas.map(z => z.getAttribute("fill") || "#fff"); }
-function guardarCores() { const t = pinturas(); t[atual.dia] = cores(); gravar(CHAVE, t); }
+// As cores e os passos do Desfazer ficam no telemóvel: ao reabrir o desenho, o Desfazer continua a funcionar.
+const CHAVE_PASSOS = "advento-passos-v1";
+function guardarCores() {
+  const t = pinturas(); t[atual.dia] = cores(); gravar(CHAVE, t);
+  const p = ler(CHAVE_PASSOS, {}); p[atual.dia] = atual.pilha.slice(-200).map(x => [atual.zonas.indexOf(x.z), x.antes]); gravar(CHAVE_PASSOS, p);
+}
 const branco = c => !c || /^#f{3}(f{3})?$/i.test(c);
 const completo = () => atual.zonas.length > 0 && atual.zonas.every(z => !branco(z.getAttribute("fill")));
 
