@@ -50,7 +50,7 @@ function guardarFormulario(dados) {
     const folha = SpreadsheetApp.getActiveSpreadsheet();
     const aba = folha.getSheetByName(f.folha) || folha.insertSheet(f.folha);
     if (aba.getLastRow() === 0) aba.appendRow(["timestamp"].concat(f.campos));
-    aba.appendRow([new Date()].concat(valores));
+    aba.appendRow([new Date()].concat(valores.map(semFormula)));
   }
   const assunto = dados.evento === "socio" ? "Nova ficha de sócio: " + valores[0] + " (" + valores[1] + ")"
     : dados.evento === "donativo" ? "Nova oferta: " + valores[9] + " — " + valores[1]
@@ -86,7 +86,7 @@ function cabecalho(aba) {
 // Escreve uma linha pelos nomes das colunas (a ordem das colunas na folha pode mudar).
 function juntarLinha(aba, linha) {
   const cab = cabecalho(aba);
-  aba.appendRow(cab.map(c => c in linha ? linha[c] : ""));
+  aba.appendRow(cab.map(c => c in linha ? semFormula(linha[c]) : ""));
   const col = cab.indexOf("publicar") + 1;
   if (col) aba.getRange(aba.getLastRow(), col).insertCheckboxes();
 }
@@ -123,7 +123,7 @@ function guardarDoacaoMeta(d) {
   if (!String(aba.getRange(1, 8).getValue()).trim()) aba.getRange(1, 8, 1, 2).setValues([["contacto", "agradecer em público"]]).setFontWeight("bold");
   aba.getRange(livre, 1, 1, 6).setValues([[new Date(), limpar(d.meta, 60), "entrada", valor, origem, limpar(d.nota, 200)]]);
   aba.getRange(livre, 7).setValue(false);
-  aba.getRange(livre, 8, 1, 2).setValues([[limpar(d.contacto, 80), d.publico ? "sim" : "não"]]);
+  aba.getRange(livre, 8, 1, 2).setValues([[semFormula(limpar(d.contacto, 80)), d.publico ? "sim" : "não"]]);
   return ContentService.createTextOutput("ok");
 }
 
@@ -318,6 +318,11 @@ function limpar(texto, max) {
   return String(texto || "").trim().slice(0, max);
 }
 
+// O que vem dos formulários e começa por = + - @ (ex.: telefone "+351 9…") a Sheet lia como fórmula (#ERROR!). O ' à frente guarda como texto.
+function semFormula(v) {
+  return typeof v === "string" && /^[=+\-@]/.test(v) ? "'" + v : v;
+}
+
 function json(obj) {
   return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON);
 }
@@ -339,7 +344,7 @@ function guardarResponsavel(dados) {
   const lock = LockService.getScriptLock();
   lock.waitLock(10000);
   try {
-    abaResponsaveis().appendRow([new Date(), percurso, nome, limpar(dados.telemovel, 20), ""]);
+    abaResponsaveis().appendRow([new Date(), percurso, nome, semFormula(limpar(dados.telemovel, 20)), ""]);
   } finally {
     lock.releaseLock();
   }
@@ -456,7 +461,7 @@ function guardarDoacaoMeta(d) {
   livre = livre === -1 ? aba.getLastRow() + 1 : livre + 2;
   const como = ({ ref: "Multibanco", transf: "Transferência" }[d.metodo] || "MB WAY") + " (site)" + (d.demo ? " · DEMONSTRAÇÃO" : "");
   aba.getRange(livre, 1, 1, MOV_COLS.length).setValues([[new Date(), "entrada", valor, limpar(d.meta, 60), "Donativo pelo site", como, "", "", false,
-    limpar(d.nome, 80) || "Anónimo", limpar(d.contacto, 80), d.publico ? "sim" : "não", limpar(d.nota, 200)]]);
+    semFormula(limpar(d.nome, 80)) || "Anónimo", semFormula(limpar(d.contacto, 80)), d.publico ? "sim" : "não", limpar(d.nota, 200)]]);
   return ContentService.createTextOutput("ok");
 }
 
