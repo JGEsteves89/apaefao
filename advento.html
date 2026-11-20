@@ -27,7 +27,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css?v=20261120a">
-  <link rel="stylesheet" href="advento.css?v=3">
+  <link rel="stylesheet" href="advento.css?v=4">
   <link rel="preload" as="image" href="img/advento/cenario-telemovel.webp" media="(max-width: 767px)">
   <link rel="preload" as="image" href="img/advento/cenario-pc.webp" media="(min-width: 768px)">
   <link rel="preconnect" href="https://script.google.com">
@@ -94,6 +94,7 @@
     <section class="adv-mural" id="mural" aria-labelledby="mural-titulo">
       <h2 id="mural-titulo">O mural de Natal</h2>
       <p class="adv-sub">Os desenhos das crianças de Fão. Toca no ♡ dos teus preferidos.</p>
+      <p class="adv-obrigado" id="adv-obrigado" role="status" hidden><img src="img/mascote/salta.webp" alt="" width="60" height="74"><span>Obrigado! O teu desenho aparece aqui depois de aprovado.</span></p>
       <div class="adv-preferidos" id="adv-preferidos" hidden>
         <h3>Os preferidos da semana</h3>
         <div class="adv-grelha" id="adv-preferidos-grelha"></div>
@@ -141,11 +142,9 @@
 
     <!-- Para os pais: enviar para o mural -->
     <form class="adv-folha-baixo" id="adv-form" hidden novalidate>
-      <h2>Para os pais</h2>
-      <p>Vamos pôr o desenho no mural de Natal. Só aparece o primeiro nome.</p>
+      <h2>Pôr no mural de Natal</h2>
+      <p>Só aparece o primeiro nome. O desenho aparece depois de aprovado.</p>
       <label>Primeiro nome da criança<input id="adv-nome" name="nome" autocomplete="off" maxlength="12" required></label>
-      <label>Idade (opcional)<input id="adv-idade" name="idade" type="number" inputmode="numeric" min="2" max="12"></label>
-      <label class="adv-caixa"><input type="checkbox" id="adv-adulto" required> Sou adulto e autorizo</label>
       <p class="adv-erro" id="adv-erro" role="alert"></p>
       <button class="botao botao-grande" type="submit">Enviar</button>
       <p><button class="adv-link" type="button" id="adv-agora-nao">Agora não</button></p>
@@ -181,7 +180,7 @@
 
   <script src="js/config.js"></script>
   <script src="js/comum.js?v=20261120b"></script>
-  <script src="js/advento.js?v=3"></script>
+  <script src="js/advento.js?v=4"></script>
   <!-- Contador de visitas (GoatCounter: sem cookies) -->
   <script data-goatcounter="https://apaefao.goatcounter.com/count"
           async src="//gc.zgo.at/count.js"></script>

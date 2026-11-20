@@ -133,7 +133,7 @@ html.adv-aberto, html.adv-aberto body { overflow: hidden; }
 .adv-folha-baixo .botao { margin-top: 14px; }
 .adv-erro { color: var(--vermelho); font-weight: 800; min-height: 1em; margin: 8px 0 0; }
 .adv-link { border: 0; background: none; font: inherit; font-weight: 800; text-decoration: underline; cursor: pointer; color: var(--suave); min-height: 44px; padding: 0 6px; }
-.adv-salta { width: 110px; height: auto; margin-top: -60px; }
+.adv-salta { display: block; width: 96px; height: auto; margin: 0 auto; }
 .adv-salta.salta { animation: adv-saltar .6s ease 2; }
 .adv-festa-botoes { display: grid; gap: 10px; max-width: 360px; margin: 6px auto 8px; }
 .adv-festa-botoes .botao { margin: 0; width: 100%; justify-content: center; font-size: 19px; }
@@ -162,3 +162,5 @@ html.adv-aberto, html.adv-aberto body { overflow: hidden; }
 @media (prefers-reduced-motion: reduce) {
   .adv-num.hoje, .adv-num.hoje::after, .adv-num.abana, .adv-folha-baixo, .adv-salta.salta, .adv-coracao.pop { animation: none !important; }
 }
+.adv-obrigado { display: flex; align-items: center; gap: 10px; background: #e6f4e3; border: 2px solid #2e7d32; border-radius: 14px; padding: 8px 14px; font-weight: 800; margin: 0 0 14px; }
+.adv-obrigado img { width: 48px; height: auto; flex: none; }

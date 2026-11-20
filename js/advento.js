@@ -337,20 +337,18 @@ $("adv-enviar").addEventListener("click", () => { fecharFolhas(); $("adv-erro").
 $("adv-agora-nao").addEventListener("click", fecharFolhas);
 $("adv-form").addEventListener("submit", async e => {
   e.preventDefault();
-  const erro = $("adv-erro"), nome = $("adv-nome").value.trim(), idadeTxt = $("adv-idade").value.trim();
+  const erro = $("adv-erro"), nome = $("adv-nome").value.trim();
   const simples = nome.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
   if (!/^[A-Za-zÀ-ÖØ-öø-ÿ]{2,12}$/.test(nome) || PALAVROES.some(p => simples.includes(p))) { erro.textContent = "Escreve só o primeiro nome (2 a 12 letras)."; return; }
-  if (idadeTxt && !(Number(idadeTxt) >= 2 && Number(idadeTxt) <= 12)) { erro.textContent = "A idade é de 2 a 12 anos (ou deixa em branco)."; return; }
-  if (!$("adv-adulto").checked) { erro.textContent = "Falta marcar \"Sou adulto e autorizo\"."; return; }
   const botao = e.target.querySelector("[type=submit]"); botao.disabled = true;
-  const ok = await enviar("advento_pintura", { dia: atual.dia, nome, idade: idadeTxt ? Number(idadeTxt) : "", cores: cores(), adulto: true, voterId: votante() });
+  const ok = await enviar("advento_pintura", { dia: atual.dia, nome, cores: cores(), voterId: votante() });
   botao.disabled = false;
   if (!ok) { erro.textContent = "Não foi possível enviar. Tenta daqui a pouco."; return; }
-  const f = $("adv-form");
-  f.hidden = true;
-  $("adv-festa").hidden = false;
-  $("adv-festa").querySelector("h2").textContent = "Obrigado! Aparece no mural depois de aprovado.";
-  setTimeout(() => { const h = $("adv-festa").querySelector("h2"); if (h) h.textContent = "Que bonito!"; }, 6000);
+  // Enviado: fecha o desenho e vai para o mural, com o obrigado.
+  $("adv-nome").value = "";
+  fechar();
+  $("adv-obrigado").hidden = false;
+  setTimeout(() => $("mural").scrollIntoView({ behavior: MOVIMENTO ? "smooth" : "auto", block: "start" }), 250);
 });
 
 // ---------- Mural ----------

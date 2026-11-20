@@ -1300,10 +1300,10 @@ function abaAdvento(nome) {
 function guardarPinturaAdvento(d) {
   const nome = String(d.nome || "").trim(), dia = Math.floor(Number(d.dia));
   const simples = nome.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-  const idade = d.idade === "" || d.idade == null ? "" : Math.floor(Number(d.idade));
+  const idade = d.idade === "" || d.idade == null ? "" : Math.floor(Number(d.idade));   // o site já não pede a idade (20/11); fica a coluna
   const cores = Array.isArray(d.cores) ? d.cores.map(String) : [];
   const voter = limpar(d.voterId, 60);
-  if (d.adulto !== true || !(dia >= 1 && dia <= 24)) return json({ ok: false, erro: "dados" });
+  if (!(dia >= 1 && dia <= 24)) return json({ ok: false, erro: "dados" });   // sem a caixa "sou adulto" (pedido do Jose, 20/11)
   if (!/^[A-Za-zÀ-ÖØ-öø-ÿ]{2,12}$/.test(nome) || PALAVROES.some(p => simples.indexOf(p) >= 0)) return json({ ok: false, erro: "nome" });
   if (idade !== "" && !(idade >= 2 && idade <= 12)) return json({ ok: false, erro: "idade" });
   if (!cores.length || cores.length > 60 || !cores.every(c => /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(c))) return json({ ok: false, erro: "cores" });
