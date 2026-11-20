@@ -1,6 +1,6 @@
 // O Advento da Lumi (advento.html): 24 números sobre o cenário; cada dia abre um desenho para pintar com o dedo.
 // Pintar: tocar numa zona do SVG enche-a com a cor escolhida. As cores ficam no telemóvel (localStorage "advento-v1").
-// Depois: guardar (PNG), imprimir (pintado ou por pintar) ou enviar para o mural (Sheet, aprovado antes de aparecer).
+// Depois: guardar (PNG), imprimir (pintado ou por pintar) ou enviar para o mural (Sheet; aparece logo, o Jose esconde com "não" em publicar).
 // Testes: ?dia=7 (simula 7 de dezembro; ?dia=0 antes, ?dia=30 depois) · ?editar=1 (pôr os números) · ?mural-teste (6 exemplos).
 // SPEC: notas/projetos/website/advento/SPEC_advento.md
 
@@ -36,7 +36,8 @@ const diasDoMural = Q.fase === "durante" ? Q.dia : Q.fase === "antes" ? 0 : N_DI
 // ---------- Cores guardadas ----------
 const CHAVE = "advento-v1";
 const pinturas = () => ler(CHAVE, {});
-const pintou = n => (pinturas()[n] || []).some(c => c && c.toLowerCase() !== "#fff" && c.toLowerCase() !== "#ffffff");
+const CHAVE_TRACOS = "advento-tracos-v1";   // pincel: { "7": "#e53935|10,20 14,25;#1e5bd8|…" }
+const pintou = n => (pinturas()[n] || []).some(c => c && c.toLowerCase() !== "#fff" && c.toLowerCase() !== "#ffffff") || !!ler(CHAVE_TRACOS, {})[n];
 
 // O mesmo "votante" da ementa (um id por telemóvel). Se não existir, cria.
 function votante() {
@@ -54,17 +55,44 @@ function desenho(n) {
   return desenhos[n];
 }
 // Cria o <svg> do dia com as cores dadas. Zonas por ordem z1, z2… (é o que se guarda).
-function montar(texto, cores) {
+// Pincel: os traços ficam numa camada entre as zonas e as linhas pretas (as linhas ficam sempre por cima).
+const NS = "http://www.w3.org/2000/svg", LARGURA_PINCEL = 22;
+let nClip = 0;
+function caminho(pts) { return pts.length ? "M" + pts.map(p => p.join(" ")).join(" L") + (pts.length === 1 ? " L" + pts[0].join(" ") : "") : ""; }
+function novoTraco(camada, cor, pts) {
+  const p = document.createElementNS(NS, "path");
+  p.setAttribute("fill", "none"); p.setAttribute("stroke", cor); p.setAttribute("stroke-width", LARGURA_PINCEL);
+  p.setAttribute("stroke-linecap", "round"); p.setAttribute("stroke-linejoin", "round");
+  p.dataset.cor = cor; p.pontos = pts; p.setAttribute("d", caminho(pts));
+  camada.appendChild(p);
+  return p;
+}
+const tracosTexto = camada => [...camada.querySelectorAll("path")].map(p => p.dataset.cor + "|" + p.pontos.map(q => q.join(",")).join(" ")).join(";");
+function lerTracos(texto) {
+  return String(texto || "").split(";").filter(Boolean).map(t => {
+    const [cor, pts] = t.split("|");
+    return { cor, pts: String(pts || "").split(" ").filter(Boolean).map(q => q.split(",").map(Number)) };
+  }).filter(t => /^#[0-9a-f]{3,6}$/i.test(t.cor) && t.pts.length);
+}
+function montar(texto, cores, tracos) {
   const doc = new DOMParser().parseFromString(texto, "image/svg+xml");
   const svg = document.importNode(doc.documentElement, true);
   const zonas = [...svg.querySelectorAll(".zona")].sort((a, b) => Number(a.id.slice(1)) - Number(b.id.slice(1)));
   zonas.forEach((z, i) => { if (cores && cores[i]) z.setAttribute("fill", cores[i]); });
+  // camada do pincel, cortada pela moldura do desenho (zona z1)
+  const id = "adv-clip-" + (++nClip), defs = document.createElementNS(NS, "defs"), clip = document.createElementNS(NS, "clipPath");
+  clip.id = id; if (zonas[0]) clip.appendChild(zonas[0].cloneNode(false)); defs.appendChild(clip); svg.insertBefore(defs, svg.firstChild);
+  const camada = document.createElementNS(NS, "g");
+  camada.setAttribute("class", "tracos"); camada.setAttribute("pointer-events", "none"); camada.setAttribute("clip-path", `url(#${id})`);
+  const linhas = svg.querySelector("#linhas");
+  svg.insertBefore(camada, linhas);
+  lerTracos(tracos).forEach(t => novoTraco(camada, t.cor, t.pts));
   const meta = svg.querySelector("metadata");
   let info = {};
   try { info = JSON.parse(meta ? meta.textContent : "{}"); } catch (e) {}
   if (meta) meta.remove();
   svg.removeAttribute("width"); svg.removeAttribute("height");
-  return { svg, zonas, info };
+  return { svg, zonas, info, camada };
 }
 
 // ---------- Calendário ----------
@@ -185,14 +213,17 @@ async function abrir(n, semHistoria) {
   }
   paleta.parentElement.hidden = false;
   const guardadas = pinturas()[n] || [];
-  const m = montar(texto, guardadas);
-  atual.svg = m.svg; atual.zonas = m.zonas; atual.info = m.info;
+  const m = montar(texto, guardadas, ler(CHAVE_TRACOS, {})[n]);
+  atual.svg = m.svg; atual.zonas = m.zonas; atual.info = m.info; atual.camada = m.camada;
   atual.festejado = completo();
-  atual.pilha = (ler(CHAVE_PASSOS, {})[n] || []).filter(([i]) => m.zonas[i]).map(([i, antes]) => ({ z: m.zonas[i], antes }));
+  // Passos do Desfazer guardados: [i, corAntes] = balde na zona i; ["t"] = um traço do pincel (os últimos traços, por ordem).
+  const passos = ler(CHAVE_PASSOS, {})[n] || [], tracos = [...m.camada.children];
+  let k = tracos.length - passos.filter(x => x[0] === "t").length;
+  atual.pilha = passos.map(x => x[0] === "t" ? (tracos[k] ? { t: tracos[k++] } : null) : (m.zonas[x[0]] ? { z: m.zonas[x[0]], antes: x[1] } : null)).filter(Boolean);
   m.svg.setAttribute("width", 600); m.svg.setAttribute("height", 800);   // tamanho próprio: o desenho cabe sem bordas a mais
   m.svg.setAttribute("role", "img"); m.svg.setAttribute("aria-label", m.info.titulo || "Desenho do dia " + n);
   folha.appendChild(m.svg);
-  m.svg.addEventListener("pointerdown", pintarToque);
+  m.svg.addEventListener("pointerdown", e => ferramenta === "pincel" ? comecarTraco(e) : pintarToque(e));
 }
 
 function cores() { return atual.zonas.map(z => z.getAttribute("fill") || "#fff"); }
@@ -200,7 +231,50 @@ function cores() { return atual.zonas.map(z => z.getAttribute("fill") || "#fff")
 const CHAVE_PASSOS = "advento-passos-v1";
 function guardarCores() {
   const t = pinturas(); t[atual.dia] = cores(); gravar(CHAVE, t);
-  const p = ler(CHAVE_PASSOS, {}); p[atual.dia] = atual.pilha.slice(-200).map(x => [atual.zonas.indexOf(x.z), x.antes]); gravar(CHAVE_PASSOS, p);
+  const tr = ler(CHAVE_TRACOS, {}), txt = tracosTexto(atual.camada);
+  if (txt) tr[atual.dia] = txt; else delete tr[atual.dia];
+  gravar(CHAVE_TRACOS, tr);
+  const p = ler(CHAVE_PASSOS, {}); p[atual.dia] = atual.pilha.slice(-200).map(x => x.t ? ["t"] : [atual.zonas.indexOf(x.z), x.antes]); gravar(CHAVE_PASSOS, p);
+}
+
+// ---------- Pincel ----------
+let ferramenta = ler("advento-ferramenta", "balde");
+function escolherFerramenta(f) {
+  ferramenta = f; gravar("advento-ferramenta", f);
+  document.querySelectorAll(".adv-ferramenta button").forEach(b => b.setAttribute("aria-checked", String(b.dataset.f === f)));
+  folha.classList.toggle("com-pincel", f === "pincel");
+}
+document.querySelectorAll(".adv-ferramenta button").forEach(b => b.addEventListener("click", () => escolherFerramenta(b.dataset.f)));
+escolherFerramenta(ferramenta);
+function pontoSVG(e) {
+  const m = atual.svg.getScreenCTM();
+  if (!m) return null;
+  const p = new DOMPoint(e.clientX, e.clientY).matrixTransform(m.inverse());
+  return [Math.round(p.x), Math.round(p.y)];
+}
+function comecarTraco(e) {
+  if (!atual || !atual.svg) return;
+  e.preventDefault();
+  const svg = atual.svg, inicio = pontoSVG(e);
+  if (!inicio) return;
+  const traco = novoTraco(atual.camada, corEscolhida, [inicio]);
+  try { svg.setPointerCapture(e.pointerId); } catch (x) {}
+  const mexe = ev => {
+    if (ev.pointerId !== e.pointerId) return;
+    (ev.getCoalescedEvents ? ev.getCoalescedEvents() : [ev]).forEach(c => {
+      const q = pontoSVG(c), u = traco.pontos[traco.pontos.length - 1];
+      if (q && Math.hypot(q[0] - u[0], q[1] - u[1]) >= 3) traco.pontos.push(q);
+    });
+    traco.setAttribute("d", caminho(traco.pontos));
+  };
+  const fim = ev => {
+    if (ev.pointerId !== e.pointerId) return;
+    svg.removeEventListener("pointermove", mexe); svg.removeEventListener("pointerup", fim); svg.removeEventListener("pointercancel", fim);
+    atual.pilha.push({ t: traco });
+    tocar(CORES.findIndex(c => c[0] === corEscolhida));
+    guardarCores();
+  };
+  svg.addEventListener("pointermove", mexe); svg.addEventListener("pointerup", fim); svg.addEventListener("pointercancel", fim);
 }
 const branco = c => !c || /^#f{3}(f{3})?$/i.test(c);
 const completo = () => atual.zonas.length > 0 && atual.zonas.every(z => !branco(z.getAttribute("fill")));
@@ -221,8 +295,8 @@ function pintarToque(e) {
 
 function desfazer() {
   if (!atual || !atual.pilha.length) return;
-  const { z, antes } = atual.pilha.pop();
-  z.setAttribute("fill", antes);
+  const passo = atual.pilha.pop();
+  if (passo.t) passo.t.remove(); else passo.z.setAttribute("fill", passo.antes);
   guardarCores();
 }
 function recomecar() {
@@ -230,6 +304,7 @@ function recomecar() {
   if (!atual || !atual.zonas.length) return;
   if (!confirm("Começar de novo?")) return;
   atual.zonas.forEach(z => z.setAttribute("fill", "#fff"));
+  atual.camada.innerHTML = "";
   atual.pilha = []; atual.festejado = false;
   guardarCores();
 }
@@ -244,7 +319,9 @@ function fecharMenu() { $("adv-menu").hidden = true; $("adv-mais").setAttribute(
 $("adv-mais").addEventListener("click", () => { const m = $("adv-menu"); m.hidden = !m.hidden; $("adv-mais").setAttribute("aria-expanded", String(!m.hidden)); });
 $("adv-recomecar").addEventListener("click", recomecar);
 
-function fecharFolhas() { ["adv-festa", "adv-form", "adv-imagem"].forEach(id => { $(id).hidden = true; }); fecharMenu(); }
+function fecharFolhas() { ["adv-festa", "adv-form", "adv-imagem"].forEach(id => { $(id).hidden = true; }); ecra.classList.remove("com-folha"); fecharMenu(); }
+// Com um cartão aberto (Que bonito!, mural, guardar) o desenho fica bloqueado: só se volta a pintar com "Continuar a pintar".
+function mostrarFolha(id) { fecharFolhas(); $(id).hidden = false; ecra.classList.add("com-folha"); }
 function fechar(daHistoria) {
   if (ecra.hidden) return;
   ecra.hidden = true; fecharFolhas();
@@ -260,8 +337,7 @@ addEventListener("keydown", e => { if (e.key === "Escape" && !ecra.hidden) fecha
 // ---------- Festa ----------
 function festa() {
   if (!atual || !atual.svg) return;
-  fecharFolhas();
-  $("adv-festa").hidden = false;
+  mostrarFolha("adv-festa");
   confetti();
   tocar(0, true);
   const l = document.querySelector(".adv-salta");
@@ -276,7 +352,7 @@ function svgTexto(svg, pintado) {
   c.setAttribute("xmlns", "http://www.w3.org/2000/svg");
   c.setAttribute("width", 600); c.setAttribute("height", 800);
   c.removeAttribute("style");
-  if (!pintado) c.querySelectorAll(".zona").forEach(z => z.setAttribute("fill", "#fff"));
+  if (!pintado) { c.querySelectorAll(".zona").forEach(z => z.setAttribute("fill", "#fff")); c.querySelectorAll(".tracos path").forEach(p => p.remove()); }
   return new XMLSerializer().serializeToString(c);
 }
 function imagemPNG() {
@@ -308,14 +384,14 @@ $("adv-guardar").addEventListener("click", async () => {
     catch (e) { if (e.name === "AbortError") return; }
   }
   if (/iPhone|iPad|iPod/.test(navigator.userAgent)) {   // plano B: tocar e manter o dedo na imagem
-    fecharFolhas(); $("adv-imagem-img").src = png.url; $("adv-imagem").hidden = false; return;
+    $("adv-imagem-img").src = png.url; mostrarFolha("adv-imagem"); return;
   }
   const a = document.createElement("a");
   a.href = URL.createObjectURL(png.blob); a.download = nome;
   document.body.appendChild(a); a.click(); a.remove();
   setTimeout(() => URL.revokeObjectURL(a.href), 4000);
 });
-$("adv-imagem-fechar").addEventListener("click", fecharFolhas);
+$("adv-imagem-fechar").addEventListener("click", () => mostrarFolha("adv-festa"));
 
 // ---------- Imprimir ----------
 const impressao = $("adv-impressao");
@@ -333,18 +409,28 @@ $("adv-imprimir-branco2").addEventListener("click", () => imprimir(false));
 
 // ---------- Enviar para o mural ----------
 const PALAVROES = ["merda", "caralh", "foda", "fodi", "puta", "cabrao", "porra", "bosta", "cona", "piroca", "paneleir", "rabeta"];
-$("adv-enviar").addEventListener("click", () => { fecharFolhas(); $("adv-erro").textContent = ""; $("adv-form").hidden = false; $("adv-nome").focus(); });
-$("adv-agora-nao").addEventListener("click", fecharFolhas);
+$("adv-enviar").addEventListener("click", () => { $("adv-erro").textContent = ""; mostrarFolha("adv-form"); $("adv-nome").focus(); });
+$("adv-agora-nao").addEventListener("click", () => mostrarFolha("adv-festa"));
 $("adv-form").addEventListener("submit", async e => {
   e.preventDefault();
   const erro = $("adv-erro"), nome = $("adv-nome").value.trim();
   const simples = nome.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
   if (!/^[A-Za-zÀ-ÖØ-öø-ÿ]{2,12}$/.test(nome) || PALAVROES.some(p => simples.includes(p))) { erro.textContent = "Escreve só o primeiro nome (2 a 12 letras)."; return; }
   const botao = e.target.querySelector("[type=submit]"); botao.disabled = true;
-  const ok = await enviar("advento_pintura", { dia: atual.dia, nome, cores: cores(), voterId: votante() });
+  let tracos = tracosTexto(atual.camada);
+  for (let passo = 2; tracos.length > 40000 && passo < 64; passo *= 2) {   // desenho muito grande: menos pontos por traço
+    tracos = [...atual.camada.querySelectorAll("path")].map(p => p.dataset.cor + "|" + p.pontos.filter((q, i, a) => i % passo === 0 || i === a.length - 1).map(q => q.join(",")).join(" ")).join(";");
+  }
+  if (tracos.length > 40000) tracos = "";
+  const ok = await enviar("advento_pintura", { dia: atual.dia, nome, cores: cores(), tracos, voterId: votante() });
   botao.disabled = false;
   if (!ok) { erro.textContent = "Não foi possível enviar. Tenta daqui a pouco."; return; }
-  // Enviado: fecha o desenho e vai para o mural, com o obrigado.
+  // Enviado: o desenho entra logo no mural (neste telemóvel) e a página vai para lá, com o obrigado.
+  const meus = ler(CHAVE_MEUS, []);
+  meus.push({ id: "meu-" + Date.now().toString(36), dia: atual.dia, nome, cores: cores(), tracos, coracoes: 0, semana: 0, t: Date.now() });
+  gravar(CHAVE_MEUS, meus);
+  mostrarMural(ultimoMural);
+  setTimeout(carregarMural, 5000);   // a Sheet já deve ter a linha nova
   $("adv-nome").value = "";
   fechar();
   $("adv-obrigado").hidden = false;
@@ -364,8 +450,8 @@ const EXEMPLOS = () => {
     { id: "ex6", dia: 3, nome: "Gaspar", idade: 6, cores: cor(6, 13), coracoes: 1, semana: 1 },
   ];
 };
-const CHAVE_MURAL = "advento-mural", CHAVE_GOSTOS = "advento-coracoes";
-let mural = [], filtro = "todos";
+const CHAVE_MURAL = "advento-mural", CHAVE_GOSTOS = "advento-coracoes", CHAVE_MEUS = "advento-meus";
+let mural = [], filtro = "todos", ultimoMural = null;
 const gostos = new Set(ler(CHAVE_GOSTOS, []));
 
 function cartaoMural(p) {
@@ -386,7 +472,7 @@ function cartaoMural(p) {
     gostos.add(p.id); gravar(CHAVE_GOSTOS, [...gostos]);
     b.classList.remove("pop"); void b.offsetWidth; if (MOVIMENTO) b.classList.add("pop");
     mostrar();
-    if (!/^ex/.test(p.id)) enviar("advento_voto", { id: p.id, voterId: votante() });
+    if (!/^(ex|meu-)/.test(p.id)) enviar("advento_voto", { id: p.id, voterId: votante() });
   });
   observar.observe(el);
   return el;
@@ -399,7 +485,7 @@ const observar = "IntersectionObserver" in window ? new IntersectionObserver(es 
 function miniatura(el) {
   const p = mural.find(x => x.id === el.dataset.id) || EXEMPLOS().find(x => x.id === el.dataset.id);
   if (!p) return;
-  desenho(p.dia).then(t => { const m = montar(t, p.cores); m.svg.setAttribute("aria-hidden", "true"); el.querySelector(".adv-mini").appendChild(m.svg); })
+  desenho(p.dia).then(t => { const m = montar(t, p.cores, p.tracos); m.svg.setAttribute("aria-hidden", "true"); el.querySelector(".adv-mini").appendChild(m.svg); })
     .catch(() => { el.querySelector(".adv-mini").innerHTML = '<div class="adv-vazio">🎨</div>'; });
 }
 
@@ -426,14 +512,23 @@ function preferidos() {
   g.innerHTML = "";
   if (com.length >= 3) com.slice(0, 3).forEach(p => g.appendChild(cartaoMural(p)));
 }
+// Os desenhos que este telemóvel enviou aparecem logo, até a Sheet os devolver (no máximo 1 dia).
+function juntarMeus(lista) {
+  const igual = (a, b) => a.dia === b.dia && a.nome === b.nome && JSON.stringify(a.cores) === JSON.stringify(b.cores) && (a.tracos || "") === (b.tracos || "");
+  const meus = ler(CHAVE_MEUS, []).filter(m => Date.now() - m.t < 864e5 && !lista.some(p => igual(p, m)));
+  gravar(CHAVE_MEUS, meus);
+  return meus.slice().reverse().concat(lista);
+}
 function mostrarMural(d) {
-  mural = (d && Array.isArray(d.pinturas) ? d.pinturas : []).filter(p => p && p.id && p.dia >= 1 && p.dia <= N_DIAS && Array.isArray(p.cores));
-  mural.sort((a, b) => b.dia - a.dia);
+  ultimoMural = d;
+  const lista = (d && Array.isArray(d.pinturas) ? d.pinturas : []).filter(p => p && p.id && p.dia >= 1 && p.dia <= N_DIAS && Array.isArray(p.cores));
+  lista.reverse();   // os mais recentes primeiro
+  mural = MODO_TESTE || P.has("mural-teste") ? lista.reverse() : juntarMeus(lista);
   preferidos(); chips(); grelha();
 }
 // Como o resto do site: mostra logo a cópia guardada e atualiza quando a Sheet responder (só se mudou).
 function carregarMural() {
-  if (MODO_TESTE || P.has("mural-teste")) { mostrarMural({ pinturas: EXEMPLOS() }); return; }
+  if (MODO_TESTE || P.has("mural-teste")) { mostrarMural({ pinturas: ultimoMural ? ultimoMural.pinturas : EXEMPLOS() }); return; }
   const c = ler(CHAVE_MURAL, null);
   let visto = c ? JSON.stringify(c) : null;
   mostrarMural(c);

@@ -27,7 +27,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css?v=20261120a">
-  <link rel="stylesheet" href="advento.css?v=4">
+  <link rel="stylesheet" href="advento.css?v=6">
   <link rel="preload" as="image" href="img/advento/cenario-telemovel.webp" media="(max-width: 767px)">
   <link rel="preload" as="image" href="img/advento/cenario-pc.webp" media="(min-width: 768px)">
   <link rel="preconnect" href="https://script.google.com">
@@ -94,7 +94,7 @@
     <section class="adv-mural" id="mural" aria-labelledby="mural-titulo">
       <h2 id="mural-titulo">O mural de Natal</h2>
       <p class="adv-sub">Os desenhos das crianças de Fão. Toca no ♡ dos teus preferidos.</p>
-      <p class="adv-obrigado" id="adv-obrigado" role="status" hidden><img src="img/mascote/salta.webp" alt="" width="60" height="74"><span>Obrigado! O teu desenho aparece aqui depois de aprovado.</span></p>
+      <p class="adv-obrigado" id="adv-obrigado" role="status" hidden><img src="img/mascote/salta.webp" alt="" width="60" height="74"><span>Obrigado!</span></p>
       <div class="adv-preferidos" id="adv-preferidos" hidden>
         <h3>Os preferidos da semana</h3>
         <div class="adv-grelha" id="adv-preferidos-grelha"></div>
@@ -123,7 +123,11 @@
     <div class="adv-ferramentas">
       <div class="adv-paleta" id="adv-paleta" role="radiogroup" aria-label="Cores"></div>
       <div class="adv-acoes">
-        <button class="adv-desfazer" type="button" id="adv-desfazer" aria-label="Desfazer (manter carregado para começar de novo)"><span aria-hidden="true">↶</span> Desfazer</button>
+        <button class="adv-desfazer" type="button" id="adv-desfazer" aria-label="Desfazer (manter carregado para começar de novo)"><span aria-hidden="true">↶</span><span class="adv-txt"> Desfazer</span></button>
+        <div class="adv-ferramenta" role="radiogroup" aria-label="Ferramenta">
+          <button type="button" role="radio" data-f="balde" aria-label="Balde: encher uma zona" aria-checked="true">🪣</button>
+          <button type="button" role="radio" data-f="pincel" aria-label="Pincel: pintar com o dedo" aria-checked="false">🖌️</button>
+        </div>
         <button class="botao adv-acabei" type="button" id="adv-acabei">✓ Acabei</button>
       </div>
     </div>
@@ -143,7 +147,7 @@
     <!-- Para os pais: enviar para o mural -->
     <form class="adv-folha-baixo" id="adv-form" hidden novalidate>
       <h2>Pôr no mural de Natal</h2>
-      <p>Só aparece o primeiro nome. O desenho aparece depois de aprovado.</p>
+      <p>Só aparece o primeiro nome.</p>
       <label>Primeiro nome da criança<input id="adv-nome" name="nome" autocomplete="off" maxlength="12" required></label>
       <p class="adv-erro" id="adv-erro" role="alert"></p>
       <button class="botao botao-grande" type="submit">Enviar</button>
@@ -180,7 +184,7 @@
 
   <script src="js/config.js"></script>
   <script src="js/comum.js?v=20261120b"></script>
-  <script src="js/advento.js?v=4"></script>
+  <script src="js/advento.js?v=7"></script>
   <!-- Contador de visitas (GoatCounter: sem cookies) -->
   <script data-goatcounter="https://apaefao.goatcounter.com/count"
           async src="//gc.zgo.at/count.js"></script>

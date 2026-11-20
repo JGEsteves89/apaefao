@@ -154,9 +154,11 @@ html.adv-aberto, html.adv-aberto body { overflow: hidden; }
   @page { size: A4 portrait; margin: 12mm; }
   body.adv-a-imprimir > *:not(.adv-impressao) { display: none !important; }
   body.adv-a-imprimir { background: #fff; }
-  body.adv-a-imprimir .adv-impressao { display: flex !important; flex-direction: column; align-items: center; justify-content: center; height: 270mm; }
-  .adv-impressao svg { width: auto; height: 250mm; max-width: 100%; }
-  .adv-impressao p { font: 600 12pt "Nunito", sans-serif; margin: 4mm 0 0; }
+  /* Uma só página: o desenho fica mais baixo do que a folha (o Safari do iPhone junta margens e cabeçalho). */
+  html, body.adv-a-imprimir { height: auto !important; overflow: visible !important; margin: 0 !important; padding: 0 !important; }
+  body.adv-a-imprimir .adv-impressao { display: block !important; text-align: center; break-inside: avoid; page-break-inside: avoid; }
+  .adv-impressao svg { display: block; margin: 0 auto; width: auto; height: 215mm; max-width: 100%; }
+  .adv-impressao p { font: 600 11pt "Nunito", sans-serif; margin: 3mm 0 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -164,3 +166,13 @@ html.adv-aberto, html.adv-aberto body { overflow: hidden; }
 }
 .adv-obrigado { display: flex; align-items: center; gap: 10px; background: #e6f4e3; border: 2px solid #2e7d32; border-radius: 14px; padding: 8px 14px; font-weight: 800; margin: 0 0 14px; }
 .adv-obrigado img { width: 48px; height: auto; flex: none; }
+
+/* Ferramentas: balde (encher a zona) e pincel (pintar com o dedo) */
+.adv-ferramenta { display: flex; border: 2px solid var(--tinta); border-radius: 999px; overflow: hidden; background: var(--cartao); box-shadow: 3px 3px 0 var(--tinta); flex: none; }
+.adv-ferramenta button { width: 56px; min-height: 52px; border: 0; background: none; font-size: 26px; cursor: pointer; padding: 0; }
+.adv-ferramenta button + button { border-left: 2px solid var(--tinta); }
+.adv-ferramenta button[aria-checked="true"] { background: var(--sol); }
+.adv-folha.com-pincel svg { cursor: crosshair; }
+@media (max-width: 420px) { .adv-desfazer .adv-txt { display: none; } .adv-desfazer { padding: 0 16px; } .adv-desfazer span { font-size: 28px; } }
+@media (min-width: 768px) and (orientation: landscape) { .adv-ferramenta { align-self: center; } }
+.adv-pintar.com-folha .adv-folha, .adv-pintar.com-folha .adv-ferramentas { pointer-events: none; opacity: .45; }
