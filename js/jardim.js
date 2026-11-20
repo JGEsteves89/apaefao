@@ -663,7 +663,7 @@ function mostrarRecordes() {
   (lerJogo().recordes || []).filter(m => String(m.data).startsWith(mes)).forEach(m => {
     const igual = todos.find(r => !r.meu && r.nome === m.nome && r.vezes === m.vezes);
     if (igual) igual.meu = true;
-    else todos.push({ nome: m.nome, vezes: m.vezes, meu: true, estado: m.publico ? "a aguardar" : "só neste telemóvel" });
+    else todos.push({ nome: m.nome, vezes: m.vezes, meu: true, estado: m.publico ? "a aguardar" : "" });
   });
   const top = todos.sort((a, b) => b.vezes - a.vezes).slice(0, 10);
   sec.hidden = !top.length;
