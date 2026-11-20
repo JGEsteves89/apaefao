@@ -469,9 +469,10 @@ function cartaoMural(p) {
   const b = el.querySelector(".adv-coracao");
   const mostrar = n => {
     const dei = gostos[p.id] != null;
-    b.innerHTML = `<span class="adv-c-ico">${p.meu || dei ? "♥" : "♡"}</span><b>${n}</b>`;
+    // Sem números (pedido do Jose): só o coração. O n continua a contar por dentro (para a animação).
+    b.innerHTML = `<span class="adv-c-ico">${p.meu || dei ? "♥" : "♡"}</span>`;
     b.setAttribute("aria-pressed", String(dei));
-    b.setAttribute("aria-label", p.meu ? n + " corações no teu desenho" : dei ? "Já deste um coração (" + n + ")" : "Dar um coração (" + n + ")");
+    b.setAttribute("aria-label", p.meu ? "Corações no teu desenho" : dei ? "Já deste um coração" : "Dar um coração");
   };
   if (p.meu) {
     b.disabled = true;   // não se dá coração ao próprio desenho
@@ -500,9 +501,6 @@ function animarCoracoes(el, b, de, ate, mostrar) {
     return;
   }
   const novos = ate - de, n = Math.min(novos, 8);
-  const selo = document.createElement("span");
-  selo.className = "adv-mais"; selo.textContent = "+" + novos + " ♥";
-  el.appendChild(selo);
   for (let i = 0; i < n; i++) {
     const c = document.createElement("span");
     c.className = "adv-voa"; c.textContent = "♥";
@@ -515,7 +513,7 @@ function animarCoracoes(el, b, de, ate, mostrar) {
     const k = Math.min(1, (t - t0) / dur);
     mostrar(Math.round(de + (ate - de) * k));
     if (k < 1) requestAnimationFrame(passo);
-    else { b.classList.remove("pop"); void b.offsetWidth; b.classList.add("pop"); setTimeout(() => selo.remove(), 1800); }
+    else { b.classList.remove("pop"); void b.offsetWidth; b.classList.add("pop"); }
   })(t0 + 300);
 }
 const observarMeus = "IntersectionObserver" in window ? new IntersectionObserver(es => es.forEach(e => {
@@ -550,12 +548,16 @@ function grelha() {
   }
   lista.forEach(p => el.appendChild(cartaoMural(p)));
 }
+// "Os preferidos da semana": 3 desenhos, sem números. Se a criança tem desenhos, um deles está sempre lá.
 function preferidos() {
   const caixa = $("adv-preferidos"), g = $("adv-preferidos-grelha");
-  const com = mural.filter(p => (p.semana || 0) > 0).sort((a, b) => b.semana - a.semana);
-  caixa.hidden = com.length < 3;
+  const pontos = p => (p.semana || 0) * 1000 + (p.coracoes || 0);
+  const meu = mural.filter(p => p.meu).sort((a, b) => pontos(b) - pontos(a))[0];
+  const outros = mural.filter(p => !p.meu).sort((a, b) => pontos(b) - pontos(a)).slice(0, meu ? 2 : 3);
+  const lista = (meu ? [meu] : []).concat(outros);
+  caixa.hidden = lista.length < 3;
   g.innerHTML = "";
-  if (com.length >= 3) com.slice(0, 3).forEach(p => g.appendChild(cartaoMural(p)));
+  if (lista.length >= 3) lista.forEach(p => g.appendChild(cartaoMural(p)));
 }
 // Os desenhos que este telemóvel enviou aparecem logo, até a Sheet os devolver (no máximo 1 dia).
 // Os desenhos que este telemóvel enviou: aparecem logo (até a Sheet os devolver) e ficam marcados como "meus".
