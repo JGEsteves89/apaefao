@@ -9,6 +9,12 @@
 
 :where(.adv-pagina, .adv-pintar) button { font-family: inherit; }   /* sem ganhar às regras com Fredoka */
 
+/* Telemóvel: tocar duas vezes (ex.: nos botões) não faz zoom. Dois dedos continua a dar. O desenho fica com touch-action: none (mais abaixo). */
+html, body, body * { touch-action: manipulation; }
+/* Não selecionar texto sem querer (ecrã de pintar e botões). O nome da criança continua a dar para escrever e selecionar. */
+.adv-pintar, .adv-pintar *, button { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+.adv-pintar input { -webkit-user-select: text; user-select: text; -webkit-touch-callout: default; }
+
 /* ---------- Cenário + 24 números ---------- */
 .adv-cena { position: relative; border: 3px solid var(--tinta); border-radius: var(--raio); box-shadow: 5px 5px 0 var(--tinta); overflow: hidden; background: #24345e; }
 .adv-cena img { display: block; width: 100%; height: auto; }
