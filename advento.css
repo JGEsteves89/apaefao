@@ -33,7 +33,14 @@
 @keyframes adv-brilha { 0%, 100% { box-shadow: 2px 3px 0 rgba(31,26,20,.75), 0 0 0 0 rgba(235,206,88,.0); } 50% { box-shadow: 2px 3px 0 rgba(31,26,20,.75), 0 0 0 10px rgba(235,206,88,.55); } }
 @keyframes adv-seta { 0%, 100% { transform: translate(-50%, 0); } 50% { transform: translate(-50%, -5px); } }
 @keyframes adv-abana { 0%, 100% { transform: translate(-50%, -50%) rotate(0); } 25% { transform: translate(-50%, -50%) rotate(-12deg); } 75% { transform: translate(-50%, -50%) rotate(12deg); } }
-@media (min-width: 768px) { .adv-num { width: 50px; height: 50px; font-size: 22px; } .adv-num.hoje { width: 64px; height: 64px; font-size: 28px; } }
+/* Computador: o cenário sai da coluna de 960 px e cresce até à largura do ecrã, mas cabe sempre na altura da janela. */
+@media (min-width: 768px) {
+  .adv-cena { --larg: min(calc(100vw - 48px), calc((100vh - 80px) * 1672 / 941), 1800px);
+    width: var(--larg); margin-left: calc(50% - var(--larg) / 2); }
+  .adv-num { width: clamp(46px, 3.3vw, 62px); height: clamp(46px, 3.3vw, 62px); font-size: clamp(20px, 1.5vw, 28px); }
+  .adv-num.hoje { width: clamp(60px, 4.3vw, 80px); height: clamp(60px, 4.3vw, 80px); font-size: clamp(26px, 2vw, 36px); }
+  .adv-cabeca .titulo-pagina { margin-top: 4px; }
+}
 
 .adv-balao { position: absolute; z-index: 5; display: flex; align-items: center; gap: 8px; width: 230px;
   background: #fffaf0; border: 3px solid var(--tinta); border-radius: 18px; padding: 8px 14px 8px 8px; box-shadow: 4px 4px 0 var(--tinta);
