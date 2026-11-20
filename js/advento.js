@@ -56,22 +56,23 @@ function desenho(n) {
 }
 // Cria o <svg> do dia com as cores dadas. Zonas por ordem z1, z2… (é o que se guarda).
 // Pincel: os traços ficam numa camada entre as zonas e as linhas pretas (as linhas ficam sempre por cima).
-const NS = "http://www.w3.org/2000/svg", LARGURA_PINCEL = 22;
+const NS = "http://www.w3.org/2000/svg", TAMANHOS = [12, 26, 48];   // pincel: fino, médio, grosso (unidades do desenho 600×800)
 let nClip = 0;
 function caminho(pts) { return pts.length ? "M" + pts.map(p => p.join(" ")).join(" L") + (pts.length === 1 ? " L" + pts[0].join(" ") : "") : ""; }
-function novoTraco(camada, cor, pts) {
+function novoTraco(camada, cor, pts, w = 22) {
   const p = document.createElementNS(NS, "path");
-  p.setAttribute("fill", "none"); p.setAttribute("stroke", cor); p.setAttribute("stroke-width", LARGURA_PINCEL);
+  p.setAttribute("fill", "none"); p.setAttribute("stroke", cor); p.setAttribute("stroke-width", w); p.dataset.w = w;
   p.setAttribute("stroke-linecap", "round"); p.setAttribute("stroke-linejoin", "round");
   p.dataset.cor = cor; p.pontos = pts; p.setAttribute("d", caminho(pts));
   camada.appendChild(p);
   return p;
 }
-const tracosTexto = camada => [...camada.querySelectorAll("path")].map(p => p.dataset.cor + "|" + p.pontos.map(q => q.join(",")).join(" ")).join(";");
+// Texto de cada traço: "#cor,largura|x,y x,y …" (os antigos não têm largura: 22).
+const tracosTexto = camada => [...camada.querySelectorAll("path")].map(p => p.dataset.cor + "," + p.dataset.w + "|" + p.pontos.map(q => q.join(",")).join(" ")).join(";");
 function lerTracos(texto) {
   return String(texto || "").split(";").filter(Boolean).map(t => {
-    const [cor, pts] = t.split("|");
-    return { cor, pts: String(pts || "").split(" ").filter(Boolean).map(q => q.split(",").map(Number)) };
+    const [corW, pts] = t.split("|"), [cor, w] = String(corW).split(",");
+    return { cor, w: Math.min(80, Math.max(4, Number(w) || 22)), pts: String(pts || "").split(" ").filter(Boolean).map(q => q.split(",").map(Number)) };
   }).filter(t => /^#[0-9a-f]{3,6}$/i.test(t.cor) && t.pts.length);
 }
 function montar(texto, cores, tracos) {
@@ -87,7 +88,7 @@ function montar(texto, cores, tracos) {
   camada.setAttribute("class", "tracos"); camada.setAttribute("pointer-events", "none"); camada.setAttribute("clip-path", `url(#${id})`);
   const linhas = svg.querySelector("#linhas");
   svg.insertBefore(camada, linhas);
-  lerTracos(tracos).forEach(t => novoTraco(camada, t.cor, t.pts));
+  lerTracos(tracos).forEach(t => novoTraco(camada, t.cor, t.pts, t.w));
   const meta = svg.querySelector("metadata");
   let info = {};
   try { info = JSON.parse(meta ? meta.textContent : "{}"); } catch (e) {}
@@ -153,7 +154,7 @@ function cabecalho() {
 const CORES = [
   ["#e53935", "vermelho"], ["#2e7d32", "verde-escuro"], ["#8bc34a", "verde-claro"], ["#fdd835", "amarelo"], ["#fb8c00", "laranja"],
   ["#1e5bd8", "azul"], ["#64b5f6", "azul-claro"], ["#8e44ad", "roxo"], ["#f48fb1", "rosa"], ["#8d5a3b", "castanho"],
-  ["#f6c9a0", "pele"], ["#9e9e9e", "cinzento"], ["#ffffff", "branco"], ["#d4a017", "dourado"],
+  ["#f6c9a0", "pele"], ["#9e9e9e", "cinzento"], ["#ffffff", "branco"], ["#d4a017", "dourado"], ["#1f1a14", "preto"],
 ];
 const ecra = $("adv-pintar"), folha = $("adv-folha"), paleta = $("adv-paleta");
 let atual = null;   // { dia, zonas, svg, cores, pilha }
@@ -169,6 +170,7 @@ CORES.forEach(([c, nome]) => {
 });
 function escolherCor(c) {
   corEscolhida = c; gravar("advento-cor", c);
+  document.querySelectorAll(".adv-ferramenta .adv-ponto").forEach(p => { p.style.background = c; });
   paleta.querySelectorAll(".adv-cor").forEach(b => {
     const sim = b.dataset.cor === c;
     b.setAttribute("aria-checked", sim);
@@ -239,13 +241,16 @@ function guardarCores() {
 }
 
 // ---------- Pincel ----------
-let ferramenta = ler("advento-ferramenta", "balde");
-function escolherFerramenta(f) {
+// Ferramentas: balde, ou pincel em 3 tamanhos (os botões com um ponto pequeno, médio e grande).
+let ferramenta = ler("advento-ferramenta", "balde"), tamanho = ler("advento-tamanho", TAMANHOS[1]);
+if (!TAMANHOS.includes(tamanho)) tamanho = TAMANHOS[1];
+function escolherFerramenta(f, w) {
   ferramenta = f; gravar("advento-ferramenta", f);
-  document.querySelectorAll(".adv-ferramenta button").forEach(b => b.setAttribute("aria-checked", String(b.dataset.f === f)));
+  if (w) { tamanho = w; gravar("advento-tamanho", w); }
+  document.querySelectorAll(".adv-ferramenta button").forEach(b => b.setAttribute("aria-checked", String(b.dataset.f === f && (f === "balde" || Number(b.dataset.w) === tamanho))));
   folha.classList.toggle("com-pincel", f === "pincel");
 }
-document.querySelectorAll(".adv-ferramenta button").forEach(b => b.addEventListener("click", () => escolherFerramenta(b.dataset.f)));
+document.querySelectorAll(".adv-ferramenta button").forEach(b => b.addEventListener("click", () => escolherFerramenta(b.dataset.f, Number(b.dataset.w) || 0)));
 escolherFerramenta(ferramenta);
 function pontoSVG(e) {
   const m = atual.svg.getScreenCTM();
@@ -258,7 +263,7 @@ function comecarTraco(e) {
   e.preventDefault();
   const svg = atual.svg, inicio = pontoSVG(e);
   if (!inicio) return;
-  const traco = novoTraco(atual.camada, corEscolhida, [inicio]);
+  const traco = novoTraco(atual.camada, corEscolhida, [inicio], tamanho);
   try { svg.setPointerCapture(e.pointerId); } catch (x) {}
   const mexe = ev => {
     if (ev.pointerId !== e.pointerId) return;
@@ -420,7 +425,7 @@ $("adv-form").addEventListener("submit", async e => {
   const botao = e.target.querySelector("[type=submit]"); botao.disabled = true;
   let tracos = tracosTexto(atual.camada);
   for (let passo = 2; tracos.length > 40000 && passo < 64; passo *= 2) {   // desenho muito grande: menos pontos por traço
-    tracos = [...atual.camada.querySelectorAll("path")].map(p => p.dataset.cor + "|" + p.pontos.filter((q, i, a) => i % passo === 0 || i === a.length - 1).map(q => q.join(",")).join(" ")).join(";");
+    tracos = [...atual.camada.querySelectorAll("path")].map(p => p.dataset.cor + "," + p.dataset.w + "|" + p.pontos.filter((q, i, a) => i % passo === 0 || i === a.length - 1).map(q => q.join(",")).join(" ")).join(";");
   }
   if (tracos.length > 40000) tracos = "";
   const ok = await enviar("advento_pintura", { dia: atual.dia, nome, cores: cores(), tracos, voterId: votante() });

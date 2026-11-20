@@ -27,7 +27,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css?v=20261120a">
-  <link rel="stylesheet" href="advento.css?v=7">
+  <link rel="stylesheet" href="advento.css?v=10">
   <link rel="preload" as="image" href="img/advento/cenario-telemovel.webp" media="(max-width: 767px)">
   <link rel="preload" as="image" href="img/advento/cenario-pc.webp" media="(min-width: 768px)">
   <link rel="preconnect" href="https://script.google.com">
@@ -123,12 +123,14 @@
     <div class="adv-ferramentas">
       <div class="adv-paleta" id="adv-paleta" role="radiogroup" aria-label="Cores"></div>
       <div class="adv-acoes">
-        <button class="adv-desfazer" type="button" id="adv-desfazer" aria-label="Desfazer (manter carregado para começar de novo)"><span aria-hidden="true">↶</span><span class="adv-txt"> Desfazer</span></button>
+        <button class="adv-desfazer" type="button" id="adv-desfazer" aria-label="Desfazer (manter carregado para começar de novo)"><svg class="adv-ico-desfazer" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg><span class="adv-txt"> Desfazer</span></button>
         <div class="adv-ferramenta" role="radiogroup" aria-label="Ferramenta">
           <button type="button" role="radio" data-f="balde" aria-label="Balde: encher uma zona" aria-checked="true">🪣</button>
-          <button type="button" role="radio" data-f="pincel" aria-label="Pincel: pintar com o dedo" aria-checked="false">🖌️</button>
+          <button type="button" role="radio" data-f="pincel" data-w="12" aria-label="Pincel fino" aria-checked="false"><i class="adv-ponto" style="--d:8px"></i></button>
+          <button type="button" role="radio" data-f="pincel" data-w="26" aria-label="Pincel médio" aria-checked="false"><i class="adv-ponto" style="--d:15px"></i></button>
+          <button type="button" role="radio" data-f="pincel" data-w="48" aria-label="Pincel grosso" aria-checked="false"><i class="adv-ponto" style="--d:24px"></i></button>
         </div>
-        <button class="botao adv-acabei" type="button" id="adv-acabei">✓ Acabei</button>
+        <button class="botao adv-acabei" type="button" id="adv-acabei" aria-label="Acabei">✓<span class="adv-txt">Acabei</span></button>
       </div>
     </div>
 
@@ -184,7 +186,7 @@
 
   <script src="js/config.js"></script>
   <script src="js/comum.js?v=20261120b"></script>
-  <script src="js/advento.js?v=9"></script>
+  <script src="js/advento.js?v=10"></script>
   <!-- Contador de visitas (GoatCounter: sem cookies) -->
   <script data-goatcounter="https://apaefao.goatcounter.com/count"
           async src="//gc.zgo.at/count.js"></script>
