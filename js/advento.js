@@ -340,9 +340,8 @@ $("adv-fechar").addEventListener("click", () => fechar());
 addEventListener("popstate", () => fechar(true));
 // Esc: primeiro fecha o cartão aberto (volta a pintar); só depois fecha o desenho.
 addEventListener("keydown", e => { if (e.key !== "Escape" || ecra.hidden) return; if (ecra.classList.contains("com-folha")) fecharFolhas(); else fechar(); });
-// ✕ dos cartões e clique no desenho esbatido: volta a pintar.
+// ✕ dos cartões: volta a pintar. (Tocar no desenho esbatido não faz nada: o desenho fica bloqueado.)
 document.querySelectorAll("[data-voltar]").forEach(b => b.addEventListener("click", fecharFolhas));
-ecra.addEventListener("click", e => { if (e.target === ecra && ecra.classList.contains("com-folha")) fecharFolhas(); });   // a zona esbatida não recebe cliques: chegam ao ecrã
 
 // ---------- Festa ----------
 function festa() {
