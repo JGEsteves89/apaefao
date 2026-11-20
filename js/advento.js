@@ -81,7 +81,8 @@ function montar(texto, cores, tracos) {
   zonas.forEach((z, i) => { if (cores && cores[i]) z.setAttribute("fill", cores[i]); });
   // camada do pincel, cortada pela moldura do desenho (zona z1)
   const id = "adv-clip-" + (++nClip), defs = document.createElementNS(NS, "defs"), clip = document.createElementNS(NS, "clipPath");
-  clip.id = id; if (zonas[0]) clip.appendChild(zonas[0].cloneNode(false)); defs.appendChild(clip); svg.insertBefore(defs, svg.firstChild);
+  clip.id = id;
+  if (zonas[0]) { const forma = zonas[0].cloneNode(false); forma.removeAttribute("id"); forma.removeAttribute("class"); clip.appendChild(forma); } defs.appendChild(clip); svg.insertBefore(defs, svg.firstChild);
   const camada = document.createElementNS(NS, "g");
   camada.setAttribute("class", "tracos"); camada.setAttribute("pointer-events", "none"); camada.setAttribute("clip-path", `url(#${id})`);
   const linhas = svg.querySelector("#linhas");
@@ -442,7 +443,7 @@ const EXEMPLOS = () => {
   const p = ["#e53935", "#2e7d32", "#fdd835", "#1e5bd8", "#f48fb1", "#fb8c00", "#8e44ad", "#64b5f6", "#d4a017", "#8bc34a"];
   const cor = (s, n) => Array.from({ length: n }, (_, i) => p[(i * 3 + s) % p.length]);
   return [
-    { id: "ex1", dia: 1, nome: "Alba", idade: 5, cores: cor(1, 12), coracoes: 7, semana: 4 },
+    { id: "ex1", dia: 1, nome: "Alba", idade: 5, cores: cor(1, 12), coracoes: 7, semana: 4, meu: true },
     { id: "ex2", dia: 1, nome: "Tomás", idade: 7, cores: cor(2, 12), coracoes: 2, semana: 2 },
     { id: "ex3", dia: 2, nome: "Leonor", idade: "", cores: cor(3, 13), coracoes: 12, semana: 9 },
     { id: "ex4", dia: 2, nome: "Rui", idade: 4, cores: cor(4, 13), coracoes: 0, semana: 0 },
@@ -450,33 +451,77 @@ const EXEMPLOS = () => {
     { id: "ex6", dia: 3, nome: "Gaspar", idade: 6, cores: cor(6, 13), coracoes: 1, semana: 1 },
   ];
 };
-const CHAVE_MURAL = "advento-mural", CHAVE_GOSTOS = "advento-coracoes", CHAVE_MEUS = "advento-meus";
+const CHAVE_MURAL = "advento-mural", CHAVE_GOSTOS = "advento-coracoes-v2", CHAVE_MEUS = "advento-meus", CHAVE_MEUS_IDS = "advento-meus-ids", CHAVE_VISTOS = "advento-vistos";
 let mural = [], filtro = "todos", ultimoMural = null;
-const gostos = new Set(ler(CHAVE_GOSTOS, []));
+const gostos = ler(CHAVE_GOSTOS, {});      // { id: corações que a Sheet tinha quando dei o meu } (para não contar 2 vezes)
+const vistos = ler(CHAVE_VISTOS, {});      // { id: corações que vi da última vez no meu desenho }
 
+// Corações: cada desenho começa com 5 (BASE), para nunca haver um desenho com 0.
+// Os teus desenhos aparecem primeiro e, ao abrir a página, animam com os corações novos desde a última visita.
+const BASE = 5;
+const total = p => BASE + (p.coracoes || 0) + (gostos[p.id] != null && (p.coracoes || 0) <= gostos[p.id] ? 1 : 0);
 function cartaoMural(p) {
   const el = document.createElement("article");
-  el.className = "adv-cartao"; el.dataset.id = p.id;
+  el.className = "adv-cartao" + (p.meu ? " meu" : ""); el.dataset.id = p.id;
   const quem = escapar(p.nome) + (p.idade ? ", " + escapar(String(p.idade)) : "");
-  el.innerHTML = `<div class="adv-mini" role="img" aria-label="Desenho do dia ${p.dia} pintado por ${quem}"></div>
+  el.innerHTML = `${p.meu ? '<span class="adv-teu">O teu desenho</span>' : ""}<div class="adv-mini" role="img" aria-label="Desenho do dia ${p.dia} pintado por ${quem}"></div>
     <div class="adv-pe"><span class="adv-quem">${quem}<small>Dia ${p.dia}</small></span><button class="adv-coracao" type="button"></button></div>`;
   const b = el.querySelector(".adv-coracao");
-  const mostrar = () => {
-    const meu = gostos.has(p.id), n = (p.coracoes || 0) + (meu && !p.contei ? 1 : 0);
-    b.innerHTML = (meu ? "♥" : "♡") + (n >= 5 ? `<b>${n}</b>` : "");
-    b.setAttribute("aria-pressed", meu); b.setAttribute("aria-label", meu ? "Já deste um coração" : "Dar um coração");
+  const mostrar = n => {
+    const dei = gostos[p.id] != null;
+    b.innerHTML = `<span class="adv-c-ico">${p.meu || dei ? "♥" : "♡"}</span><b>${n}</b>`;
+    b.setAttribute("aria-pressed", String(dei));
+    b.setAttribute("aria-label", p.meu ? n + " corações no teu desenho" : dei ? "Já deste um coração (" + n + ")" : "Dar um coração (" + n + ")");
   };
-  mostrar();
-  b.addEventListener("click", () => {
-    if (gostos.has(p.id)) return;
-    gostos.add(p.id); gravar(CHAVE_GOSTOS, [...gostos]);
-    b.classList.remove("pop"); void b.offsetWidth; if (MOVIMENTO) b.classList.add("pop");
-    mostrar();
-    if (!/^(ex|meu-)/.test(p.id)) enviar("advento_voto", { id: p.id, voterId: votante() });
-  });
+  if (p.meu) {
+    b.disabled = true;   // não se dá coração ao próprio desenho
+    const antes = vistos[p.id] != null ? vistos[p.id] : 0, agora = total(p);
+    mostrar(antes);
+    el.animarMeu = () => { animarCoracoes(el, b, antes, agora, mostrar); vistos[p.id] = agora; gravar(CHAVE_VISTOS, vistos); };
+    observarMeus.observe(el);
+  } else {
+    mostrar(total(p));
+    b.addEventListener("click", () => {
+      if (gostos[p.id] != null) return;
+      gostos[p.id] = p.coracoes || 0; gravar(CHAVE_GOSTOS, gostos);
+      b.classList.remove("pop"); void b.offsetWidth; if (MOVIMENTO) b.classList.add("pop");
+      mostrar(total(p));
+      if (!/^(ex|meu-)/.test(p.id)) enviar("advento_voto", { id: p.id, voterId: votante() });
+    });
+  }
   observar.observe(el);
   return el;
 }
+// Os corações novos "voam" para o teu desenho e o número sobe. Sem corações novos: o coração só pulsa.
+function animarCoracoes(el, b, de, ate, mostrar) {
+  if (!MOVIMENTO || ate <= de) {
+    mostrar(ate);
+    if (MOVIMENTO) { b.classList.remove("pop"); void b.offsetWidth; b.classList.add("pop"); }
+    return;
+  }
+  const novos = ate - de, n = Math.min(novos, 8);
+  const selo = document.createElement("span");
+  selo.className = "adv-mais"; selo.textContent = "+" + novos + " ♥";
+  el.appendChild(selo);
+  for (let i = 0; i < n; i++) {
+    const c = document.createElement("span");
+    c.className = "adv-voa"; c.textContent = "♥";
+    c.style.left = 15 + Math.random() * 70 + "%"; c.style.animationDelay = i * 110 + "ms";
+    el.appendChild(c);
+    setTimeout(() => c.remove(), 1600 + i * 110);
+  }
+  const t0 = performance.now(), dur = 600 + n * 110;
+  (function passo(t) {
+    const k = Math.min(1, (t - t0) / dur);
+    mostrar(Math.round(de + (ate - de) * k));
+    if (k < 1) requestAnimationFrame(passo);
+    else { b.classList.remove("pop"); void b.offsetWidth; b.classList.add("pop"); setTimeout(() => selo.remove(), 1800); }
+  })(t0 + 300);
+}
+const observarMeus = "IntersectionObserver" in window ? new IntersectionObserver(es => es.forEach(e => {
+  if (!e.isIntersecting) return;
+  observarMeus.unobserve(e.target); setTimeout(() => e.target.animarMeu && e.target.animarMeu(), 250);
+}), { threshold: 0.6 }) : { observe: el => el.animarMeu && el.animarMeu() };
 // Só desenha a miniatura quando o cartão aparece no ecrã.
 const observar = "IntersectionObserver" in window ? new IntersectionObserver(es => es.forEach(e => {
   if (!e.isIntersecting) return;
@@ -513,17 +558,28 @@ function preferidos() {
   if (com.length >= 3) com.slice(0, 3).forEach(p => g.appendChild(cartaoMural(p)));
 }
 // Os desenhos que este telemóvel enviou aparecem logo, até a Sheet os devolver (no máximo 1 dia).
+// Os desenhos que este telemóvel enviou: aparecem logo (até a Sheet os devolver) e ficam marcados como "meus".
 function juntarMeus(lista) {
   const igual = (a, b) => a.dia === b.dia && a.nome === b.nome && JSON.stringify(a.cores) === JSON.stringify(b.cores) && (a.tracos || "") === (b.tracos || "");
-  const meus = ler(CHAVE_MEUS, []).filter(m => Date.now() - m.t < 864e5 && !lista.some(p => igual(p, m)));
-  gravar(CHAVE_MEUS, meus);
-  return meus.slice().reverse().concat(lista);
+  const ids = new Set(ler(CHAVE_MEUS_IDS, []));
+  const pendentes = ler(CHAVE_MEUS, []).filter(m => {
+    const ja = lista.find(p => igual(p, m) && !ids.has(p.id));
+    if (ja) { ids.add(ja.id); if (vistos[m.id] != null) { vistos[ja.id] = vistos[m.id]; gravar(CHAVE_VISTOS, vistos); } return false; }
+    return Date.now() - m.t < 864e5;
+  });
+  gravar(CHAVE_MEUS, pendentes); gravar(CHAVE_MEUS_IDS, [...ids]);
+  return pendentes.map(m => ({ ...m, meu: true })).concat(lista.map(p => ({ ...p, meu: ids.has(p.id) })));
+}
+// Ordem: os teus primeiro; depois os novos (menos de 1 dia), do mais recente; depois por corações.
+function ordenar(lista) {
+  const agora = Date.now(), novo = p => p.t && agora - p.t < 864e5, recente = (a, b) => (b.t || 0) - (a.t || 0);
+  const meus = lista.filter(p => p.meu).sort(recente), outros = lista.filter(p => !p.meu);
+  return meus.concat(outros.filter(novo).sort(recente), outros.filter(p => !novo(p)).sort((a, b) => ((b.coracoes || 0) - (a.coracoes || 0)) || recente(a, b)));
 }
 function mostrarMural(d) {
   ultimoMural = d;
   const lista = (d && Array.isArray(d.pinturas) ? d.pinturas : []).filter(p => p && p.id && p.dia >= 1 && p.dia <= N_DIAS && Array.isArray(p.cores));
-  lista.reverse();   // os mais recentes primeiro
-  mural = MODO_TESTE || P.has("mural-teste") ? lista.reverse() : juntarMeus(lista);
+  mural = ordenar(MODO_TESTE || P.has("mural-teste") ? lista : juntarMeus(lista));
   preferidos(); chips(); grelha();
 }
 // Como o resto do site: mostra logo a cópia guardada e atualiza quando a Sheet responder (só se mudou).

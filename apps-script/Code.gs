@@ -1370,7 +1370,7 @@ function advento() {
       let cores = [];
       try { cores = JSON.parse(l[5]); } catch (e) {}
       const id = String(l[1]);
-      pinturas.push({ id, dia: Number(l[2]), nome: limpar(l[3], 12), idade: l[4] === "" ? "" : Number(l[4]), cores, coracoes: total[id] || 0, semana: semana[id] || 0, tracos: String(l[8] || "") });
+      pinturas.push({ id, dia: Number(l[2]), nome: limpar(l[3], 12), idade: l[4] === "" ? "" : Number(l[4]), cores, coracoes: total[id] || 0, semana: semana[id] || 0, tracos: String(l[8] || ""), t: l[0] instanceof Date ? l[0].getTime() : 0 });
     });
   }
   const res = { pinturas };
