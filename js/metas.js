@@ -57,14 +57,34 @@ function galerias(raiz) {
 }
 
 // A parte que esta pessoa deu (guardada só neste browser; em modo privado não aparece).
-function minhas() { try { return JSON.parse(localStorage.getItem("metas-minhas") || "{}"); } catch (e) { return {}; } }
-function guardarMinha(id, v) {
-  const t = minhas(); t[id] = (t[id] || 0) + v;
-  try { localStorage.setItem("metas-minhas", JSON.stringify(t)); } catch (e) {}
+// Cada donativo guarda o valor e o "angariado" da Sheet nesse momento (base). Quando a tesoureira confirma,
+// o angariado da Sheet passa a incluir o donativo (angariado >= base + valor): a barra deixa de o somar
+// outra vez (antes contava 2 vezes: 10 € pagos apareciam 20 €). A frase "X € são teus" continua.
+function minhas() {
+  let t = {};
+  try { t = JSON.parse(localStorage.getItem("metas-minhas2") || "null"); } catch (e) { t = null; }
+  if (t) return t;
+  t = {};
+  try {   // formato antigo (só o total por meta): sem base, conta como confirmado quando o angariado já o cobre
+    const velho = JSON.parse(localStorage.getItem("metas-minhas") || "{}");
+    Object.keys(velho).forEach(id => { if (velho[id] > 0) t[id] = [{ v: velho[id], base: null }]; });
+  } catch (e) {}
+  return t;
+}
+function guardarMinha(id, v, base) {
+  const t = minhas(); (t[id] = t[id] || []).push({ v, base: Number(base) || 0 });
+  try { localStorage.setItem("metas-minhas2", JSON.stringify(t)); } catch (e) {}
+}
+// { meu: ainda por confirmar (amarelo na barra), teu: tudo o que esta pessoa deu (para a frase) }
+function minhaParte(meus, m) {
+  const lista = meus[m.id] || [], ang = Number(m.angariado) || 0;
+  let meu = 0, teu = 0;
+  lista.forEach(d => { teu += d.v; if (ang < (d.base || 0) + d.v) meu += d.v; });
+  return { meu, teu };
 }
 
 function barra(m) {
-  const meu = m.meu || 0, total = m.angariado + meu;
+  const meu = m.meu || 0, teu = m.teu || meu, total = m.angariado + meu;
   const p = Math.min(100, Math.round(total / m.custo * 100)) || 0;
   const pBase = Math.min(100, m.angariado / m.custo * 100) || 0, pMeu = Math.max(0, Math.min(100, total / m.custo * 100) - pBase);
   const valores = EUROS
@@ -82,7 +102,7 @@ function barra(m) {
       <span class="marco" style="left:25%"></span><span class="marco" style="left:50%"></span><span class="marco" style="left:75%"></span>
     </div>
     <p class="m-valores-linha">${valores}${m.apoiantes ? ` · ${m.apoiantes} ${m.apoiantes === 1 ? "apoiante" : "apoiantes"}` : ""}</p>
-    ${meu ? `<p class="m-meu">💛 ${EUROS ? euros(meu) + " são teus" : "Uma parte é tua"}. Obrigado!</p>` : ""}
+    ${teu ? `<p class="m-meu">💛 ${EUROS ? euros(teu) + " são teus" : "Uma parte é tua"}. Obrigado!</p>` : ""}
     ${resto.length ? `<p class="m-falta">${resto.join(" · ")}</p>` : ""}`;
 }
 
@@ -328,8 +348,9 @@ async function pago(m, v, tipo, resp) {
   enviar("doacao_meta", { ...recibo, meta: m.id, valor: v, metodo: tipo, demo: DEMO,
     nome: document.getElementById("m-nome").value.trim(), contacto: document.getElementById("m-contacto").value.trim(),
     publico: document.getElementById("m-publico").checked, nota: DEMO ? "Demonstração (não é dinheiro real)" : tipo === "transf" ? "Avisou no site que transferiu" : "" });
-  guardarMinha(m.id, v);
+  guardarMinha(m.id, v, m.angariado);
   m.meu = (m.meu || 0) + v;
+  m.teu = (m.teu || 0) + v;
   await espera(recibo.recibo ? 3000 : 1400);
   const d = document.getElementById("m-dialogo");
   if (d.close) d.close(); else d.removeAttribute("open");
@@ -393,7 +414,7 @@ function fasesDoRecreio() {
       const s = PUBLICAS.find(m => m.id === p.id);
       const m = { estado: "a seguir", angariado: 0, custos_detalhe: [], prioridade: 99, frase: "", ...p, ...(s || {}), emoji: p.emoji, custo: (s && s.custo) || p.custo };
       m.grupo = "Recreio";
-      if (!PAGA(m)) m.meu = meus[m.id] || 0;
+      if (!PAGA(m)) Object.assign(m, minhaParte(meus, m));
       return m;
     });
     return {
@@ -443,7 +464,7 @@ function desenharMetas(quieto) {
   // Cada meta tem o seu cartão (também as do recreio): os pais escolhem o baloiço OU a estrutura (16/11, Jose).
   const meus = minhas();
   const normais = PUBLICAS.filter(m => m.estado === "a angariar");
-  normais.forEach(m => { m.meu = meus[m.id] || 0; });
+  normais.forEach(m => Object.assign(m, minhaParte(meus, m)));
   const lista = normais.map(m => ({ m, prioridade: m.prioridade ?? 99 }))
     .sort((a, b) => a.prioridade - b.prioridade);
   const grelha = document.getElementById("m-ativas");
