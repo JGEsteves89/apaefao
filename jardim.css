@@ -213,3 +213,20 @@ html.jardim-cheio-aberto, html.jardim-cheio-aberto body { overflow: hidden; over
   .li-caixa, .lumi-escondida img, .lumi-alvo.brilha, .lumi-conta.pula, .lumi-seta, .flor.abana .cabeca { animation: none !important; }
 }
 @media (prefers-reduced-motion: reduce) { .lumi-alvo.brilha { box-shadow: inset 0 0 0 4px #fff, 0 0 0 10px rgba(255, 216, 74, .6); } }
+
+/* ---------- Pré-visualização na página: desfocada, com o botão "Entrar no jardim da Lumi" ---------- */
+.jardim-vista:not(.cheio) { cursor: pointer; touch-action: auto; }
+.jardim-vista:not(.cheio) .jardim-mundo, .jardim-vista:not(.cheio) .jardim-nomes { filter: blur(3px) saturate(.8) brightness(1.05); pointer-events: none; }
+.jardim-vista:not(.cheio) .jardim-zoom, .jardim-vista:not(.cheio) .jardim-cheio-botao, .jardim-vista:not(.cheio) .jardim-cartao { display: none; }
+.jardim-entrar { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 6; display: flex; align-items: center; gap: 12px;
+  width: max-content; max-width: calc(100% - 32px); background: var(--sol); border: 3px solid var(--tinta); border-radius: 999px;
+  padding: 8px 26px 8px 10px; box-shadow: 4px 4px 0 var(--tinta); pointer-events: none; animation: jardim-chama 2.4s ease-in-out infinite; }
+.jardim-entrar img { width: 64px; height: 64px; object-fit: contain; flex: none; }
+.jardim-entrar b { display: block; font-size: 21px; line-height: 1.15; }
+.jardim-entrar small { display: block; font-size: 14px; font-weight: 700; margin-top: 2px; }
+.jardim-vista:not(.cheio):hover .jardim-entrar { scale: 1.04; }
+.jardim-vista:not(.cheio):focus-visible .jardim-entrar { outline: 4px solid #1f6feb; outline-offset: 4px; }
+.jardim-vista.cheio .jardim-entrar { display: none; }
+@keyframes jardim-chama { 50% { scale: 1.05; } }
+@media (prefers-reduced-motion: reduce) { .jardim-entrar { animation: none; } }
+@media (max-width: 600px) { .jardim-vista:not(.cheio) { height: 52vh; min-height: 300px; } .jardim-entrar b { font-size: 18px; } .jardim-entrar img { width: 52px; height: 52px; } }

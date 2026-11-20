@@ -191,26 +191,23 @@ function enquadrar() {
   enquadrado = true;
   scrollBy({ top: r.top - Math.max(8, (H - r.height) / 2), behavior: MOVIMENTO ? "smooth" : "auto" });
 }
+// Na página o jardim é só uma pré-visualização (desfocada, com o botão "Entrar no jardim da Lumi"):
+// não mexe, a página faz scroll normal. Passear, zoom e jogo: só em ecrã inteiro.
 vista.addEventListener("pointerdown", e => {
-  if (e.target.closest(".jardim-zoom, .jardim-cartao, .jardim-cheio-botao, .lumi-hud")) return;
+  if (!cheio || e.target.closest(".jardim-zoom, .jardim-cartao, .jardim-cheio-botao, .lumi-hud")) return;
   toques.set(e.pointerId, { x: e.clientX, y: e.clientY, tipo: e.pointerType });
   arrastou = false; avisado = false; ini = { cam: { ...cam }, toques: new Map(toques) };
   cancelAnimationFrame(voo);
   if (toques.size >= 2 || e.pointerType !== "touch" || cheio) { vista.classList.add("ja-mexeu", "a-arrastar"); }
   if (toques.size >= 2) enquadrar();
 });
-// 2 dedos na página: o browser não faz scroll nem zoom à página (o jardim é que mexe).
-vista.addEventListener("touchmove", e => { if (e.touches.length >= 2 || cheio) e.preventDefault(); }, { passive: false });
+vista.addEventListener("touchmove", e => { if (cheio) e.preventDefault(); }, { passive: false });
 addEventListener("pointermove", e => {
   if (!toques.has(e.pointerId)) return;
   toques.set(e.pointerId, { x: e.clientX, y: e.clientY, tipo: e.pointerType });
   const r = vista.getBoundingClientRect(), pts = [...toques.values()], ant = [...ini.toques.values()];
   if (pts.length === 1 && ant.length >= 1) {
     const dx = pts[0].x - ant[0].x, dy = pts[0].y - ant[0].y, longe = Math.abs(dx) + Math.abs(dy) > 8;
-    if (e.pointerType === "touch" && !cheio) {          // 1 dedo na página: não mexe no jardim
-      if (longe) { arrastou = true; if (!avisado) { avisado = true; avisar("Usa dois dedos para passear, ou toca em ⛶ Passear no jardim"); } }
-      return;
-    }
     if (longe) arrastou = true;
     if (arrastou) { cam.x = ini.cam.x + dx; cam.y = ini.cam.y + dy; aplicar(); }
   } else if (pts.length >= 2 && ant.length >= 2) {
@@ -230,7 +227,7 @@ function fim(e) {
 }
 addEventListener("pointerup", fim); addEventListener("pointercancel", fim);
 vista.addEventListener("wheel", e => {
-  if (!cheio && !e.ctrlKey && !e.metaKey) { avisar(`Usa ${MAC ? "⌘" : "Ctrl"} + roda para aproximar`); return; }   // a página desce
+  if (!cheio) return;   // na página, a roda desce a página
   e.preventDefault(); const r = vista.getBoundingClientRect();
   zoomEm(Math.exp(-e.deltaY * .0018), e.clientX - r.left, e.clientY - r.top);
 }, { passive: false });
@@ -261,21 +258,23 @@ function sairCheio(daHistoria) {
   cheio = false; document.documentElement.classList.remove("jardim-cheio-aberto"); vista.classList.remove("cheio");
   tema(temaSite);
   requestAnimationFrame(() => { scrollBy(0, 1); requestAnimationFrame(() => scrollBy(0, -1)); });
-  botaoCheio.textContent = "⛶ Passear no jardim"; botaoCheio.setAttribute("aria-label", "Passear no jardim em ecrã inteiro");
-  limites(); cam = centrarEm(c.x, c.y, s); aplicar();
+  if (aberta) fechar();
+  inicio();                        // a pré-visualização mostra sempre o jardim todo
   if (!daHistoria && history.state && history.state.jardim) history.back();
   enquadrado = false;
 }
 botaoCheio.onclick = e => { e.stopPropagation(); cheio ? sairCheio() : entrarCheio(); };
 addEventListener("popstate", () => { if (cheio) sairCheio(true); });
-vista.addEventListener("dblclick", e => { const r = vista.getBoundingClientRect(); zoomEm(1.8, e.clientX - r.left, e.clientY - r.top); });
+vista.addEventListener("dblclick", e => { if (!cheio) return; const r = vista.getBoundingClientRect(); zoomEm(1.8, e.clientX - r.left, e.clientY - r.top); });
 vista.addEventListener("click", e => {
+  if (!cheio) { if (flores.length) entrarCheio(); return; }   // tocar na pré-visualização entra no jardim
   if (jogo && !arrastou && !aberta && !e.target.closest("button")) { jogoFalhou(e); return; }
   if (!arrastou && aberta) fechar();
 });
 document.getElementById("zoom-mais").onclick = e => { e.stopPropagation(); zoomEm(1.6, vista.clientWidth / 2, vista.clientHeight / 2); };
 document.getElementById("zoom-menos").onclick = e => { e.stopPropagation(); zoomEm(1 / 1.6, vista.clientWidth / 2, vista.clientHeight / 2); };
 vista.addEventListener("keydown", e => {
+  if (!cheio) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); if (flores.length) entrarCheio(); } return; }
   const m = { ArrowLeft: [60, 0], ArrowRight: [-60, 0], ArrowUp: [0, 60], ArrowDown: [0, -60] }[e.key];
   if (m) { e.preventDefault(); cam.x += m[0]; cam.y += m[1]; aplicar(); }
   if (e.key === "+" || e.key === "=") zoomEm(1.4, vista.clientWidth / 2, vista.clientHeight / 2);
@@ -339,7 +338,7 @@ function posicionarCartao() {
 const procura = document.getElementById("jardim-procura"), msg = document.getElementById("jardim-procura-msg");
 const resultados = document.getElementById("jardim-resultados");
 function irPara(f) {
-  if (vista.clientWidth < 600 || matchMedia("(pointer: coarse)").matches) entrarCheio(false, true); else enquadrar();
+  entrarCheio(false, true);        // vai para o ecrã inteiro (sem começar o jogo)
   // A lista fica aberta, para poder escolher outra.
   resultados.querySelectorAll('button').forEach(b => b.classList.toggle('ativo', b.querySelector('span').textContent === f.a.nome));
   flores.forEach(g => { g.achada = g === f; g.el.classList.toggle("achada", g === f); });
