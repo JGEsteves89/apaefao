@@ -230,7 +230,7 @@ async function abrir(n, semHistoria) {
   ecra.hidden = false;
   document.documentElement.classList.add("adv-aberto");
   if (!semHistoria) history.pushState({ advento: n }, "");
-  atual = { dia: n, zonas: [], svg: null, pilha: [], festejado: false };
+  atual = { dia: n, zonas: [], svg: null, pilha: [], festejado: false, versao: 0 }; foto = null;
   let texto;
   try { texto = await desenho(n); }
   catch (e) {
@@ -250,10 +250,6 @@ async function abrir(n, semHistoria) {
   atual.pilha = passos.map(x => x[0] === "t" ? (tracos[k] ? { t: tracos[k++], z: x[1] != null ? m.zonas[x[1]] : undefined, antes: x[2] } : null) : (m.zonas[x[0]] ? { z: m.zonas[x[0]], antes: x[1] } : null)).filter(Boolean);
   m.svg.setAttribute("width", 600); m.svg.setAttribute("height", 800);   // tamanho próprio: o desenho cabe sem bordas a mais
   m.svg.setAttribute("role", "img"); m.svg.setAttribute("aria-label", m.info.titulo || "Desenho do dia " + n);
-  // Lupa: tudo o que se vê no desenho fica num <g>; a lupa mostra-o com <use> (vê logo a tinta nova).
-  const tudo = document.createElementNS(NS, "g"); tudo.id = "adv-tudo-" + (++nClip);
-  while (m.svg.firstChild) tudo.appendChild(m.svg.firstChild);
-  m.svg.appendChild(tudo); atual.tudo = tudo.id;
   folha.appendChild(m.svg);
   m.svg.addEventListener("pointerdown", e => ferramenta === "pincel" ? comecarTraco(e) : baldeToque(e));
   m.svg.addEventListener("contextmenu", e => e.preventDefault());
@@ -263,26 +259,73 @@ async function abrir(n, semHistoria) {
 // Dedo em cima do desenho mais de 300 ms → aparece uma lupa por cima do dedo, com uma cruz no ponto exato.
 // Balde: toque rápido pinta logo; dedo carregado → a lupa aparece, pode-se deslizar para acertar, e pinta ao levantar.
 // Pincel: pinta como sempre; ao fim de 300 ms a lupa aparece e segue o dedo. Desaparece ao levantar o dedo.
-const LUPA_D = 120, LUPA_ZOOM = 2.5, LUPA_ESPERA = 300;
-const lupa = document.createElement("div");
+// Rápida: no início do toque tira-se uma "fotografia" do desenho (2 imagens: cores e linhas pretas);
+// a lupa só corta e aumenta essa imagem num <canvas>, uma vez por ecrã (requestAnimationFrame).
+const LUPA_D = 120, LUPA_ZOOM = 2.5, LUPA_ESPERA = 300, FOTO = 3;   // fotografia a 1800×2400
+const lupa = document.createElement("canvas"), dpr = Math.min(3, window.devicePixelRatio || 1);
 lupa.className = "adv-lupa"; lupa.hidden = true; lupa.setAttribute("aria-hidden", "true");
-lupa.innerHTML = `<svg xmlns="${NS}" width="${LUPA_D}" height="${LUPA_D}"><rect width="600" height="800" fill="#fff"/><use/></svg>`;
+lupa.width = lupa.height = Math.round(LUPA_D * dpr); lupa.style.width = lupa.style.height = LUPA_D + "px";
 document.body.appendChild(lupa);
-function mostrarLupa(x, y) {
-  if (!atual || !atual.svg) return;
-  const caixa = atual.svg.getBoundingClientRect(), q = pontoSVG({ clientX: x, clientY: y });
-  if (!caixa.width || !q) return;
-  const lado = LUPA_D / (caixa.width / 600) / LUPA_ZOOM, s = lupa.firstChild;
-  s.setAttribute("viewBox", `${q[0] - lado / 2} ${q[1] - lado / 2} ${lado} ${lado}`);
-  const u = s.querySelector("use");
-  if (u.getAttribute("href") !== "#" + atual.tudo) u.setAttribute("href", "#" + atual.tudo);
-  // por cima do dedo; se não houver espaço em cima, fica por baixo
-  let cy = y - 110; if (cy - LUPA_D / 2 < 4) cy = y + 110;
-  const cx = Math.min(innerWidth - LUPA_D / 2 - 4, Math.max(LUPA_D / 2 + 4, x));
-  lupa.style.left = (cx - LUPA_D / 2) + "px"; lupa.style.top = (cy - LUPA_D / 2) + "px";
-  lupa.hidden = false;
+const cl = lupa.getContext("2d");
+let foto = null, geo = null, alvoLupa = null, quadroLupa = 0;
+function imagemSVG(svg, soLinhas) {
+  const c = svg.cloneNode(true), l = c.querySelector("#linhas");
+  c.setAttribute("width", 600 * FOTO); c.setAttribute("height", 800 * FOTO);
+  if (soLinhas) [...c.children].forEach(k => { if (k !== l && k.tagName.toLowerCase() !== "defs") k.remove(); });
+  else if (l) l.remove();
+  const url = URL.createObjectURL(new Blob([new XMLSerializer().serializeToString(c)], { type: "image/svg+xml" }));
+  const img = new Image();
+  img.onload = () => { URL.revokeObjectURL(url); img.pronta = true; if (!lupa.hidden && !quadroLupa) quadroLupa = requestAnimationFrame(desenharLupa); };
+  img.src = url;
+  return img;
 }
-function esconderLupa() { lupa.hidden = true; }
+// No início de cada toque: medidas do desenho no ecrã + fotografia (só se o desenho mudou).
+function prepararLupa() {
+  const m = atual.svg.getScreenCTM(), caixa = atual.svg.getBoundingClientRect();
+  geo = m && caixa.width ? { inv: m.inverse(), escala: caixa.width / 600 } : null;
+  if (!foto || foto.v !== atual.versao) {
+    const v = atual.versao, svg = atual.svg;
+    foto = { v };
+    setTimeout(() => { if (foto && foto.v === v && atual && atual.svg === svg) { foto.base = imagemSVG(svg, false); foto.linhas = imagemSVG(svg, true); } }, 0);
+  }
+}
+function mostrarLupa(x, y, traco) {
+  if (!geo) return;
+  alvoLupa = { x, y, traco };
+  let cy = y - 110; if (cy - LUPA_D / 2 < 4) cy = y + 110;   // por cima do dedo; sem espaço em cima, fica por baixo
+  const cx = Math.min(innerWidth - LUPA_D / 2 - 4, Math.max(LUPA_D / 2 + 4, x));
+  lupa.style.transform = `translate3d(${cx - LUPA_D / 2}px, ${cy - LUPA_D / 2}px, 0)`;
+  lupa.hidden = false;
+  if (!quadroLupa) quadroLupa = requestAnimationFrame(desenharLupa);
+}
+function desenharLupa() {
+  quadroLupa = 0;
+  const a = alvoLupa;
+  if (!a || lupa.hidden || !geo) return;
+  const q = new DOMPoint(a.x, a.y).matrixTransform(geo.inv), lado = LUPA_D / geo.escala / LUPA_ZOOM, k = lupa.width / lado;
+  const sx = q.x - lado / 2, sy = q.y - lado / 2;
+  cl.setTransform(1, 0, 0, 1, 0, 0); cl.fillStyle = "#fff"; cl.fillRect(0, 0, lupa.width, lupa.height);
+  cl.setTransform(k, 0, 0, k, -sx * k, -sy * k);   // a partir daqui, desenha-se em unidades do desenho (600×800)
+  const pedaco = img => { if (img && img.pronta) cl.drawImage(img, sx * FOTO, sy * FOTO, lado * FOTO, lado * FOTO, sx, sy, lado, lado); };
+  pedaco(foto && foto.base);
+  const t = a.traco;
+  if (t && t.pontos.length) {   // o traço que se está a fazer (a fotografia não o tem todo)
+    cl.strokeStyle = t.dataset.cor; cl.lineWidth = Number(t.dataset.w); cl.lineCap = cl.lineJoin = "round";
+    cl.beginPath(); t.pontos.forEach(([px, py], i) => i ? cl.lineTo(px, py) : cl.moveTo(px, py));
+    if (t.pontos.length === 1) cl.lineTo(t.pontos[0][0] + 0.01, t.pontos[0][1]);
+    cl.stroke();
+  }
+  pedaco(foto && foto.linhas);
+  // cruz no centro (preta com contorno branco)
+  cl.setTransform(1, 0, 0, 1, 0, 0);
+  const c = lupa.width / 2, r = 9 * dpr;
+  cl.lineCap = "butt";
+  [["#fff", 4.5 * dpr], ["#1f1a14", 2 * dpr]].forEach(([cor, w]) => {
+    cl.strokeStyle = cor; cl.lineWidth = w; cl.beginPath();
+    cl.moveTo(c - r, c); cl.lineTo(c + r, c); cl.moveTo(c, c - r); cl.lineTo(c, c + r); cl.stroke();
+  });
+}
+function esconderLupa() { lupa.hidden = true; alvoLupa = null; }
 // Balde: espera para saber se é toque rápido ou dedo carregado.
 function baldeToque(e) {
   if (!atual || !atual.svg) return;
@@ -290,6 +333,7 @@ function baldeToque(e) {
   const svg = atual.svg, x0 = e.clientX, y0 = e.clientY;
   let x = x0, y = y0, comLupa = false;
   try { svg.setPointerCapture(e.pointerId); } catch (z) {}
+  prepararLupa();
   const abrirLupa = () => { if (!comLupa) { comLupa = true; mostrarLupa(x, y); } };
   const espera = setTimeout(abrirLupa, LUPA_ESPERA);
   const mexe = ev => {
@@ -314,6 +358,7 @@ function cores() { return atual.zonas.map(z => z.getAttribute("fill") || "#fff")
 // As cores e os passos do Desfazer ficam no telemóvel: ao reabrir o desenho, o Desfazer continua a funcionar.
 const CHAVE_PASSOS = "advento-passos-v2";
 function guardarCores() {
+  atual.versao++;   // a lupa sabe que tem de tirar outra "fotografia" do desenho
   const t = pinturas(); t[atual.dia] = cores(); gravar(CHAVE, t);
   const tr = ler(CHAVE_TRACOS, {}), txt = tracosTexto(atual.camada);
   if (txt) tr[atual.dia] = txt; else delete tr[atual.dia];
@@ -346,17 +391,19 @@ function comecarTraco(e) {
   if (!inicio) return;
   const traco = novoTraco(atual.camada, corEscolhida, [inicio], tamanho);
   try { svg.setPointerCapture(e.pointerId); } catch (x) {}
+  prepararLupa();
+  const ponto = c => { if (!geo) return pontoSVG(c); const p = new DOMPoint(c.clientX, c.clientY).matrixTransform(geo.inv); return [Math.round(p.x), Math.round(p.y)]; };
   let comLupa = false, ultimo = [e.clientX, e.clientY];
-  const espera = setTimeout(() => { comLupa = true; mostrarLupa(ultimo[0], ultimo[1]); }, LUPA_ESPERA);
+  const espera = setTimeout(() => { comLupa = true; mostrarLupa(ultimo[0], ultimo[1], traco); }, LUPA_ESPERA);
   const mexe = ev => {
     if (ev.pointerId !== e.pointerId) return;
     ultimo = [ev.clientX, ev.clientY];
-    if (comLupa) mostrarLupa(ev.clientX, ev.clientY);
     (ev.getCoalescedEvents ? ev.getCoalescedEvents() : [ev]).forEach(c => {
-      const q = pontoSVG(c), u = traco.pontos[traco.pontos.length - 1];
+      const q = ponto(c), u = traco.pontos[traco.pontos.length - 1];
       if (q && Math.hypot(q[0] - u[0], q[1] - u[1]) >= 3) traco.pontos.push(q);
     });
     traco.setAttribute("d", caminho(traco.pontos));
+    if (comLupa) mostrarLupa(ev.clientX, ev.clientY, traco);
   };
   const fim = ev => {
     if (ev.pointerId !== e.pointerId) return;
