@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 800">
+  <g id="zonas">
+    <rect id="z1" class="zona" x="12" y="12" width="576" height="776" rx="24" fill="#fff"/>
+    <path id="z2" class="zona" d="M12 690 H588 V764 Q588 788 564 788 H36 Q12 788 12 764 Z" fill="#fff"/>
+    <rect id="z3" class="zona" x="110" y="400" width="380" height="290" fill="#fff"/>
+    <rect id="z4" class="zona" x="80" y="320" width="440" height="80" rx="10" fill="#fff"/>
+    <rect id="z5" class="zona" x="265" y="400" width="70" height="290" fill="#fff"/>
+    <rect id="z6" class="zona" x="265" y="320" width="70" height="80" fill="#fff"/>
+    <path id="z7" class="zona" d="M272 278 C200 160 100 220 140 272 C165 304 236 312 272 302 Z" fill="#fff"/>
+    <path id="z8" class="zona" d="M328 278 C400 160 500 220 460 272 C435 304 364 312 328 302 Z" fill="#fff"/>
+    <circle id="z9" class="zona" cx="300" cy="290" r="30" fill="#fff"/>
+    <path id="z10" class="zona" d="M370 450 L430 450 L452 490 L430 530 L370 530 Z" fill="#fff"/>
+    <circle id="z11" class="zona" cx="180" cy="480" r="36" fill="#fff"/>
+    <circle id="z12" class="zona" cx="200" cy="612" r="36" fill="#fff"/>
+    <circle id="z13" class="zona" cx="410" cy="620" r="36" fill="#fff"/>
+  </g>
+  <g id="linhas" pointer-events="none" stroke="#1f1a14" stroke-width="9" stroke-linejoin="round" stroke-linecap="round">
+    <rect x="12" y="12" width="576" height="776" rx="24" fill="none"/>
+    <path d="M12 690 H588 V764 Q588 788 564 788 H36 Q12 788 12 764 Z" fill="none"/>
+    <rect x="110" y="400" width="380" height="290" fill="none"/>
+    <rect x="80" y="320" width="440" height="80" rx="10" fill="none"/>
+    <rect x="265" y="400" width="70" height="290" fill="none"/>
+    <rect x="265" y="320" width="70" height="80" fill="none"/>
+    <path d="M272 278 C200 160 100 220 140 272 C165 304 236 312 272 302 Z" fill="none"/>
+    <path d="M328 278 C400 160 500 220 460 272 C435 304 364 312 328 302 Z" fill="none"/>
+    <circle cx="300" cy="290" r="30" fill="none"/>
+    <path d="M370 450 L430 450 L452 490 L430 530 L370 530 Z" fill="none"/>
+    <circle cx="180" cy="480" r="36" fill="none"/>
+    <circle cx="200" cy="612" r="36" fill="none"/>
+    <circle cx="410" cy="620" r="36" fill="none"/>
+<circle cx="430" cy="490" r="8" fill="#1f1a14" stroke="none"/>
+  </g>
+  <metadata>{"titulo":"Um presente para ti","idade":"facil"}</metadata>
+</svg>

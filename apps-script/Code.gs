@@ -15,6 +15,8 @@ function doPost(e) {
   const dados = JSON.parse(e.postData.contents);
   if (dados.evento === "ementa_voto") return guardarVotoEmenta(dados);
   if (dados.evento === "recorde") return guardarRecorde(dados);
+  if (dados.evento === "advento_pintura") return guardarPinturaAdvento(dados);
+  if (dados.evento === "advento_voto") return guardarVotoAdvento(dados);
   limparCache();
   if (dados.evento === "votacao") return guardarVoto(dados);
   if (dados.evento === "responsavel") return guardarResponsavel(dados);
@@ -223,6 +225,7 @@ function doGet(e) {
   if (e && e.parameter && e.parameter.acao === "avisos") return json(avisos());
   if (e && e.parameter && e.parameter.acao === "estatisticas") return json(estatisticas());
   if (e && e.parameter && e.parameter.acao === "ementa_votos") return json(votosEmenta(e.parameter.semana));
+  if (e && e.parameter && e.parameter.acao === "advento") return json(advento());
   return json({ ok: true });
 }
 
@@ -878,7 +881,7 @@ function corrigirFases() {
 
 // Cache de 6 horas: limpa-se sempre que alguém edita a Sheet (onEdit) ou o site envia um formulário (doPost).
 function limparCache() {
-  CacheService.getScriptCache().removeAll(["site", "metas", "apoiantes", "avisos"]);
+  CacheService.getScriptCache().removeAll(["site", "metas", "apoiantes", "avisos", "advento"]);
 }
 function onEdit(e) { limparCache(); }
 
@@ -1207,7 +1210,7 @@ const GC_NOMES = { "/": "Início", "/apoiantes.html": "Apoiantes", "/agenda.html
   "/noticias.html": "Notícias", "/documentos.html": "Documentos", "/socios.html": "Ser sócio", "/ajudar.html": "Quero oferecer algo",
   "/sugestoes.html": "Sugestões", "/votar.html": "Votação das atividades", "/links.html": "Links úteis", "/recreio.html": "O novo recreio",
   "/metas.html": "Metas", "/ementa.html": "Ementa", "/calendario.html": "Calendário", "/halloween.html": "Halloween",
-  "/jardim.html": "Jardim dos apoiantes", "/estatisticas.html": "Estatísticas" };
+  "/jardim.html": "Jardim dos apoiantes", "/estatisticas.html": "Estatísticas", "/advento.html": "Advento da Lumi" };
 
 function estatisticas() {
   const cache = CacheService.getScriptCache();
@@ -1266,4 +1269,105 @@ function estatisticas() {
 function testarEstatisticas() {
   CacheService.getScriptCache().remove("estatisticas");
   Logger.log(JSON.stringify(estatisticas()).slice(0, 2000));
+}
+
+
+// ===== O Advento da Lumi (advento.html, dezembro 2026) =====
+// Aba "advento_pinturas": uma linha por desenho enviado para o mural. Só aparece no site com "sim" em "publicar".
+// Aba "advento_votos": uma linha por coração (uma por pintura e por telemóvel).
+// O site guarda só as cores de cada zona do desenho (o desenho em si está no site: img/advento/desenhos/dia-NN.svg).
+const ADVENTO_ABAS = {
+  advento_pinturas: { cols: ["data", "id", "dia", "nome", "idade", "cores", "publicar", "voterId"], notas: {
+    data: "Quando foi enviado", id: "Código curto da pintura (não mudar)", dia: "Dia do Advento (1 a 24)",
+    nome: "Primeiro nome da criança", idade: "Idade (opcional)", cores: "Cores das zonas do desenho (não mudar)",
+    publicar: "Escrever \"sim\" para aparecer no mural do site", voterId: "Telemóvel que enviou (para o limite de 3 por dia)" } },
+  advento_votos: { cols: ["data", "id_pintura", "voterId"], notas: {
+    data: "Quando foi dado o coração", id_pintura: "id da pintura (aba advento_pinturas)", voterId: "Telemóvel que deu o coração" } },
+};
+function abaAdvento(nome) {
+  const livro = SpreadsheetApp.getActiveSpreadsheet(), def = ADVENTO_ABAS[nome];
+  let aba = livro.getSheetByName(nome);
+  if (!aba) {
+    aba = livro.insertSheet(nome);
+    aba.getRange(1, 1, 1, def.cols.length).setValues([def.cols]).setFontWeight("bold").setBackground("#ebce58");
+    aba.getRange(1, 1, 1, def.cols.length).setNotes([def.cols.map(c => def.notas[c] || "")]);
+    aba.setFrozenRows(1);
+    aba.getRange("A2:A").setNumberFormat("dd/mm/yyyy hh:mm");
+  }
+  return aba;
+}
+
+function guardarPinturaAdvento(d) {
+  const nome = String(d.nome || "").trim(), dia = Math.floor(Number(d.dia));
+  const simples = nome.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+  const idade = d.idade === "" || d.idade == null ? "" : Math.floor(Number(d.idade));
+  const cores = Array.isArray(d.cores) ? d.cores.map(String) : [];
+  const voter = limpar(d.voterId, 60);
+  if (d.adulto !== true || !(dia >= 1 && dia <= 24)) return json({ ok: false, erro: "dados" });
+  if (!/^[A-Za-zÀ-ÖØ-öø-ÿ]{2,12}$/.test(nome) || PALAVROES.some(p => simples.indexOf(p) >= 0)) return json({ ok: false, erro: "nome" });
+  if (idade !== "" && !(idade >= 2 && idade <= 12)) return json({ ok: false, erro: "idade" });
+  if (!cores.length || cores.length > 60 || !cores.every(c => /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(c))) return json({ ok: false, erro: "cores" });
+
+  const lock = LockService.getScriptLock();
+  lock.waitLock(10000);
+  try {
+    const aba = abaAdvento("advento_pinturas");
+    // Limite: no máximo 3 pinturas por telemóvel por dia.
+    if (voter && aba.getLastRow() > 1) {
+      const hoje = Utilities.formatDate(new Date(), "Europe/Lisbon", "yyyy-MM-dd");
+      const n = aba.getRange(2, 1, aba.getLastRow() - 1, 8).getValues()
+        .filter(l => l[7] === voter && l[0] instanceof Date && Utilities.formatDate(l[0], "Europe/Lisbon", "yyyy-MM-dd") === hoje).length;
+      if (n >= 3) return json({ ok: false, erro: "limite" });
+    }
+    aba.appendRow([new Date(), Utilities.getUuid().slice(0, 8), dia, nome, idade, JSON.stringify(cores), "", voter]);
+  } finally {
+    lock.releaseLock();
+  }
+  CacheService.getScriptCache().remove("advento");
+  return json({ ok: true });
+}
+
+function guardarVotoAdvento(d) {
+  const id = limpar(d.id, 20), voter = limpar(d.voterId, 60);
+  if (!/^[0-9a-f-]{4,20}$/i.test(id) || !voter) return json({ ok: false, erro: "dados" });
+  const lock = LockService.getScriptLock();
+  lock.waitLock(10000);
+  try {
+    const aba = abaAdvento("advento_votos");
+    const ja = aba.getLastRow() > 1 && aba.getRange(2, 2, aba.getLastRow() - 1, 2).getValues().some(l => String(l[0]) === id && String(l[1]) === voter);
+    if (!ja) aba.appendRow([new Date(), id, voter]);
+  } finally {
+    lock.releaseLock();
+  }
+  CacheService.getScriptCache().remove("advento");
+  return json({ ok: true });
+}
+
+// Mural: só as pinturas com "publicar" = sim. coracoes = total; semana = corações desta semana (segunda a domingo, Lisboa).
+function advento() {
+  const cache = CacheService.getScriptCache();
+  const guardado = cache.get("advento");
+  if (guardado) return JSON.parse(guardado);
+  const livro = SpreadsheetApp.getActiveSpreadsheet();
+  const abaP = livro.getSheetByName("advento_pinturas"), abaV = livro.getSheetByName("advento_votos");
+  const pinturas = [];
+  if (abaP && abaP.getLastRow() > 1) {
+    const total = {}, semana = {};
+    const agora = new Date(), dow = (Number(Utilities.formatDate(agora, "Europe/Lisbon", "u")) + 6) % 7;   // 0 = segunda
+    const inicio = Utilities.formatDate(new Date(agora.getTime() - dow * 864e5), "Europe/Lisbon", "yyyy-MM-dd");
+    if (abaV && abaV.getLastRow() > 1) abaV.getRange(2, 1, abaV.getLastRow() - 1, 2).getValues().forEach(([data, id]) => {
+      id = String(id); total[id] = (total[id] || 0) + 1;
+      if (data instanceof Date && Utilities.formatDate(data, "Europe/Lisbon", "yyyy-MM-dd") >= inicio) semana[id] = (semana[id] || 0) + 1;
+    });
+    abaP.getRange(2, 1, abaP.getLastRow() - 1, 7).getValues().forEach(l => {
+      if (!sim(l[6])) return;
+      let cores = [];
+      try { cores = JSON.parse(l[5]); } catch (e) {}
+      const id = String(l[1]);
+      pinturas.push({ id, dia: Number(l[2]), nome: limpar(l[3], 12), idade: l[4] === "" ? "" : Number(l[4]), cores, coracoes: total[id] || 0, semana: semana[id] || 0 });
+    });
+  }
+  const res = { pinturas };
+  cache.put("advento", JSON.stringify(res), 300);
+  return res;
 }

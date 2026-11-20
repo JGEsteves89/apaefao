@@ -1,0 +1,516 @@
+// O Advento da Lumi (advento.html): 24 números sobre o cenário; cada dia abre um desenho para pintar com o dedo.
+// Pintar: tocar numa zona do SVG enche-a com a cor escolhida. As cores ficam no telemóvel (localStorage "advento-v1").
+// Depois: guardar (PNG), imprimir (pintado ou por pintar) ou enviar para o mural (Sheet, aprovado antes de aparecer).
+// Testes: ?dia=7 (simula 7 de dezembro; ?dia=0 antes, ?dia=30 depois) · ?editar=1 (pôr os números) · ?mural-teste (6 exemplos).
+// SPEC: notas/projetos/website/advento/SPEC_advento.md
+
+(() => {
+const N_DIAS = 24;
+const P = new URLSearchParams(location.search);
+const $ = id => document.getElementById(id);
+const ler = (k, def) => { try { const v = JSON.parse(localStorage.getItem(k)); return v == null ? def : v; } catch (e) { return def; } };
+const gravar = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
+const MESES = ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"];
+
+// ---------- Datas (Lisboa) ----------
+// fase: "antes" (até 30/11) · "durante" (1–24/12) · "depois" (25/12–6/1: tudo aberto) · "fim" (até ao próximo Natal)
+function quando() {
+  const d = P.get("dia");
+  if (d !== null && /^\d+$/.test(d)) {
+    const n = Number(d);
+    if (n === 0) return { fase: "antes", dia: 0, texto: "30 de novembro" };
+    if (n <= N_DIAS) return { fase: "durante", dia: n, texto: n + " de dezembro" };
+    return { fase: "depois", dia: N_DIAS, texto: Math.min(n, 31) + " de dezembro" };
+  }
+  const [, m, dd] = hojeISO().split("-").map(Number);
+  const texto = dd + " de " + MESES[m - 1];
+  if (m === 12 && dd <= N_DIAS) return { fase: "durante", dia: dd, texto };
+  if ((m === 12) || (m === 1 && dd <= 6)) return { fase: "depois", dia: N_DIAS, texto };
+  if (m === 11) return { fase: "antes", dia: 0, texto };
+  return { fase: "fim", dia: 0, texto };
+}
+const Q = quando();
+const aberto = n => (Q.fase === "durante" && n <= Q.dia) || Q.fase === "depois";
+const diasDoMural = Q.fase === "durante" ? Q.dia : Q.fase === "antes" ? 0 : N_DIAS;
+
+// ---------- Cores guardadas ----------
+const CHAVE = "advento-v1";
+const pinturas = () => ler(CHAVE, {});
+const pintou = n => (pinturas()[n] || []).some(c => c && c.toLowerCase() !== "#fff" && c.toLowerCase() !== "#ffffff");
+
+// O mesmo "votante" da ementa (um id por telemóvel). Se não existir, cria.
+function votante() {
+  let id = null;
+  try { id = localStorage.getItem("ementa-votante"); } catch (e) {}
+  if (!id) { id = Math.random().toString(36).slice(2) + Date.now().toString(36); try { localStorage.setItem("ementa-votante", id); } catch (e) {} }
+  return id;
+}
+
+// ---------- Desenhos (SVG) ----------
+const desenhos = {};
+const ficheiro = n => "img/advento/desenhos/dia-" + String(n).padStart(2, "0") + ".svg";
+function desenho(n) {
+  if (!desenhos[n]) desenhos[n] = fetch(ficheiro(n)).then(r => { if (!r.ok) throw new Error(r.status); return r.text(); });
+  return desenhos[n];
+}
+// Cria o <svg> do dia com as cores dadas. Zonas por ordem z1, z2… (é o que se guarda).
+function montar(texto, cores) {
+  const doc = new DOMParser().parseFromString(texto, "image/svg+xml");
+  const svg = document.importNode(doc.documentElement, true);
+  const zonas = [...svg.querySelectorAll(".zona")].sort((a, b) => Number(a.id.slice(1)) - Number(b.id.slice(1)));
+  zonas.forEach((z, i) => { if (cores && cores[i]) z.setAttribute("fill", cores[i]); });
+  const meta = svg.querySelector("metadata");
+  let info = {};
+  try { info = JSON.parse(meta ? meta.textContent : "{}"); } catch (e) {}
+  if (meta) meta.remove();
+  svg.removeAttribute("width"); svg.removeAttribute("height");
+  return { svg, zonas, info };
+}
+
+// ---------- Calendário ----------
+const cena = $("adv-cena"), numeros = $("adv-numeros"), balao = $("adv-balao");
+const pc = matchMedia("(min-width: 768px)");
+let posicoes = null;
+
+function provisorias() {   // se o JSON falhar: grelha espalhada
+  const l = [];
+  for (let i = 0; i < N_DIAS; i++) l.push({ dia: i + 1, x: 10 + (i % 6) * 16 + (Math.floor(i / 6) % 2) * 8, y: 14 + Math.floor(i / 6) * 22 });
+  return { pc: l, telemovel: l };
+}
+
+function desenharNumeros() {
+  if (EDITAR) return;
+  const lista = (posicoes && posicoes[pc.matches ? "pc" : "telemovel"]) || [];
+  numeros.innerHTML = "";
+  lista.forEach(p => {
+    const n = p.dia, b = document.createElement("button");
+    b.type = "button"; b.className = "adv-num"; b.textContent = n; b.dataset.dia = n;
+    b.style.left = p.x + "%"; b.style.top = p.y + "%";
+    if (Q.fase === "durante" && n === Q.dia) { b.classList.add("hoje"); b.setAttribute("aria-label", "Dia " + n + ", hoje"); }
+    else if (aberto(n)) {
+      b.classList.add("passado"); b.setAttribute("aria-label", "Dia " + n + (pintou(n) ? ", já pintado" : ""));
+      if (pintou(n)) b.insertAdjacentHTML("beforeend", '<span class="feito" aria-hidden="true">✓</span>');
+    } else {
+      b.classList.add("futuro"); b.setAttribute("aria-label", "Dia " + n + ", ainda fechado");
+      b.insertAdjacentHTML("beforeend", '<span class="cadeado" aria-hidden="true">🔒</span>');
+    }
+    b.addEventListener("click", () => aberto(n) ? abrir(n) : aindaNao(b, n));
+    numeros.appendChild(b);
+  });
+}
+
+let balaoT = 0;
+function aindaNao(b, n) {
+  b.classList.remove("abana"); void b.offsetWidth; b.classList.add("abana");
+  const txt = Q.fase === "antes" ? "Ainda não! O Advento começa a 1 de dezembro." : Q.fase === "fim" ? "Até ao próximo Natal!" : "Ainda não! Volta no dia " + n + ".";
+  balao.querySelector("span").textContent = txt;
+  // O balão fica sempre todo dentro do cenário (largura fixa, centrado no número quando cabe).
+  const w = cena.clientWidth, meio = Math.min(w - 8 - 115, Math.max(8 + 115, parseFloat(b.style.left) / 100 * w));
+  balao.style.left = meio + "px"; balao.style.top = b.style.top;
+  if (parseFloat(b.style.top) < 22) balao.style.transform = "translate(-50%, 36px)"; else balao.style.transform = "";
+  balao.hidden = false;
+  clearTimeout(balaoT); balaoT = setTimeout(() => { balao.hidden = true; }, 2600);
+}
+
+function cabecalho() {
+  $("adv-data").textContent = Q.texto;
+  const estado = $("adv-estado"), botao = $("adv-abrir-hoje");
+  if (Q.fase === "antes") { estado.textContent = "O Advento começa a 1 de dezembro!"; estado.hidden = false; }
+  if (Q.fase === "fim") { estado.textContent = "Até ao próximo Natal! O mural continua aqui em baixo."; estado.hidden = false; }
+  if (Q.fase === "durante") { botao.textContent = "Abrir o dia " + Q.dia + " →"; botao.hidden = false; botao.onclick = () => abrir(Q.dia); }
+  if (Q.fase === "depois") { estado.textContent = "Os 24 desenhos estão abertos. Escolhe um!"; estado.hidden = false; }
+}
+
+// ---------- Ecrã de pintar ----------
+const CORES = [
+  ["#e53935", "vermelho"], ["#2e7d32", "verde-escuro"], ["#8bc34a", "verde-claro"], ["#fdd835", "amarelo"], ["#fb8c00", "laranja"],
+  ["#1e5bd8", "azul"], ["#64b5f6", "azul-claro"], ["#8e44ad", "roxo"], ["#f48fb1", "rosa"], ["#8d5a3b", "castanho"],
+  ["#f6c9a0", "pele"], ["#9e9e9e", "cinzento"], ["#ffffff", "branco"], ["#d4a017", "dourado"],
+];
+const ecra = $("adv-pintar"), folha = $("adv-folha"), paleta = $("adv-paleta");
+let atual = null;   // { dia, zonas, svg, cores, pilha }
+let corEscolhida = ler("advento-cor", CORES[0][0]);
+let som = ler("advento-som", true);
+
+CORES.forEach(([c, nome]) => {
+  const b = document.createElement("button");
+  b.type = "button"; b.className = "adv-cor"; b.setAttribute("role", "radio"); b.setAttribute("aria-label", nome); b.dataset.cor = c;
+  b.innerHTML = `<i style="background:${c}${c === "#d4a017" ? ";background-image:linear-gradient(135deg,#f7e08a,#d4a017 55%,#9c7410)" : ""}"></i>`;
+  b.addEventListener("click", () => escolherCor(c));
+  paleta.appendChild(b);
+});
+function escolherCor(c) {
+  corEscolhida = c; gravar("advento-cor", c);
+  paleta.querySelectorAll(".adv-cor").forEach(b => {
+    const sim = b.dataset.cor === c;
+    b.setAttribute("aria-checked", sim);
+    b.querySelector("i").textContent = sim ? "✓" : "";
+    b.querySelector("i").style.color = ["#ffffff", "#fdd835", "#f6c9a0", "#8bc34a", "#64b5f6", "#f48fb1"].includes(b.dataset.cor) ? "#1f1a14" : "#fff";
+  });
+}
+escolherCor(corEscolhida);
+
+// Som curto gerado (sem ficheiros). Cada cor tem a sua nota.
+let audio = null;
+function tocar(i = 0, festa = false) {
+  if (!som) return;
+  try {
+    audio = audio || new (window.AudioContext || window.webkitAudioContext)();
+    const notas = festa ? [523, 659, 784, 1047] : [392 + i * 22];
+    notas.forEach((f, k) => {
+      const o = audio.createOscillator(), g = audio.createGain(), t = audio.currentTime + k * .09;
+      o.type = "triangle"; o.frequency.value = f;
+      g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(.18, t + .01); g.gain.exponentialRampToValueAtTime(.0001, t + .22);
+      o.connect(g).connect(audio.destination); o.start(t); o.stop(t + .25);
+    });
+  } catch (e) {}
+}
+function mostrarSom() { $("adv-som").textContent = som ? "🔊" : "🔇"; $("adv-som").setAttribute("aria-label", som ? "Som ligado" : "Som desligado"); }
+$("adv-som").addEventListener("click", () => { som = !som; gravar("advento-som", som); mostrarSom(); });
+mostrarSom();
+
+async function abrir(n, semHistoria) {
+  fecharFolhas();
+  $("adv-dia").textContent = "Dia " + n;
+  folha.innerHTML = "";
+  ecra.hidden = false;
+  document.documentElement.classList.add("adv-aberto");
+  if (!semHistoria) history.pushState({ advento: n }, "");
+  atual = { dia: n, zonas: [], svg: null, pilha: [], festejado: false };
+  let texto;
+  try { texto = await desenho(n); }
+  catch (e) {
+    folha.innerHTML = '<div class="adv-a-chegar"><img src="img/mascote/pensa.webp" alt="" width="110" height="136">Desenho a chegar 🎨<br><small>Volta mais logo!</small></div>';
+    paleta.parentElement.hidden = true;
+    return;
+  }
+  paleta.parentElement.hidden = false;
+  const guardadas = pinturas()[n] || [];
+  const m = montar(texto, guardadas);
+  atual.svg = m.svg; atual.zonas = m.zonas; atual.info = m.info;
+  atual.festejado = completo();
+  m.svg.setAttribute("width", 600); m.svg.setAttribute("height", 800);   // tamanho próprio: o desenho cabe sem bordas a mais
+  m.svg.setAttribute("role", "img"); m.svg.setAttribute("aria-label", m.info.titulo || "Desenho do dia " + n);
+  folha.appendChild(m.svg);
+  m.svg.addEventListener("pointerdown", pintarToque);
+}
+
+function cores() { return atual.zonas.map(z => z.getAttribute("fill") || "#fff"); }
+function guardarCores() { const t = pinturas(); t[atual.dia] = cores(); gravar(CHAVE, t); }
+const branco = c => !c || /^#f{3}(f{3})?$/i.test(c);
+const completo = () => atual.zonas.length > 0 && atual.zonas.every(z => !branco(z.getAttribute("fill")));
+
+function pintarToque(e) {
+  const z = e.target.closest(".zona");
+  if (!z) return;
+  e.preventDefault();
+  const antes = z.getAttribute("fill") || "#fff";
+  if (antes.toLowerCase() === corEscolhida.toLowerCase()) return;
+  atual.pilha.push({ z, antes });
+  z.setAttribute("fill", corEscolhida);
+  if (MOVIMENTO && z.animate) z.animate([{ transform: "scale(1)" }, { transform: "scale(1.04)" }, { transform: "scale(1)" }], { duration: 150 });
+  tocar(CORES.findIndex(c => c[0] === corEscolhida));
+  guardarCores();
+  if (!atual.festejado && completo()) { atual.festejado = true; setTimeout(festa, 250); }
+}
+
+function desfazer() {
+  if (!atual || !atual.pilha.length) return;
+  const { z, antes } = atual.pilha.pop();
+  z.setAttribute("fill", antes);
+  guardarCores();
+}
+function recomecar() {
+  fecharMenu();
+  if (!atual || !atual.zonas.length) return;
+  if (!confirm("Começar de novo?")) return;
+  atual.zonas.forEach(z => z.setAttribute("fill", "#fff"));
+  atual.pilha = []; atual.festejado = false;
+  guardarCores();
+}
+// Desfazer: toque = um passo; manter carregado (0,8 s) = começar de novo.
+let carregado = 0, longo = false;
+$("adv-desfazer").addEventListener("pointerdown", () => { longo = false; carregado = setTimeout(() => { longo = true; recomecar(); }, 800); });
+["pointerup", "pointerleave", "pointercancel"].forEach(t => $("adv-desfazer").addEventListener(t, () => clearTimeout(carregado)));
+$("adv-desfazer").addEventListener("click", () => { if (!longo) desfazer(); });
+$("adv-desfazer").addEventListener("contextmenu", e => e.preventDefault());
+
+function fecharMenu() { $("adv-menu").hidden = true; $("adv-mais").setAttribute("aria-expanded", "false"); }
+$("adv-mais").addEventListener("click", () => { const m = $("adv-menu"); m.hidden = !m.hidden; $("adv-mais").setAttribute("aria-expanded", String(!m.hidden)); });
+$("adv-recomecar").addEventListener("click", recomecar);
+
+function fecharFolhas() { ["adv-festa", "adv-form", "adv-imagem"].forEach(id => { $(id).hidden = true; }); fecharMenu(); }
+function fechar(daHistoria) {
+  if (ecra.hidden) return;
+  ecra.hidden = true; fecharFolhas();
+  document.documentElement.classList.remove("adv-aberto");
+  atual = null;
+  desenharNumeros();   // ✓ nos dias pintados
+  if (!daHistoria && history.state && history.state.advento) history.back();
+}
+$("adv-fechar").addEventListener("click", () => fechar());
+addEventListener("popstate", () => fechar(true));
+addEventListener("keydown", e => { if (e.key === "Escape" && !ecra.hidden) fechar(); });
+
+// ---------- Festa ----------
+function festa() {
+  if (!atual || !atual.svg) return;
+  fecharFolhas();
+  $("adv-festa").hidden = false;
+  confetti();
+  tocar(0, true);
+  const l = document.querySelector(".adv-salta");
+  l.classList.remove("salta"); void l.offsetWidth; if (MOVIMENTO) l.classList.add("salta");
+}
+$("adv-acabei").addEventListener("click", festa);
+$("adv-continuar").addEventListener("click", fecharFolhas);
+
+// ---------- Guardar (PNG) ----------
+function svgTexto(svg, pintado) {
+  const c = svg.cloneNode(true);
+  c.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+  c.setAttribute("width", 600); c.setAttribute("height", 800);
+  c.removeAttribute("style");
+  if (!pintado) c.querySelectorAll(".zona").forEach(z => z.setAttribute("fill", "#fff"));
+  return new XMLSerializer().serializeToString(c);
+}
+function imagemPNG() {
+  return new Promise((ok, falha) => {
+    const img = new Image();
+    const url = URL.createObjectURL(new Blob([svgTexto(atual.svg, true)], { type: "image/svg+xml" }));
+    img.onload = () => {
+      const cv = document.createElement("canvas"); cv.width = 1200; cv.height = 1600;
+      const g = cv.getContext("2d");
+      g.fillStyle = "#fff"; g.fillRect(0, 0, 1200, 1600);
+      g.drawImage(img, 60, 30, 1080, 1440);
+      g.fillStyle = "#1f1a14"; g.font = "600 34px Fredoka, Nunito, sans-serif"; g.textAlign = "center";
+      g.fillText("Advento da Lumi · dia " + atual.dia + " · apaefao.pt", 600, 1550);
+      URL.revokeObjectURL(url);
+      cv.toBlob(b => b ? ok({ blob: b, url: cv.toDataURL("image/png") }) : falha(new Error("png")), "image/png");
+    };
+    img.onerror = falha;
+    img.src = url;
+  });
+}
+$("adv-guardar").addEventListener("click", async () => {
+  if (!atual || !atual.svg) return;
+  let png;
+  try { png = await imagemPNG(); } catch (e) { return; }
+  const nome = "advento-lumi-dia-" + atual.dia + ".png";
+  const file = typeof File === "function" ? new File([png.blob], nome, { type: "image/png" }) : null;
+  if (file && navigator.canShare && navigator.canShare({ files: [file] })) {
+    try { await navigator.share({ files: [file], title: "O Advento da Lumi — dia " + atual.dia }); return; }
+    catch (e) { if (e.name === "AbortError") return; }
+  }
+  if (/iPhone|iPad|iPod/.test(navigator.userAgent)) {   // plano B: tocar e manter o dedo na imagem
+    fecharFolhas(); $("adv-imagem-img").src = png.url; $("adv-imagem").hidden = false; return;
+  }
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(png.blob); a.download = nome;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+});
+$("adv-imagem-fechar").addEventListener("click", fecharFolhas);
+
+// ---------- Imprimir ----------
+const impressao = $("adv-impressao");
+function imprimir(pintado) {
+  fecharMenu();
+  if (!atual || !atual.svg) return;
+  impressao.innerHTML = svgTexto(atual.svg, pintado) + `<p>O Advento da Lumi · dia ${atual.dia} · apaefao.pt</p>`;
+  document.body.classList.add("adv-a-imprimir");
+  setTimeout(() => window.print(), 50);
+}
+addEventListener("afterprint", () => { document.body.classList.remove("adv-a-imprimir"); impressao.innerHTML = ""; });
+$("adv-imprimir").addEventListener("click", () => imprimir(true));
+$("adv-imprimir-branco").addEventListener("click", () => imprimir(false));
+$("adv-imprimir-branco2").addEventListener("click", () => imprimir(false));
+
+// ---------- Enviar para o mural ----------
+const PALAVROES = ["merda", "caralh", "foda", "fodi", "puta", "cabrao", "porra", "bosta", "cona", "piroca", "paneleir", "rabeta"];
+$("adv-enviar").addEventListener("click", () => { fecharFolhas(); $("adv-erro").textContent = ""; $("adv-form").hidden = false; $("adv-nome").focus(); });
+$("adv-agora-nao").addEventListener("click", fecharFolhas);
+$("adv-form").addEventListener("submit", async e => {
+  e.preventDefault();
+  const erro = $("adv-erro"), nome = $("adv-nome").value.trim(), idadeTxt = $("adv-idade").value.trim();
+  const simples = nome.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+  if (!/^[A-Za-zÀ-ÖØ-öø-ÿ]{2,12}$/.test(nome) || PALAVROES.some(p => simples.includes(p))) { erro.textContent = "Escreve só o primeiro nome (2 a 12 letras)."; return; }
+  if (idadeTxt && !(Number(idadeTxt) >= 2 && Number(idadeTxt) <= 12)) { erro.textContent = "A idade é de 2 a 12 anos (ou deixa em branco)."; return; }
+  if (!$("adv-adulto").checked) { erro.textContent = "Falta marcar \"Sou adulto e autorizo\"."; return; }
+  const botao = e.target.querySelector("[type=submit]"); botao.disabled = true;
+  const ok = await enviar("advento_pintura", { dia: atual.dia, nome, idade: idadeTxt ? Number(idadeTxt) : "", cores: cores(), adulto: true, voterId: votante() });
+  botao.disabled = false;
+  if (!ok) { erro.textContent = "Não foi possível enviar. Tenta daqui a pouco."; return; }
+  const f = $("adv-form");
+  f.hidden = true;
+  $("adv-festa").hidden = false;
+  $("adv-festa").querySelector("h2").textContent = "Obrigado! Aparece no mural depois de aprovado.";
+  setTimeout(() => { const h = $("adv-festa").querySelector("h2"); if (h) h.textContent = "Que bonito!"; }, 6000);
+});
+
+// ---------- Mural ----------
+const EXEMPLOS = () => {
+  const p = ["#e53935", "#2e7d32", "#fdd835", "#1e5bd8", "#f48fb1", "#fb8c00", "#8e44ad", "#64b5f6", "#d4a017", "#8bc34a"];
+  const cor = (s, n) => Array.from({ length: n }, (_, i) => p[(i * 3 + s) % p.length]);
+  return [
+    { id: "ex1", dia: 1, nome: "Alba", idade: 5, cores: cor(1, 12), coracoes: 7, semana: 4 },
+    { id: "ex2", dia: 1, nome: "Tomás", idade: 7, cores: cor(2, 12), coracoes: 2, semana: 2 },
+    { id: "ex3", dia: 2, nome: "Leonor", idade: "", cores: cor(3, 13), coracoes: 12, semana: 9 },
+    { id: "ex4", dia: 2, nome: "Rui", idade: 4, cores: cor(4, 13), coracoes: 0, semana: 0 },
+    { id: "ex5", dia: 3, nome: "Matilde", idade: 8, cores: cor(5, 13), coracoes: 5, semana: 5 },
+    { id: "ex6", dia: 3, nome: "Gaspar", idade: 6, cores: cor(6, 13), coracoes: 1, semana: 1 },
+  ];
+};
+const CHAVE_MURAL = "advento-mural", CHAVE_GOSTOS = "advento-coracoes";
+let mural = [], filtro = "todos";
+const gostos = new Set(ler(CHAVE_GOSTOS, []));
+
+function cartaoMural(p) {
+  const el = document.createElement("article");
+  el.className = "adv-cartao"; el.dataset.id = p.id;
+  const quem = escapar(p.nome) + (p.idade ? ", " + escapar(String(p.idade)) : "");
+  el.innerHTML = `<div class="adv-mini" role="img" aria-label="Desenho do dia ${p.dia} pintado por ${quem}"></div>
+    <div class="adv-pe"><span class="adv-quem">${quem}<small>Dia ${p.dia}</small></span><button class="adv-coracao" type="button"></button></div>`;
+  const b = el.querySelector(".adv-coracao");
+  const mostrar = () => {
+    const meu = gostos.has(p.id), n = (p.coracoes || 0) + (meu && !p.contei ? 1 : 0);
+    b.innerHTML = (meu ? "♥" : "♡") + (n >= 5 ? `<b>${n}</b>` : "");
+    b.setAttribute("aria-pressed", meu); b.setAttribute("aria-label", meu ? "Já deste um coração" : "Dar um coração");
+  };
+  mostrar();
+  b.addEventListener("click", () => {
+    if (gostos.has(p.id)) return;
+    gostos.add(p.id); gravar(CHAVE_GOSTOS, [...gostos]);
+    b.classList.remove("pop"); void b.offsetWidth; if (MOVIMENTO) b.classList.add("pop");
+    mostrar();
+    if (!/^ex/.test(p.id)) enviar("advento_voto", { id: p.id, voterId: votante() });
+  });
+  observar.observe(el);
+  return el;
+}
+// Só desenha a miniatura quando o cartão aparece no ecrã.
+const observar = "IntersectionObserver" in window ? new IntersectionObserver(es => es.forEach(e => {
+  if (!e.isIntersecting) return;
+  observar.unobserve(e.target); miniatura(e.target);
+}), { rootMargin: "200px" }) : { observe: el => miniatura(el), unobserve() {} };
+function miniatura(el) {
+  const p = mural.find(x => x.id === el.dataset.id) || EXEMPLOS().find(x => x.id === el.dataset.id);
+  if (!p) return;
+  desenho(p.dia).then(t => { const m = montar(t, p.cores); m.svg.setAttribute("aria-hidden", "true"); el.querySelector(".adv-mini").appendChild(m.svg); })
+    .catch(() => { el.querySelector(".adv-mini").innerHTML = '<div class="adv-vazio">🎨</div>'; });
+}
+
+function chips() {
+  const el = $("adv-chips");
+  const ops = ["todos"].concat(Array.from({ length: diasDoMural }, (_, i) => i + 1));
+  el.innerHTML = ops.map(o => `<button type="button" role="tab" data-f="${o}" aria-selected="${String(o) === String(filtro)}">${o === "todos" ? "Todos" : "Dia " + o}</button>`).join("");
+  el.onclick = e => { const b = e.target.closest("button"); if (!b) return; filtro = b.dataset.f; chips(); grelha(); };
+}
+function grelha() {
+  const el = $("adv-grelha");
+  const lista = mural.filter(p => filtro === "todos" || String(p.dia) === String(filtro));
+  el.innerHTML = "";
+  if (!lista.length) {
+    el.innerHTML = `<p class="adv-vazio"><img src="img/mascote/presente.webp" alt="" width="90" height="111">${mural.length ? "Ainda não há desenhos deste dia." : "Ainda não há desenhos no mural. Pinta o de hoje e envia!"}</p>`;
+    return;
+  }
+  lista.forEach(p => el.appendChild(cartaoMural(p)));
+}
+function preferidos() {
+  const caixa = $("adv-preferidos"), g = $("adv-preferidos-grelha");
+  const com = mural.filter(p => (p.semana || 0) > 0).sort((a, b) => b.semana - a.semana);
+  caixa.hidden = com.length < 3;
+  g.innerHTML = "";
+  if (com.length >= 3) com.slice(0, 3).forEach(p => g.appendChild(cartaoMural(p)));
+}
+function mostrarMural(d) {
+  mural = (d && Array.isArray(d.pinturas) ? d.pinturas : []).filter(p => p && p.id && p.dia >= 1 && p.dia <= N_DIAS && Array.isArray(p.cores));
+  mural.sort((a, b) => b.dia - a.dia);
+  preferidos(); chips(); grelha();
+}
+// Como o resto do site: mostra logo a cópia guardada e atualiza quando a Sheet responder (só se mudou).
+function carregarMural() {
+  if (MODO_TESTE || P.has("mural-teste")) { mostrarMural({ pinturas: EXEMPLOS() }); return; }
+  const c = ler(CHAVE_MURAL, null);
+  let visto = c ? JSON.stringify(c) : null;
+  mostrarMural(c);
+  fetch(ENDPOINT + "?acao=advento", { signal: AbortSignal.timeout(15000) })
+    .then(r => r.json())
+    .then(d => {
+      if (!d || !Array.isArray(d.pinturas)) return;
+      gravar(CHAVE_MURAL, d);
+      if (JSON.stringify(d) !== visto) { visto = JSON.stringify(d); mostrarMural(d); }
+    }).catch(() => {});
+}
+
+// ---------- Modo de edição (?editar=1): o Jose põe os 24 números no sítio ----------
+const EDITAR = P.get("editar") === "1";
+function modoEditar() {
+  let qual = pc.matches ? "pc" : "telemovel";
+  const pos = { pc: (posicoes.pc || []).slice(), telemovel: (posicoes.telemovel || []).slice() };
+  const img = $("adv-img"), source = document.querySelector(".adv-cena source");
+  const painel = document.createElement("div");
+  painel.className = "adv-editar";
+  painel.innerHTML = `<p id="adv-ed-txt"></p>
+    <button type="button" data-a="desfazer">Desfazer</button><button type="button" data-a="limpar">Limpar</button>
+    <button type="button" data-a="trocar"></button><button type="button" data-a="copiar">Copiar JSON</button>`;
+  cena.before(painel);
+  cena.classList.add("adv-editando");
+  const proximo = () => { for (let n = 1; n <= N_DIAS; n++) if (!pos[qual].some(p => p.dia === n)) return n; return 0; };
+  function pintar() {
+    // Força a imagem do modo escolhido (pc ou telemóvel), seja qual for o ecrã.
+    source.media = qual === "pc" ? "all" : "not all";
+    img.src = "img/advento/cenario-" + (qual === "pc" ? "pc" : "telemovel") + ".webp";
+    const n = proximo();
+    $("adv-ed-txt").innerHTML = (n ? `Toca na imagem para pôr o dia <b>${n}</b>.` : "Os 24 estão postos.") + ` Arrasta para acertar. (${qual === "pc" ? "computador" : "telemóvel"})`;
+    painel.querySelector('[data-a="trocar"]').textContent = qual === "pc" ? "Ver telemóvel" : "Ver computador";
+    numeros.innerHTML = "";
+    pos[qual].forEach(p => {
+      const b = document.createElement("button");
+      b.type = "button"; b.className = "adv-num"; b.textContent = p.dia;
+      b.style.left = p.x + "%"; b.style.top = p.y + "%";
+      b.addEventListener("pointerdown", ev => {
+        ev.stopPropagation(); b.setPointerCapture(ev.pointerId);
+        const mexe = e2 => { const r = numeros.getBoundingClientRect();
+          p.x = Math.round(Math.min(100, Math.max(0, (e2.clientX - r.left) / r.width * 100)) * 10) / 10;
+          p.y = Math.round(Math.min(100, Math.max(0, (e2.clientY - r.top) / r.height * 100)) * 10) / 10;
+          b.style.left = p.x + "%"; b.style.top = p.y + "%"; };
+        b.addEventListener("pointermove", mexe);
+        b.addEventListener("pointerup", () => b.removeEventListener("pointermove", mexe), { once: true });
+      });
+      numeros.appendChild(b);
+    });
+  }
+  numeros.addEventListener("pointerdown", e => {
+    if (e.target !== numeros) return;
+    const n = proximo(); if (!n) return;
+    const r = numeros.getBoundingClientRect();
+    pos[qual].push({ dia: n, x: Math.round((e.clientX - r.left) / r.width * 1000) / 10, y: Math.round((e.clientY - r.top) / r.height * 1000) / 10 });
+    pintar();
+  });
+  painel.addEventListener("click", e => {
+    const a = e.target.dataset.a; if (!a) return;
+    if (a === "desfazer") { const n = proximo() || N_DIAS + 1; const ult = pos[qual].reduce((m, p) => p.dia > m ? p.dia : m, 0); pos[qual] = pos[qual].filter(p => p.dia !== ult); void n; }
+    if (a === "limpar" && confirm("Tirar todos os números deste cenário?")) pos[qual] = [];
+    if (a === "trocar") qual = qual === "pc" ? "telemovel" : "pc";
+    if (a === "copiar") {
+      const ord = l => l.slice().sort((x, y) => x.dia - y.dia).map(p => ({ dia: p.dia, x: p.x, y: p.y }));
+      copiar(JSON.stringify({ pc: ord(pos.pc), telemovel: ord(pos.telemovel) }), e.target);
+      e.target.textContent = "Copiado ✓"; setTimeout(() => { e.target.textContent = "Copiar JSON"; }, 2000);
+    }
+    pintar();
+  });
+  pintar();
+}
+
+// ---------- Arrancar ----------
+cabecalho();
+fetch("data/advento-numeros.json", { cache: "no-cache" }).then(r => r.json()).catch(() => provisorias())
+  .then(d => { posicoes = d && d.pc ? d : provisorias(); if (EDITAR) modoEditar(); else desenharNumeros(); });
+pc.addEventListener ? pc.addEventListener("change", desenharNumeros) : pc.addListener(desenharNumeros);
+carregarMural();
+avisoTeste();
+// ?abrir=7 abre logo o dia (para links partilhados), se já estiver aberto.
+const pedido = Number(P.get("abrir"));
+if (pedido && aberto(pedido)) abrir(pedido);
+})();

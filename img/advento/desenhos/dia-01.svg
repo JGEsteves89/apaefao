@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 800">
+  <g id="zonas">
+    <rect id="z1" class="zona" x="12" y="12" width="576" height="776" rx="24" fill="#fff"/>
+    <path id="z2" class="zona" d="M12 640 Q160 590 300 620 T588 610 V764 Q588 788 564 788 H36 Q12 788 12 764 Z" fill="#fff"/>
+    <path id="z3" class="zona" d="M470 64 a60 60 0 1 0 64 90 a48 48 0 1 1 -64 -90 Z" fill="#fff"/>
+    <polygon id="z4" class="zona" points="84.0,48.0 96.9,78.2 129.7,81.2 104.9,102.8 112.2,134.8 84.0,118.0 55.8,134.8 63.1,102.8 38.3,81.2 71.1,78.2" fill="#fff"/>
+    <polygon id="z5" class="zona" points="92.0,476.0 103.8,503.8 133.8,506.4 111.0,526.2 117.9,555.6 92.0,540.0 66.1,555.6 73.0,526.2 50.2,506.4 80.2,503.8" fill="#fff"/>
+    <polygon id="z6" class="zona" points="510.0,474.0 522.3,503.0 553.7,505.8 530.0,526.5 537.0,557.2 510.0,541.0 483.0,557.2 490.0,526.5 466.3,505.8 497.7,503.0" fill="#fff"/>
+    <polygon id="z7" class="zona" points="244.7,254.0 300.0,110.0 355.3,254.0" fill="#fff"/>
+    <polygon id="z8" class="zona" points="355.3,254.0 509.2,262.0 389.4,359.0" fill="#fff"/>
+    <polygon id="z9" class="zona" points="389.4,359.0 429.3,508.0 300.0,424.0" fill="#fff"/>
+    <polygon id="z10" class="zona" points="300.0,424.0 170.7,508.0 210.6,359.0" fill="#fff"/>
+    <polygon id="z11" class="zona" points="210.6,359.0 90.8,262.0 244.7,254.0" fill="#fff"/>
+    <polygon id="z12" class="zona" points="355.3,254.0 389.4,359.0 300.0,424.0 210.6,359.0 244.7,254.0" fill="#fff"/>
+  </g>
+  <g id="linhas" pointer-events="none" stroke="#1f1a14" stroke-width="9" stroke-linejoin="round" stroke-linecap="round">
+    <rect x="12" y="12" width="576" height="776" rx="24" fill="none"/>
+    <path d="M12 640 Q160 590 300 620 T588 610 V764 Q588 788 564 788 H36 Q12 788 12 764 Z" fill="none"/>
+    <path d="M470 64 a60 60 0 1 0 64 90 a48 48 0 1 1 -64 -90 Z" fill="none"/>
+    <polygon points="84.0,48.0 96.9,78.2 129.7,81.2 104.9,102.8 112.2,134.8 84.0,118.0 55.8,134.8 63.1,102.8 38.3,81.2 71.1,78.2" fill="none"/>
+    <polygon points="92.0,476.0 103.8,503.8 133.8,506.4 111.0,526.2 117.9,555.6 92.0,540.0 66.1,555.6 73.0,526.2 50.2,506.4 80.2,503.8" fill="none"/>
+    <polygon points="510.0,474.0 522.3,503.0 553.7,505.8 530.0,526.5 537.0,557.2 510.0,541.0 483.0,557.2 490.0,526.5 466.3,505.8 497.7,503.0" fill="none"/>
+    <polygon points="244.7,254.0 300.0,110.0 355.3,254.0" fill="none"/>
+    <polygon points="355.3,254.0 509.2,262.0 389.4,359.0" fill="none"/>
+    <polygon points="389.4,359.0 429.3,508.0 300.0,424.0" fill="none"/>
+    <polygon points="300.0,424.0 170.7,508.0 210.6,359.0" fill="none"/>
+    <polygon points="210.6,359.0 90.8,262.0 244.7,254.0" fill="none"/>
+    <polygon points="355.3,254.0 389.4,359.0 300.0,424.0 210.6,359.0 244.7,254.0" fill="none"/>
+<circle cx="272" cy="322" r="9" fill="#1f1a14" stroke="none"/><circle cx="328" cy="322" r="9" fill="#1f1a14" stroke="none"/><path d="M276 360 Q300 380 324 360"/>
+  </g>
+  <metadata>{"titulo":"A estrela de Natal","idade":"facil"}</metadata>
+</svg>
