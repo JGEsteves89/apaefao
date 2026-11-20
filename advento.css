@@ -191,3 +191,10 @@ html.adv-aberto, html.adv-aberto body { overflow: hidden; }
 .adv-mais { position: absolute; left: 50%; top: 42%; z-index: 3; transform: translate(-50%, -50%); background: #fff; border: 2px solid #d6455d; color: #d6455d; font: 700 22px/1 "Fredoka", sans-serif; border-radius: 999px; padding: 6px 14px; box-shadow: 2px 2px 0 #d6455d; animation: adv-mais 2s ease forwards; pointer-events: none; }
 @keyframes adv-mais { 0% { opacity: 0; transform: translate(-50%, -30%) scale(.6); } 15% { opacity: 1; transform: translate(-50%, -50%) scale(1.08); } 80% { opacity: 1; } 100% { opacity: 0; transform: translate(-50%, -70%); } }
 @media (prefers-reduced-motion: reduce) { .adv-voa, .adv-mais { display: none; } }
+
+/* Cartões: ✕ no canto e "Continuar a pintar" bem à vista. No computador: cartão ao centro. */
+.adv-folha-fechar { position: absolute; top: 10px; right: 10px; z-index: 2; }
+.adv-continuar { background: var(--cartao); width: 100%; max-width: 360px; justify-content: center; font-size: 18px; }
+@media (min-width: 768px) {
+  .adv-folha-baixo { left: 0; right: 0; margin: 0 auto; width: min(520px, calc(100% - 32px)); bottom: 24px; border: 3px solid var(--tinta); border-radius: 22px; box-shadow: 6px 6px 0 var(--tinta); }
+}

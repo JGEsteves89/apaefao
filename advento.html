@@ -27,7 +27,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css?v=20261120a">
-  <link rel="stylesheet" href="advento.css?v=10">
+  <link rel="stylesheet" href="advento.css?v=11">
   <link rel="preload" as="image" href="img/advento/cenario-telemovel.webp" media="(max-width: 767px)">
   <link rel="preload" as="image" href="img/advento/cenario-pc.webp" media="(min-width: 768px)">
   <link rel="preconnect" href="https://script.google.com">
@@ -136,6 +136,7 @@
 
     <!-- Festa + guardar / imprimir / mural -->
     <div class="adv-folha-baixo" id="adv-festa" hidden>
+      <button class="adv-ico adv-folha-fechar" type="button" data-voltar aria-label="Continuar a pintar">✕</button>
       <img class="adv-salta" src="img/mascote/salta.webp" alt="" width="120" height="148">
       <h2>Que bonito!</h2>
       <div class="adv-festa-botoes">
@@ -143,11 +144,13 @@
         <button class="botao botao-grande" type="button" id="adv-imprimir">Imprimir</button>
         <button class="botao botao-grande" type="button" id="adv-enviar">Enviar para o mural</button>
       </div>
-      <p><button class="adv-link" type="button" id="adv-imprimir-branco2">Imprimir por pintar</button> · <button class="adv-link" type="button" id="adv-continuar">Continuar a pintar</button></p>
+      <button class="botao botao-grande adv-continuar" type="button" id="adv-continuar">← Continuar a pintar</button>
+      <p><button class="adv-link" type="button" id="adv-imprimir-branco2">Imprimir por pintar</button></p>
     </div>
 
     <!-- Para os pais: enviar para o mural -->
     <form class="adv-folha-baixo" id="adv-form" hidden novalidate>
+      <button class="adv-ico adv-folha-fechar" type="button" data-voltar aria-label="Voltar">✕</button>
       <h2>Pôr no mural de Natal</h2>
       <p>Só aparece o primeiro nome.</p>
       <label>Primeiro nome da criança<input id="adv-nome" name="nome" autocomplete="off" maxlength="12" required></label>
@@ -186,7 +189,7 @@
 
   <script src="js/config.js"></script>
   <script src="js/comum.js?v=20261120b"></script>
-  <script src="js/advento.js?v=10"></script>
+  <script src="js/advento.js?v=11"></script>
   <!-- Contador de visitas (GoatCounter: sem cookies) -->
   <script data-goatcounter="https://apaefao.goatcounter.com/count"
           async src="//gc.zgo.at/count.js"></script>
