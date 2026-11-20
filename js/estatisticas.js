@@ -39,7 +39,13 @@
     });
   }
 
-  fetch('data/estatisticas.json?v=' + Date.now()).then(function (r) { return r.json(); }).then(function (d) {
+  // 1.º números ao vivo (Apps Script → GoatCounter, cache 1 h); se falhar, o ficheiro guardado.
+  function guardado() { return fetch('data/estatisticas.json?v=' + Date.now()).then(function (r) { return r.json(); }); }
+  var aoVivo = typeof ENDPOINT === 'string'
+    ? fetch(ENDPOINT + '?acao=estatisticas').then(function (r) { return r.json(); })
+        .then(function (d) { return d && d.dias && d.dias.length ? d : guardado(); }).catch(guardado)
+    : guardado();
+  aoVivo.then(function (d) {
     var dias = d.dias, valores = dias.map(function (x) { return x[1]; });
     var total = soma(valores);
     var entradas = soma(d.origens.map(function (o) { return o[1]; }));

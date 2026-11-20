@@ -221,6 +221,7 @@ function doGet(e) {
   if (e && e.parameter && e.parameter.acao === "metas") return json(metas());
   if (e && e.parameter && e.parameter.acao === "site") return json(site());
   if (e && e.parameter && e.parameter.acao === "avisos") return json(avisos());
+  if (e && e.parameter && e.parameter.acao === "estatisticas") return json(estatisticas());
   if (e && e.parameter && e.parameter.acao === "ementa_votos") return json(votosEmenta(e.parameter.semana));
   return json({ ok: true });
 }
@@ -1194,4 +1195,75 @@ function recordes() {
     .filter(l => l[0] instanceof Date && Utilities.formatDate(l[0], "Europe/Lisbon", "yyyy-MM") === mes && sim(l[3]))
     .map(l => ({ nome: limpar(l[1], 12), vezes: Number(l[2]) || 0 }))
     .sort((a, b) => b.vezes - a.vezes).slice(0, 10);
+}
+
+
+// ===== Estatísticas do site (estatisticas.html) =====
+// Lê os números do GoatCounter pela API. A chave fica em Project Settings → Script Properties → GOATCOUNTER_TOKEN
+// (nunca no código). Guarda o resultado 1 hora em cache.
+const GC_SITE = "https://apaefao.goatcounter.com/api/v0";
+const GC_INICIO = "2026-10-15";
+const GC_NOMES = { "/": "Início", "/apoiantes.html": "Apoiantes", "/agenda.html": "Agenda", "/quem-somos.html": "Quem somos",
+  "/noticias.html": "Notícias", "/documentos.html": "Documentos", "/socios.html": "Ser sócio", "/ajudar.html": "Quero oferecer algo",
+  "/sugestoes.html": "Sugestões", "/votar.html": "Votação das atividades", "/links.html": "Links úteis", "/recreio.html": "O novo recreio",
+  "/metas.html": "Metas", "/ementa.html": "Ementa", "/calendario.html": "Calendário", "/halloween.html": "Halloween",
+  "/jardim.html": "Jardim dos apoiantes", "/estatisticas.html": "Estatísticas" };
+
+function estatisticas() {
+  const cache = CacheService.getScriptCache();
+  const guardado = cache.get("estatisticas");
+  if (guardado) return JSON.parse(guardado);
+  const token = PropertiesService.getScriptProperties().getProperty("GOATCOUNTER_TOKEN");
+  if (!token) return { erro: "sem chave" };
+  const agora = new Date();
+  const q = "start=" + GC_INICIO + "T00:00:00Z&end=" + agora.toISOString();
+  const pedir = caminho => {
+    Utilities.sleep(600); // o GoatCounter tem limite de pedidos por segundo
+    return JSON.parse(UrlFetchApp.fetch(GC_SITE + caminho, { headers: { Authorization: "Bearer " + token } }).getContentText());
+  };
+
+  const total = pedir("/stats/total?" + q);
+  const paginas = pedir("/stats/hits?" + q + "&limit=100").hits;
+  const refs = pedir("/stats/toprefs?" + q + "&limit=100").stats;
+  const tamanhos = pedir("/stats/sizes?" + q).stats;
+  const locais = pedir("/stats/locations?" + q + "&limit=100").stats;
+
+  const dias = total.stats.map(s => [s.day, s.daily]);
+  const horas = Array(24).fill(0), semana = Array(7).fill(0);
+  total.stats.forEach(s => {
+    (s.hourly || []).forEach((v, h) => horas[h] += v);
+    semana[(new Date(s.day + "T12:00:00Z").getUTCDay() + 6) % 7] += s.daily;
+  });
+
+  const pag = paginas
+    .filter(p => !p.event && p.count > 0 && !/não encontrada/i.test(p.title || ""))
+    .map(p => [GC_NOMES[p.path] || String(p.title || p.path).replace(/\s*[—-]\s*APAEF.*$/, "").replace(/\s*\(teste\)/, ""), p.count])
+    .sort((a, b) => b[1] - a[1]);
+
+  const org = {};
+  refs.forEach(r => {
+    const n = r.name === "" ? "Link direto ou WhatsApp" : r.name === "Google" ? "Google" : /facebook/i.test(r.name) ? "Facebook" : /instagram/i.test(r.name) ? "Instagram" : "Outros sites";
+    org[n] = (org[n] || 0) + r.count;
+  });
+
+  const ap = {};
+  const nomeAp = { phone: "Telemóvel", tablet: "Tablet", desktop: "Computador", desktophd: "Computador" };
+  tamanhos.forEach(t => { if (nomeAp[t.id]) ap[nomeAp[t.id]] = (ap[nomeAp[t.id]] || 0) + t.count; });
+  const ordenar = o => Object.entries(o).filter(x => x[1] > 0).sort((a, b) => b[1] - a[1]);
+
+  const res = {
+    gerado: Utilities.formatDate(agora, "Europe/Lisbon", "yyyy-MM-dd HH:mm"),
+    inicio: dias[0][0], fim: dias[dias.length - 1][0],
+    dias, paginas: pag, origens: ordenar(org), horas, semana, aparelhos: ordenar(ap),
+    portugal: (locais.find(l => l.id === "PT") || { count: 0 }).count,
+    paises_total: locais.reduce((s, l) => s + l.count, 0),
+  };
+  cache.put("estatisticas", JSON.stringify(res), 3600);
+  return res;
+}
+
+// Para testar no editor: corre esta função e vê o registo.
+function testarEstatisticas() {
+  CacheService.getScriptCache().remove("estatisticas");
+  Logger.log(JSON.stringify(estatisticas()).slice(0, 2000));
 }
