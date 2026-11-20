@@ -68,12 +68,36 @@ function novoTraco(camada, cor, pts, w = 22) {
   return p;
 }
 // Texto de cada traço: "#cor,largura|x,y x,y …" (os antigos não têm largura: 22).
-const tracosTexto = camada => [...camada.querySelectorAll("path")].map(p => p.dataset.cor + "," + p.dataset.w + "|" + p.pontos.map(q => q.join(",")).join(" ")).join(";");
+// Balde por cima do pincel: um "remendo" com a forma da zona (sem as zonas que estão por cima dela), na camada do pincel.
+// Assim o balde tapa a tinta do pincel dentro dessa zona. No texto guardado: "#cor,0|índice da zona".
+function novoRemendo(svg, camada, zonas, i, cor) {
+  const z = zonas[i];
+  if (!z) return null;
+  const id = "adv-m-" + (++nClip), mask = document.createElementNS(NS, "mask");
+  mask.id = id; mask.setAttribute("maskUnits", "userSpaceOnUse");
+  [["x", 0], ["y", 0], ["width", 600], ["height", 800]].forEach(([k, v]) => mask.setAttribute(k, v));
+  zonas.slice(i).forEach((o, k) => {
+    const c = o.cloneNode(false); c.removeAttribute("id"); c.removeAttribute("class"); c.setAttribute("fill", k ? "#000" : "#fff");
+    mask.appendChild(c);
+  });
+  svg.querySelector("defs").appendChild(mask);
+  const r = document.createElementNS(NS, "rect");
+  [["x", 0], ["y", 0], ["width", 600], ["height", 800]].forEach(([k, v]) => r.setAttribute(k, v));
+  r.setAttribute("fill", cor); r.setAttribute("mask", `url(#${id})`);
+  r.dataset.cor = cor; r.dataset.remendo = i;
+  camada.appendChild(r);
+  return r;
+}
+const pedacoTexto = (p, passo = 1) => p.dataset.remendo != null ? p.dataset.cor + ",0|" + p.dataset.remendo
+  : p.dataset.cor + "," + p.dataset.w + "|" + p.pontos.filter((q, i, a) => i % passo === 0 || i === a.length - 1).map(q => q.join(",")).join(" ");
+const tracosTexto = (camada, passo) => [...camada.children].map(p => pedacoTexto(p, passo)).join(";");
 function lerTracos(texto) {
   return String(texto || "").split(";").filter(Boolean).map(t => {
     const [corW, pts] = t.split("|"), [cor, w] = String(corW).split(",");
-    return { cor, w: Math.min(80, Math.max(4, Number(w) || 22)), pts: String(pts || "").split(" ").filter(Boolean).map(q => q.split(",").map(Number)) };
-  }).filter(t => /^#[0-9a-f]{3,6}$/i.test(t.cor) && t.pts.length);
+    const lista = String(pts || "").split(" ").filter(Boolean).map(q => q.split(",").map(Number));
+    if (Number(w) === 0) return { cor, remendo: Math.floor(Number(pts)), pts: [[0]] };
+    return { cor, w: Math.min(80, Math.max(4, Number(w) || 22)), pts: lista };
+  }).filter(t => /^#[0-9a-f]{3,6}$/i.test(t.cor) && t.pts.length && (t.remendo == null || t.remendo >= 0));
 }
 function montar(texto, cores, tracos) {
   const doc = new DOMParser().parseFromString(texto, "image/svg+xml");
@@ -88,7 +112,7 @@ function montar(texto, cores, tracos) {
   camada.setAttribute("class", "tracos"); camada.setAttribute("pointer-events", "none"); camada.setAttribute("clip-path", `url(#${id})`);
   const linhas = svg.querySelector("#linhas");
   svg.insertBefore(camada, linhas);
-  lerTracos(tracos).forEach(t => novoTraco(camada, t.cor, t.pts, t.w));
+  lerTracos(tracos).forEach(t => t.remendo != null ? novoRemendo(svg, camada, zonas, t.remendo, t.cor) : novoTraco(camada, t.cor, t.pts, t.w));
   const meta = svg.querySelector("metadata");
   let info = {};
   try { info = JSON.parse(meta ? meta.textContent : "{}"); } catch (e) {}
@@ -222,7 +246,8 @@ async function abrir(n, semHistoria) {
   // Passos do Desfazer guardados: [i, corAntes] = balde na zona i; ["t"] = um traço do pincel (os últimos traços, por ordem).
   const passos = ler(CHAVE_PASSOS, {})[n] || [], tracos = [...m.camada.children];
   let k = tracos.length - passos.filter(x => x[0] === "t").length;
-  atual.pilha = passos.map(x => x[0] === "t" ? (tracos[k] ? { t: tracos[k++] } : null) : (m.zonas[x[0]] ? { z: m.zonas[x[0]], antes: x[1] } : null)).filter(Boolean);
+  // ["t"] = traço; ["t", i, corAntes] = balde por cima do pincel (remendo + cor da zona); [i, corAntes] = balde.
+  atual.pilha = passos.map(x => x[0] === "t" ? (tracos[k] ? { t: tracos[k++], z: x[1] != null ? m.zonas[x[1]] : undefined, antes: x[2] } : null) : (m.zonas[x[0]] ? { z: m.zonas[x[0]], antes: x[1] } : null)).filter(Boolean);
   m.svg.setAttribute("width", 600); m.svg.setAttribute("height", 800);   // tamanho próprio: o desenho cabe sem bordas a mais
   m.svg.setAttribute("role", "img"); m.svg.setAttribute("aria-label", m.info.titulo || "Desenho do dia " + n);
   folha.appendChild(m.svg);
@@ -237,7 +262,7 @@ function guardarCores() {
   const tr = ler(CHAVE_TRACOS, {}), txt = tracosTexto(atual.camada);
   if (txt) tr[atual.dia] = txt; else delete tr[atual.dia];
   gravar(CHAVE_TRACOS, tr);
-  const p = ler(CHAVE_PASSOS, {}); p[atual.dia] = atual.pilha.slice(-200).map(x => x.t ? ["t"] : [atual.zonas.indexOf(x.z), x.antes]); gravar(CHAVE_PASSOS, p);
+  const p = ler(CHAVE_PASSOS, {}); p[atual.dia] = atual.pilha.slice(-200).map(x => x.t ? (x.z ? ["t", atual.zonas.indexOf(x.z), x.antes] : ["t"]) : [atual.zonas.indexOf(x.z), x.antes]); gravar(CHAVE_PASSOS, p);
 }
 
 // ---------- Pincel ----------
@@ -290,8 +315,10 @@ function pintarToque(e) {
   if (!z) return;
   e.preventDefault();
   const antes = z.getAttribute("fill") || "#fff";
-  if (antes.toLowerCase() === corEscolhida.toLowerCase()) return;
-  atual.pilha.push({ z, antes });
+  const comPincel = atual.camada.children.length > 0;   // há tinta do pincel: o balde tapa-a nesta zona
+  if (!comPincel && antes.toLowerCase() === corEscolhida.toLowerCase()) return;
+  const remendo = comPincel ? novoRemendo(atual.svg, atual.camada, atual.zonas, atual.zonas.indexOf(z), corEscolhida) : null;
+  atual.pilha.push(remendo ? { t: remendo, z, antes } : { z, antes });
   z.setAttribute("fill", corEscolhida);
   if (MOVIMENTO && z.animate) z.animate([{ transform: "scale(1)" }, { transform: "scale(1.04)" }, { transform: "scale(1)" }], { duration: 150 });
   tocar(CORES.findIndex(c => c[0] === corEscolhida));
@@ -302,7 +329,8 @@ function pintarToque(e) {
 function desfazer() {
   if (!atual || !atual.pilha.length) return;
   const passo = atual.pilha.pop();
-  if (passo.t) passo.t.remove(); else passo.z.setAttribute("fill", passo.antes);
+  if (passo.t) passo.t.remove();
+  if (passo.z) passo.z.setAttribute("fill", passo.antes);
   guardarCores();
 }
 function recomecar() {
@@ -361,7 +389,7 @@ function svgTexto(svg, pintado) {
   c.setAttribute("xmlns", "http://www.w3.org/2000/svg");
   c.setAttribute("width", 600); c.setAttribute("height", 800);
   c.removeAttribute("style");
-  if (!pintado) { c.querySelectorAll(".zona").forEach(z => z.setAttribute("fill", "#fff")); c.querySelectorAll(".tracos path").forEach(p => p.remove()); }
+  if (!pintado) { c.querySelectorAll(".zona").forEach(z => z.setAttribute("fill", "#fff")); c.querySelectorAll(".tracos > *").forEach(p => p.remove()); }
   return new XMLSerializer().serializeToString(c);
 }
 function imagemPNG() {
@@ -428,7 +456,7 @@ $("adv-form").addEventListener("submit", async e => {
   const botao = e.target.querySelector("[type=submit]"); botao.disabled = true;
   let tracos = tracosTexto(atual.camada);
   for (let passo = 2; tracos.length > 40000 && passo < 64; passo *= 2) {   // desenho muito grande: menos pontos por traço
-    tracos = [...atual.camada.querySelectorAll("path")].map(p => p.dataset.cor + "," + p.dataset.w + "|" + p.pontos.filter((q, i, a) => i % passo === 0 || i === a.length - 1).map(q => q.join(",")).join(" ")).join(";");
+    tracos = tracosTexto(atual.camada, passo);
   }
   if (tracos.length > 40000) tracos = "";
   const ok = await enviar("advento_pintura", { dia: atual.dia, nome, cores: cores(), tracos, voterId: votante() });
