@@ -176,8 +176,15 @@ html.adv-aberto, html.adv-aberto body { overflow: hidden; }
 .adv-ferramenta button[aria-checked="true"] { background: var(--sol); }
 .adv-folha.com-pincel svg { cursor: crosshair; }
 .adv-acabei .adv-txt { margin-left: 4px; }
-@media (max-width: 420px) { .adv-desfazer .adv-txt { display: none; } .adv-desfazer { padding: 0 13px; } .adv-acoes { gap: 6px; } .adv-ferramenta button { width: 44px; } .adv-acabei { padding: 0 14px; font-size: 18px; } }
-@media (max-width: 380px) { .adv-acabei .adv-txt { display: none; } .adv-acabei { min-width: 60px; font-size: 24px; } }
+/* Telemóvel (qualquer largura até 767 px): Desfazer só com a seta; o Acabei fica com o espaço que sobra. */
+@media (max-width: 767px) {
+  .adv-acoes { gap: 6px; align-items: stretch; }
+  .adv-desfazer { flex: none; width: 56px; padding: 0; display: grid; place-items: center; }
+  .adv-desfazer .adv-txt { display: none; }
+  .adv-ferramenta button { width: 44px; }
+  .adv-acabei { flex: 1 1 auto; min-width: 56px; padding: 0 10px; font-size: 18px; justify-content: center; overflow: hidden; }
+}
+@media (max-width: 380px) { .adv-acabei .adv-txt { display: none; } .adv-acabei { font-size: 24px; } }
 @media (min-width: 768px) and (orientation: landscape) { .adv-ferramenta { align-self: center; } }
 .adv-pintar.com-folha .adv-folha, .adv-pintar.com-folha .adv-ferramentas { pointer-events: none; opacity: .45; }
 
