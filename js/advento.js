@@ -556,16 +556,17 @@ function grelha() {
   }
   lista.forEach(p => el.appendChild(cartaoMural(p)));
 }
-// "Os preferidos da semana": 3 desenhos, sem números. Se a criança tem desenhos, um deles está sempre lá.
+// "Os preferidos da semana": até 3 desenhos, sem números (corações da semana, segunda a domingo).
+// O desenho mais recente da criança está sempre lá; o resto são os com mais corações. Aparece logo com 1 desenho.
 function preferidos() {
   const caixa = $("adv-preferidos"), g = $("adv-preferidos-grelha");
   const pontos = p => (p.semana || 0) * 1000 + (p.coracoes || 0);
-  const meu = mural.filter(p => p.meu).sort((a, b) => pontos(b) - pontos(a))[0];
-  const outros = mural.filter(p => !p.meu).sort((a, b) => pontos(b) - pontos(a)).slice(0, meu ? 2 : 3);
-  const lista = (meu ? [meu] : []).concat(outros);
-  caixa.hidden = lista.length < 3;
+  const meu = mural.filter(p => p.meu).sort((a, b) => (b.t || 0) - (a.t || 0))[0];
+  const melhores = mural.filter(p => p !== meu).sort((a, b) => pontos(b) - pontos(a) || (b.t || 0) - (a.t || 0)).slice(0, meu ? 2 : 3);
+  const lista = (meu ? [meu] : []).concat(melhores);
+  caixa.hidden = !lista.length;
   g.innerHTML = "";
-  if (lista.length >= 3) lista.forEach(p => g.appendChild(cartaoMural(p)));
+  lista.forEach(p => g.appendChild(cartaoMural(p)));
 }
 // Os desenhos que este telemóvel enviou aparecem logo, até a Sheet os devolver (no máximo 1 dia).
 // Os desenhos que este telemóvel enviou: aparecem logo (até a Sheet os devolver) e ficam marcados como "meus".
