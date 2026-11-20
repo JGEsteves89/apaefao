@@ -257,11 +257,12 @@ async function abrir(n, semHistoria) {
 
 // ---------- Lupa ----------
 // Dedo em cima do desenho mais de 300 ms → aparece uma lupa por cima do dedo, com uma cruz no ponto exato.
-// Balde: toque rápido pinta logo; dedo carregado → a lupa aparece, pode-se deslizar para acertar, e pinta ao levantar.
-// Pincel: pinta como sempre; ao fim de 300 ms a lupa aparece e segue o dedo. Desaparece ao levantar o dedo.
+// Só com toque longo: o dedo fica parado 300 ms. Se o dedo mexe antes disso, não há lupa nesse toque.
+// Balde: toque rápido pinta logo; toque longo → a lupa aparece, pode-se deslizar para acertar, e pinta ao levantar.
+// Pincel: pinta como sempre; com toque longo a lupa aparece e segue o dedo. Desaparece ao levantar o dedo.
 // Rápida: no início do toque tira-se uma "fotografia" do desenho (2 imagens: cores e linhas pretas);
 // a lupa só corta e aumenta essa imagem num <canvas>, uma vez por ecrã (requestAnimationFrame).
-const LUPA_D = 120, LUPA_ZOOM = 2.5, LUPA_ESPERA = 300, FOTO = 3;   // fotografia a 1800×2400
+const LUPA_D = 120, LUPA_ZOOM = 2.5, LUPA_ESPERA = 300, PARADO = 10, FOTO = 3;   // PARADO: px que o dedo pode mexer e ainda ser toque longo   // fotografia a 1800×2400
 const lupa = document.createElement("canvas"), dpr = Math.min(3, window.devicePixelRatio || 1);
 lupa.className = "adv-lupa"; lupa.hidden = true; lupa.setAttribute("aria-hidden", "true");
 lupa.width = lupa.height = Math.round(LUPA_D * dpr); lupa.style.width = lupa.style.height = LUPA_D + "px";
@@ -339,7 +340,7 @@ function baldeToque(e) {
   const mexe = ev => {
     if (ev.pointerId !== e.pointerId) return;
     x = ev.clientX; y = ev.clientY;
-    if (!comLupa && Math.hypot(x - x0, y - y0) > 10) abrirLupa();   // a deslizar = a apontar
+    if (!comLupa && Math.hypot(x - x0, y - y0) > PARADO) clearTimeout(espera);   // mexeu antes dos 300 ms: não é toque longo, sem lupa
     if (comLupa) mostrarLupa(x, y);
   };
   const fim = ev => {
@@ -398,6 +399,7 @@ function comecarTraco(e) {
   const mexe = ev => {
     if (ev.pointerId !== e.pointerId) return;
     ultimo = [ev.clientX, ev.clientY];
+    if (!comLupa && Math.hypot(ev.clientX - e.clientX, ev.clientY - e.clientY) > PARADO) clearTimeout(espera);   // a pintar a mexer: sem lupa
     (ev.getCoalescedEvents ? ev.getCoalescedEvents() : [ev]).forEach(c => {
       const q = ponto(c), u = traco.pontos[traco.pontos.length - 1];
       if (q && Math.hypot(q[0] - u[0], q[1] - u[1]) >= 3) traco.pontos.push(q);
