@@ -510,7 +510,7 @@ function escolherLugar(n, alto, ver) {
   const amarelas = flores.filter(f => f.nv === "girassol" || f.nv === "sol");
   for (let t = 0; t < 400; t++) {
     let x, y;
-    if (n === 1) { x = v.x0 + vw * (.3 + .4 * r()); y = 560 + r() * 130; }        // relva aberta, no meio do ecrã
+    if (n === 1) { const k = .15 + .17 * r(); x = v.x0 + vw * (r() < .5 ? k : 1 - k); y = 560 + r() * 130; }   // relva aberta, no ecrã mas longe do centro
     else {
       const lista = n >= 6 && amarelas.length && r() < .35 ? amarelas : flores;    // amarelo com amarelo = camuflagem
       const f = lista[Math.floor(r() * lista.length)];
