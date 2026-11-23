@@ -1,5 +1,5 @@
 {
-  "atualizado": "2026-11-18T16:57:15Z",
+  "atualizado": "2026-11-23T13:05:33Z",
   "fonte": "SIGA / Nortake",
   "semanas": [
     {
@@ -59,6 +59,68 @@
           "horticolas": "Salada de alface e pepino",
           "sobremesa": "Fruta da época",
           "proteina": "peixe",
+          "sem_aulas": false,
+          "nota": ""
+        }
+      ]
+    },
+    {
+      "inicio": "2026-11-23",
+      "fim": "2026-11-27",
+      "pdf": "https://node1.siga.edubox.pt/Ementas_Public/285/2138/f07ee36d-e9b4-4e52-aa12-dc393d8abc4a.pdf",
+      "dias": [
+        {
+          "data": "2026-11-23",
+          "sopa": "Sopa de feijão-verde e cenoura",
+          "prato": "Arroz Xau Xau (arroz, ovo mexido, ervilhas, milho e cenoura)",
+          "vegetariano": "Estufado de lentilhas. Arroz com ervilhas, cenoura e milho",
+          "horticolas": "Salada de alface e cenoura",
+          "sobremesa": "Gelatina",
+          "proteina": "ovo",
+          "sem_aulas": false,
+          "nota": ""
+        },
+        {
+          "data": "2026-11-24",
+          "sopa": "Sopa de couve-flor e curgete",
+          "prato": "Massada de atum (massa espiral e atum)",
+          "vegetariano": "Massada de feijão frade (massa espiral e feijão frade)",
+          "horticolas": "Salada de alface",
+          "sobremesa": "Fruta da época",
+          "proteina": "peixe",
+          "sem_aulas": false,
+          "nota": ""
+        },
+        {
+          "data": "2026-11-25",
+          "sopa": "Sopa de alho francês e abóbora",
+          "prato": "Bife de porco com cebolada. Arroz com brócolos, cenoura e repolho",
+          "vegetariano": "Strogonoff de feijão branco. Arroz com brócolos, cenoura e repolho",
+          "horticolas": "Couve-flor, curgete e cenoura salteados",
+          "sobremesa": "Fruta da época",
+          "proteina": "carne",
+          "sem_aulas": false,
+          "nota": ""
+        },
+        {
+          "data": "2026-11-26",
+          "sopa": "Creme de lentilhas e cenoura",
+          "prato": "Mimos de pescada no forno com azeite e alho. Batata cozida, cenoura e feijão verde",
+          "vegetariano": "Batata cozida com grão-de-bico, cenoura e feijão verde",
+          "horticolas": "Brócolos, cenoura e repolho cozidos",
+          "sobremesa": "Fruta da época",
+          "proteina": "peixe",
+          "sem_aulas": false,
+          "nota": ""
+        },
+        {
+          "data": "2026-11-27",
+          "sopa": "Sopa de brócolos e curgete",
+          "prato": "Frango picado com legumes (cenoura, repolho, pimento e cogumelos). Massa penne cozida",
+          "vegetariano": "Feijoada de cogumelos (feijão vermelho, repolho, cenoura, pimento e cogumelos). Massa penne cozida",
+          "horticolas": "Salada de alface e tomate",
+          "sobremesa": "Fruta da época",
+          "proteina": "carne",
           "sem_aulas": false,
           "nota": ""
         }
