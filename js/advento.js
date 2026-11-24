@@ -1,5 +1,5 @@
 // O Advento da Lumi (advento.html): 24 números sobre o cenário; cada dia abre um desenho para pintar com o dedo.
-// Pintar: tocar numa zona do SVG enche-a com a cor escolhida. As cores ficam no telemóvel (localStorage "advento-v3").
+// Pintar: tocar numa zona do SVG enche-a com a cor escolhida. As cores ficam no telemóvel (localStorage "advento-v4").
 // Depois: guardar (PNG), imprimir (pintado ou por pintar) ou enviar para o mural (Sheet; aparece logo, o Jose esconde com "não" em publicar).
 // Testes: ?dia=7 (simula 7 de dezembro; ?dia=0 antes, ?dia=30 depois) · ?editar=1 (pôr os números) · ?mural-teste (6 exemplos).
 // SPEC: notas/projetos/website/advento/SPEC_advento.md
@@ -34,9 +34,9 @@ const aberto = n => (Q.fase === "durante" && n <= Q.dia) || Q.fase === "depois";
 const diasDoMural = Q.fase === "durante" ? Q.dia : Q.fase === "antes" ? 0 : N_DIAS;
 
 // ---------- Cores guardadas ----------
-const CHAVE = "advento-v3";
+const CHAVE = "advento-v4";
 const pinturas = () => ler(CHAVE, {});
-const CHAVE_TRACOS = "advento-tracos-v3";   // pincel: { "7": "#e53935|10,20 14,25;#1e5bd8|…" }
+const CHAVE_TRACOS = "advento-tracos-v4";   // pincel: { "7": "#e53935|10,20 14,25;#1e5bd8|…" }
 const pintou = n => (pinturas()[n] || []).some(c => c && c.toLowerCase() !== "#fff" && c.toLowerCase() !== "#ffffff") || !!ler(CHAVE_TRACOS, {})[n];
 
 // O mesmo "votante" da ementa (um id por telemóvel). Se não existir, cria.
@@ -49,7 +49,7 @@ function votante() {
 
 // ---------- Desenhos (SVG) ----------
 const desenhos = {};
-const ficheiro = n => "img/advento/desenhos/dia-" + String(n).padStart(2, "0") + ".svg?v=3";   // v3 (24/11): desenhos novos — as cores antigas não servem
+const ficheiro = n => "img/advento/desenhos/dia-" + String(n).padStart(2, "0") + ".svg?v=4";   // v4 (24/11): 1 área = 1 zona — as cores antigas não servem
 function desenho(n) {
   if (!desenhos[n]) desenhos[n] = fetch(ficheiro(n)).then(r => { if (!r.ok) throw new Error(r.status); return r.text(); });
   return desenhos[n];
@@ -357,7 +357,7 @@ function baldeToque(e) {
 
 function cores() { return atual.zonas.map(z => z.getAttribute("fill") || "#fff"); }
 // As cores e os passos do Desfazer ficam no telemóvel: ao reabrir o desenho, o Desfazer continua a funcionar.
-const CHAVE_PASSOS = "advento-passos-v3";
+const CHAVE_PASSOS = "advento-passos-v4";
 function guardarCores() {
   atual.versao++;   // a lupa sabe que tem de tirar outra "fotografia" do desenho
   const t = pinturas(); t[atual.dia] = cores(); gravar(CHAVE, t);
