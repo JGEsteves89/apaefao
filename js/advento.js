@@ -571,7 +571,7 @@ $("adv-form").addEventListener("submit", async e => {
   if (!ok) { erro.textContent = "Não foi possível enviar. Tenta daqui a pouco."; return; }
   // Enviado: o desenho entra logo no mural (neste telemóvel) e a página vai para lá, com o obrigado.
   const meus = ler(CHAVE_MEUS, []);
-  meus.push({ id: "meu-" + Date.now().toString(36), dia: atual.dia, nome, cores: cores(), tracos, coracoes: 0, t: Date.now() - 3e6, t: Date.now() });
+  meus.push({ id: "meu-" + Date.now().toString(36), dia: atual.dia, nome, cores: cores(), tracos, coracoes: 1, t: Date.now() });   // 1 = o meu coração (dado por defeito)
   gravar(CHAVE_MEUS, meus);
   mostrarMural(ultimoMural);
   setTimeout(carregarMural, 5000);   // a Sheet já deve ter a linha nova
@@ -616,32 +616,33 @@ function cartaoMural(p) {
   el.innerHTML = `${p.meu ? '<span class="adv-teu">O teu desenho</span>' : ""}<div class="adv-mini" role="img" aria-label="Desenho do dia ${p.dia} pintado por ${quem}"></div>
     <div class="adv-pe"><span class="adv-quem">${quem}<small>Dia ${p.dia}</small></span><button class="adv-coracao" type="button"></button></div>`;
   const b = el.querySelector(".adv-coracao");
+  // Os meus desenhos têm o meu coração por defeito (24/11, pedido do Jose); posso tirá-lo e voltar a dar.
+  const local = /^meu-/.test(p.id);   // ainda à espera da Sheet: mostra o coração, mas só se vota quando tiver código
   const mostrar = n => {
-    const dei = gostos[p.id] != null;
+    const dei = local || gostos[p.id] != null;
     // Sem números (pedido do Jose), menos com ?votos=1.
-    b.innerHTML = `<span class="adv-c-ico">${p.meu || dei ? "♥" : "♡"}</span>${VER_VOTOS ? `<span class="adv-c-n">${n}</span>` : ""}`;
+    b.innerHTML = `<span class="adv-c-ico">${dei ? "♥" : "♡"}</span>${VER_VOTOS ? `<span class="adv-c-n">${n}</span>` : ""}`;
     b.setAttribute("aria-pressed", String(dei));
-    b.setAttribute("aria-label", p.meu ? "Corações no teu desenho" : dei ? "Tirar o teu coração" : "Dar um coração");
+    b.setAttribute("aria-label", dei ? "Tirar o teu coração" : "Dar um coração");
   };
   if (p.meu) {
-    b.disabled = true;   // não se dá coração ao próprio desenho
     const antes = vistos[p.id] != null ? vistos[p.id] : 0, agora = total(p);
     mostrar(antes);
     el.animarMeu = () => { animarCoracoes(el, b, antes, agora, mostrar); vistos[p.id] = agora; gravar(CHAVE_VISTOS, vistos); };
     observarMeus.observe(el);
-  } else {
-    mostrar(total(p));
-    b.addEventListener("click", () => {
-      const tirar = gostos[p.id] != null;
-      pendentes[p.id] = [p.coracoes || 0, Math.max(0, total(p) + (tirar ? -1 : 1))];
-      if (tirar) delete gostos[p.id]; else gostos[p.id] = 1;
-      gravar(CHAVE_GOSTOS, gostos); gravar("advento-pendentes", pendentes);
-      b.classList.remove("pop"); void b.offsetWidth; if (MOVIMENTO && !tirar) b.classList.add("pop");
-      document.querySelectorAll(`.adv-cartao[data-id="${CSS.escape(p.id)}"] .adv-coracao`).forEach(x => x.atualizar && x.atualizar());
-      if (!/^(ex|meu-)/.test(p.id)) enviar("advento_voto", { id: p.id, voterId: votante(), voto: tirar ? -1 : 1 });
-    });
-    b.atualizar = () => mostrar(total(p));
-  }
+  } else mostrar(total(p));
+  if (local) b.disabled = true;
+  else b.addEventListener("click", () => {
+    const tirar = gostos[p.id] != null;
+    pendentes[p.id] = [p.coracoes || 0, Math.max(0, total(p) + (tirar ? -1 : 1))];
+    if (tirar) delete gostos[p.id]; else gostos[p.id] = 1;
+    gravar(CHAVE_GOSTOS, gostos); gravar("advento-pendentes", pendentes);
+    if (p.meu) { vistos[p.id] = total(p); gravar(CHAVE_VISTOS, vistos); }   // não "voar" corações por causa do meu toque
+    b.classList.remove("pop"); void b.offsetWidth; if (MOVIMENTO && !tirar) b.classList.add("pop");
+    document.querySelectorAll(`.adv-cartao[data-id="${CSS.escape(p.id)}"] .adv-coracao`).forEach(x => x.atualizar && x.atualizar());
+    if (!/^ex/.test(p.id)) enviar("advento_voto", { id: p.id, voterId: votante(), voto: tirar ? -1 : 1 });
+  });
+  b.atualizar = () => mostrar(total(p));
   observar.observe(el);
   return el;
 }
@@ -724,13 +725,23 @@ function preferidos() {
 function juntarMeus(lista) {
   const igual = (a, b) => a.dia === b.dia && a.nome === b.nome && JSON.stringify(a.cores) === JSON.stringify(b.cores) && (a.tracos || "") === (b.tracos || "");
   const ids = new Set(ler(CHAVE_MEUS_IDS, []));
-  const pendentes = ler(CHAVE_MEUS, []).filter(m => {
+  const locais = ler(CHAVE_MEUS, []).filter(m => {
     const ja = lista.find(p => igual(p, m) && !ids.has(p.id));
     if (ja) { ids.add(ja.id); if (vistos[m.id] != null) { vistos[ja.id] = vistos[m.id]; gravar(CHAVE_VISTOS, vistos); } return false; }
     return Date.now() - m.t < 864e5;
   });
-  gravar(CHAVE_MEUS, pendentes); gravar(CHAVE_MEUS_IDS, [...ids]);
-  return pendentes.map(m => ({ ...m, meu: true })).concat(lista.map(p => ({ ...p, meu: ids.has(p.id) })));
+  gravar(CHAVE_MEUS, locais); gravar(CHAVE_MEUS_IDS, [...ids]);
+  // O meu coração nos meus desenhos (24/11): dá-se 1 vez, sozinho, quando o desenho chega da Sheet.
+  const feitos = new Set(ler("advento-meus-coracao", []));
+  lista.filter(p => ids.has(p.id) && !feitos.has(p.id)).forEach(p => {
+    feitos.add(p.id);
+    if (gostos[p.id] != null) return;
+    gostos[p.id] = 1; pendentes[p.id] = [p.coracoes || 0, (p.coracoes || 0) + 1];
+    if (vistos[p.id] != null) vistos[p.id] += 1;
+    enviar("advento_voto", { id: p.id, voterId: votante(), voto: 1 });
+  });
+  gravar("advento-meus-coracao", [...feitos]); gravar(CHAVE_GOSTOS, gostos); gravar("advento-pendentes", pendentes); gravar(CHAVE_VISTOS, vistos);
+  return locais.map(m => ({ ...m, meu: true })).concat(lista.map(p => ({ ...p, meu: ids.has(p.id) })));
 }
 // Ordem do mural (24/11, pedido do Jose): mais corações primeiro; empate: o mais recente.
 function ordenar(lista) {
