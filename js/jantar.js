@@ -13,7 +13,6 @@ const PRECO_ADULTO = 15, PRECO_CRIANCA = 5;
   const total = document.getElementById("total");
   const ref = document.getElementById("referencia");
   const mail = document.getElementById("mail-comprovativo");
-  const seBebe = form.querySelector(".se-bebe");
 
   if (new Date() >= JANTAR_FECHA) {
     form.hidden = true;
@@ -28,9 +27,6 @@ const PRECO_ADULTO = 15, PRECO_CRIANCA = 5;
     const quem = form.nome.value.trim() || "O teu nome";
     ref.textContent = "JANTAR " + quem;
     mail.href = "mailto:apaefao@gmail.com?subject=" + encodeURIComponent("Comprovativo jantar de Natal " + quem);
-    const temBebe = n("bebes") > 0;
-    seBebe.hidden = !temBebe;
-    form.cadeirinha.forEach(r => { r.required = temBebe; });
   }
   form.addEventListener("input", atualizar);
   form.addEventListener("change", atualizar);
@@ -55,7 +51,6 @@ const PRECO_ADULTO = 15, PRECO_CRIANCA = 5;
     const dados = Object.fromEntries(new FormData(form));
     dados.rgpd = form.rgpd.checked;
     dados.total = valor();
-    if (!n("bebes")) dados.cadeirinha = "";
 
     const botao = form.querySelector("button[type=submit]");
     botao.disabled = true; botao.textContent = "A enviar…";
