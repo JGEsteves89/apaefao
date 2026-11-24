@@ -53,7 +53,7 @@ const PRECO_ADULTO = 15, PRECO_CRIANCA = 5;
   }
   if (!form.hidden && !MODO_TESTE) verLugares();
 
-  // Alergénios: tocar no "i" mostra e esconde (funciona no telemóvel).
+  // Alergénios: tocar num ícone mostra e esconde o nome (funciona no telemóvel).
   form.querySelectorAll(".alergenos-botao").forEach(b => b.addEventListener("click", () => {
     const t = b.nextElementSibling, abrir = t.hidden;
     form.querySelectorAll(".alergenos-texto").forEach(x => { x.hidden = true; });

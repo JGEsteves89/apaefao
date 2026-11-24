@@ -41,8 +41,10 @@
     .prato { padding: 4px 0 8px; }
     .prato-nome { font-family: "Fredoka", sans-serif; font-size: 1.25em; margin: 12px 0 0; display: flex; align-items: center; gap: 8px; }
     .alergenos { position: relative; display: inline-block; }
-    .alergenos-botao { width: 26px; height: 26px; border-radius: 50%; border: 1.5px solid #1f1a14; background: #fff; font: 800 15px/1 Georgia, serif; font-style: italic; padding: 0; cursor: pointer; color: #1f1a14; }
-    .alergenos-texto { position: absolute; left: 0; top: 32px; z-index: 5; width: max-content; max-width: 260px; background: #1f1a14; color: #fff; font: 600 14px/1.35 "Nunito", sans-serif; padding: 8px 12px; border-radius: 10px; }
+    .alergenos-lista { display: inline-flex; gap: 6px; }
+    .alergenos-botao { width: 32px; height: 32px; border-radius: 50%; border: 1.5px solid #d9c9a3; background: #fff; font-size: 17px; line-height: 1; padding: 0; cursor: pointer; display: grid; place-items: center; }
+    .alergenos-botao[aria-expanded="true"] { border-color: #1f1a14; }
+    .alergenos-texto { position: absolute; left: 0; top: 38px; z-index: 5; width: max-content; max-width: 260px; background: #1f1a14; color: #fff; font: 600 14px/1.35 "Nunito", sans-serif; padding: 8px 12px; border-radius: 10px; }
     .lugares { margin: 0 0 16px; }
     .lugares p { margin: 0 0 6px; font-size: 1.1em; }
     .lugares-barra { height: 14px; border: 1.5px solid #1f1a14; border-radius: 999px; background: #fff; overflow: hidden; }
@@ -132,12 +134,12 @@
         <fieldset class="pessoas">
           <legend>Quantas pessoas, e que prato?</legend>
           <div class="prato">
-            <p class="prato-nome">Arroz de pato <span class="alergenos"><button type="button" class="alergenos-botao" aria-expanded="false" aria-label="Alergénios de arroz de pato">i</button><span class="alergenos-texto" role="tooltip" hidden><b>Alergénios:</b> pode conter aipo, sulfitos e leite (enchidos e caldo).</span></span></p>
+            <p class="prato-nome">Arroz de pato <span class="alergenos-lista"><span class="alergenos"><button type="button" class="alergenos-botao" aria-expanded="false" aria-label="Pode conter aipo" title="Pode conter aipo">🥬</button><span class="alergenos-texto" role="tooltip" hidden>Pode conter aipo</span></span><span class="alergenos"><button type="button" class="alergenos-botao" aria-expanded="false" aria-label="Pode conter sulfitos" title="Pode conter sulfitos">🍷</button><span class="alergenos-texto" role="tooltip" hidden>Pode conter sulfitos</span></span><span class="alergenos"><button type="button" class="alergenos-botao" aria-expanded="false" aria-label="Pode conter leite" title="Pode conter leite">🥛</button><span class="alergenos-texto" role="tooltip" hidden>Pode conter leite</span></span></span></p>
             <div class="pessoa"><span><b>Adulto</b> 15 €</span><span class="conta-pessoas"><button type="button" class="menos" aria-label="Menos">−</button><output data-campo="adultosPato">0</output><button type="button" class="mais" aria-label="Mais">+</button></span></div>
             <div class="pessoa"><span><b>Criança</b> 5 € <small>(3 a 12 anos)</small></span><span class="conta-pessoas"><button type="button" class="menos" aria-label="Menos">−</button><output data-campo="criancasPato">0</output><button type="button" class="mais" aria-label="Mais">+</button></span></div>
           </div>
           <div class="prato">
-            <p class="prato-nome">Bacalhau com natas <span class="alergenos"><button type="button" class="alergenos-botao" aria-expanded="false" aria-label="Alergénios de bacalhau com natas">i</button><span class="alergenos-texto" role="tooltip" hidden><b>Alergénios:</b> peixe, leite e glúten.</span></span></p>
+            <p class="prato-nome">Bacalhau com natas <span class="alergenos-lista"><span class="alergenos"><button type="button" class="alergenos-botao" aria-expanded="false" aria-label="Peixe" title="Peixe">🐟</button><span class="alergenos-texto" role="tooltip" hidden>Peixe</span></span><span class="alergenos"><button type="button" class="alergenos-botao" aria-expanded="false" aria-label="Leite" title="Leite">🥛</button><span class="alergenos-texto" role="tooltip" hidden>Leite</span></span><span class="alergenos"><button type="button" class="alergenos-botao" aria-expanded="false" aria-label="Glúten" title="Glúten">🌾</button><span class="alergenos-texto" role="tooltip" hidden>Glúten</span></span></span></p>
             <div class="pessoa"><span><b>Adulto</b> 15 €</span><span class="conta-pessoas"><button type="button" class="menos" aria-label="Menos">−</button><output data-campo="adultosBacalhau">0</output><button type="button" class="mais" aria-label="Mais">+</button></span></div>
             <div class="pessoa"><span><b>Criança</b> 5 € <small>(3 a 12 anos)</small></span><span class="conta-pessoas"><button type="button" class="menos" aria-label="Menos">−</button><output data-campo="criancasBacalhau">0</output><button type="button" class="mais" aria-label="Mais">+</button></span></div>
           </div>
@@ -145,7 +147,7 @@
             <p class="prato-nome">Bebés</p>
             <div class="pessoa"><span><b>Até 2 anos</b> grátis <small>(ao colo)</small></span><span class="conta-pessoas"><button type="button" class="menos" aria-label="Menos">−</button><output data-campo="bebes">0</output><button type="button" class="mais" aria-label="Mais">+</button></span></div>
           </div>
-          <p class="pequeno">Todos os pratos têm sopa, bebida e sobremesa.</p>
+          <p class="pequeno">Todos os pratos têm sopa, bebida e sobremesa. Os ícones ao lado de cada prato são os alergénios: toca para ver o nome.</p>
           <p class="total-jantar">Total: <b id="total">0 €</b></p>
         </fieldset>
 
