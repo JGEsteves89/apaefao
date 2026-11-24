@@ -27,8 +27,9 @@ const PRECO_ADULTO = 15, PRECO_CRIANCA = 5;
     c.querySelector(".menos").addEventListener("click", () => mudar(-1));
     c.querySelector(".mais").addEventListener("click", () => mudar(1));
   });
-  const adultos = () => conta.adultosPato + conta.adultosBacalhau;
-  const criancas = () => conta.criancasPato + conta.criancasBacalhau;
+  const adultos = () => conta.adultosPato + conta.adultosBacalhau + conta.adultosVeg;
+  const criancas = () => conta.criancasPato + conta.criancasBacalhau + conta.criancasVeg;
+  const marcados = nome => [...form.querySelectorAll('input[name="' + nome + '"]:checked')].map(i => i.value);
   const valor = () => adultos() * PRECO_ADULTO + criancas() * PRECO_CRIANCA;
   const pessoasQuePagam = () => adultos() + criancas(); // = lugares (os bebés vão ao colo)
 
@@ -74,6 +75,7 @@ const PRECO_ADULTO = 15, PRECO_CRIANCA = 5;
     mail.href = "mailto:apaefao@gmail.com?subject=" + encodeURIComponent("Comprovativo jantar de Natal " + quem);
     // A ajuda do pagamento aparece logo a seguir à escolha, só a do método escolhido.
     form.querySelectorAll(".pagar-info").forEach(d => { d.hidden = d.dataset.para !== form.pagamento.value; });
+    form.querySelector(".se-alergia").hidden = form.temAlergias.value !== "sim";
   }
   form.addEventListener("input", atualizar);
   form.addEventListener("change", atualizar);
@@ -88,6 +90,14 @@ const PRECO_ADULTO = 15, PRECO_CRIANCA = 5;
       erro.textContent = "Escolhe pelo menos 1 adulto ou 1 criança, com o prato.";
       return;
     }
+    if (!marcados("turmas").length) {
+      erro.textContent = "Escolhe a turma ou sala dos teus filhos (ou \"Não tenho filhos na escola\").";
+      return;
+    }
+    if (form.temAlergias.value === "sim" && !marcados("alergiasQuais").length) {
+      erro.textContent = "Diz-nos a que alergias (ou escolhe \"Outra\").";
+      return;
+    }
     if (livres !== null && pessoasQuePagam() > livres) {
       erro.textContent = "Só há " + livres + " lugares livres. Tira algumas pessoas, por favor.";
       return;
@@ -100,6 +110,9 @@ const PRECO_ADULTO = 15, PRECO_CRIANCA = 5;
       return;
     }
     const dados = Object.assign(Object.fromEntries(new FormData(form)), conta);
+    dados.turmas = marcados("turmas").join(", ");
+    dados.alergias = form.temAlergias.value === "sim" ? marcados("alergiasQuais").join(", ") : "não";
+    delete dados.temAlergias; delete dados.alergiasQuais;
     dados.rgpd = form.rgpd.checked;
     dados.total = valor();
 
