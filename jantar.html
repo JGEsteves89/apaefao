@@ -25,6 +25,19 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css?v=20261120a">
+  <style>
+    .pessoas { border: 0; padding: 0; margin: 0 0 16px; }
+    .pessoas legend { font-weight: 800; margin-bottom: 8px; }
+    .pessoa > span:first-child { flex: 1; }
+    .pessoa { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid #e5d8b8; }
+    .pessoa small { display: block; opacity: .75; }
+    .conta-pessoas { display: inline-flex; align-items: center; gap: 10px; }
+    .conta-pessoas button { display: grid; place-items: center; padding: 0; line-height: 1; color: #1f1a14; width: 44px; height: 44px; border-radius: 50%; border: 1.5px solid #1f1a14; background: #fff; font-size: 1.4em; font-weight: 800; cursor: pointer; }
+    .conta-pessoas button.mais { background: var(--sol); }
+    .conta-pessoas output { min-width: 1.5em; text-align: center; font-size: 1.3em; font-weight: 800; }
+    .total-jantar { font-size: 1.3em; margin: 12px 0 0; }
+    .pagar-info { margin: 0 0 16px; }
+  </style>
 </head>
 <body>
   <header class="topo">
@@ -100,50 +113,32 @@
           <label>Telemóvel
             <input name="telefone" type="tel" required maxlength="20" inputmode="tel" autocomplete="tel">
           </label>
-          <label>Email (opcional)
-            <input name="email" type="email" maxlength="120" autocomplete="email">
-          </label>
-          <label>Criança(s) na escola e sala
-            <input name="criancasEscola" required maxlength="120" placeholder="Ex.: Maria, Sala B">
-          </label>
-          <label>Adultos (15 €)
-            <input name="adultos" type="number" min="0" max="20" value="2" required inputmode="numeric">
-          </label>
-          <label>Crianças dos 3 aos 12 anos (5 €)
-            <input name="criancas" type="number" min="0" max="20" value="1" required inputmode="numeric">
-          </label>
-          <label>Bebés até 2 anos (grátis)
-            <input name="bebes" type="number" min="0" max="10" value="0" inputmode="numeric">
-          </label>
         </div>
-        <div class="campos">
-          <label class="largo">Alergias ou restrições (opcional)
-            <input name="alergias" maxlength="200" placeholder="Ex.: 1 vegetariano, 1 sem glúten">
-          </label>
-        </div>
+
+        <fieldset class="pessoas">
+          <legend>Quantas pessoas, e carne ou peixe?</legend>
+          <div class="pessoa"><span><b>Adulto · carne</b> 15 €</span><span class="conta-pessoas"><button type="button" class="menos" aria-label="Menos">−</button><output data-campo="adultosCarne">0</output><button type="button" class="mais" aria-label="Mais">+</button></span></div>
+          <div class="pessoa"><span><b>Adulto · peixe</b> 15 €</span><span class="conta-pessoas"><button type="button" class="menos" aria-label="Menos">−</button><output data-campo="adultosPeixe">0</output><button type="button" class="mais" aria-label="Mais">+</button></span></div>
+          <div class="pessoa"><span><b>Criança · carne</b> 5 € <small>(3 a 12 anos)</small></span><span class="conta-pessoas"><button type="button" class="menos" aria-label="Menos">−</button><output data-campo="criancasCarne">0</output><button type="button" class="mais" aria-label="Mais">+</button></span></div>
+          <div class="pessoa"><span><b>Criança · peixe</b> 5 € <small>(3 a 12 anos)</small></span><span class="conta-pessoas"><button type="button" class="menos" aria-label="Menos">−</button><output data-campo="criancasPeixe">0</output><button type="button" class="mais" aria-label="Mais">+</button></span></div>
+          <div class="pessoa"><span><b>Bebé</b> grátis <small>(até 2 anos)</small></span><span class="conta-pessoas"><button type="button" class="menos" aria-label="Menos">−</button><output data-campo="bebes">0</output><button type="button" class="mais" aria-label="Mais">+</button></span></div>
+          <p class="total-jantar">Total: <b id="total">0 €</b></p>
+        </fieldset>
+
+        <fieldset class="escolha">
+          <legend>Alguém tem alergias ou intolerâncias?</legend>
+          <label><input type="radio" name="alergias" value="não" required> Não</label>
+          <label><input type="radio" name="alergias" value="sim"> Sim</label>
+          <p class="pequeno se-alergia" hidden>Vamos ligar-te antes do jantar para saber os detalhes.</p>
+        </fieldset>
+
         <fieldset class="escolha">
           <legend>Como vais pagar?</legend>
           <label><input type="radio" name="pagamento" value="transferência" required> Transferência</label>
           <label><input type="radio" name="pagamento" value="envelope"> Envelope ao professor</label>
         </fieldset>
-        <p class="total-jantar" style="font-size:1.3em">Total: <b id="total">35 €</b></p>
-        <label class="check"><input type="checkbox" name="rgpd" required> <span>Aceito que a APAEF guarde estes dados só para gerir o jantar. Depois do jantar, são apagados.</span></label>
-        <p class="erro-form" role="alert"></p>
-        <button class="botao botao-grande" type="submit">Reservar</button>
-      </form>
-      <div id="jantar-ok" class="sucesso" hidden tabindex="-1">
-        <img class="mascote mascote-salta" src="img/mascote/salta.webp" alt="" width="420" height="517" loading="lazy">
-        <h3>Obrigado!</h3>
-        <p>A reserva chegou. Agora só falta pagar <b id="total-ok"></b>: vê como aqui em baixo.</p>
-      </div>
-    </section>
-
-    <section id="pagar">
-      <h2>Como pagar</h2>
-      <div class="colunas">
-        <div class="cartao">
-          <h3>🏦 Por transferência</h3>
-          <p>IBAN:</p>
+        <div class="cartao pagar-info" data-para="transferência" hidden>
+          <p>Transfere <b class="valor"></b> para o IBAN:</p>
           <div class="copiar-linha">
             <code id="iban">PT50 0033 0000 4566 4874 4950 5</code>
             <button class="b-copiar" type="button" data-copiar="iban"><span class="txt">Copiar</span><span class="ok">✓ Copiado</span></button>
@@ -153,12 +148,21 @@
             <code id="referencia">JANTAR O teu nome</code>
             <button class="b-copiar" type="button" data-copiar="referencia"><span class="txt">Copiar</span><span class="ok">✓ Copiado</span></button>
           </div>
-          <p>Depois, envia o comprovativo para <a id="mail-comprovativo" href="mailto:apaefao@gmail.com?subject=Comprovativo%20jantar%20de%20Natal">apaefao@gmail.com</a>.</p>
+          <p>Depois, envia o comprovativo para <a id="mail-comprovativo" href="mailto:apaefao@gmail.com">apaefao@gmail.com</a>.</p>
         </div>
-        <div class="cartao">
-          <h3>✉️ Em dinheiro</h3>
-          <p>Entrega o valor ao professor ou à educadora, num envelope com <b>"Jantar de Natal"</b> e o teu nome.</p>
+        <div class="cartao pagar-info" data-para="envelope" hidden>
+          <p>Põe <b class="valor"></b> num envelope com <b>"Jantar de Natal"</b> e o teu nome, e entrega ao professor ou à educadora.</p>
         </div>
+
+        <label class="check"><input type="checkbox" name="rgpd" required> <span>Aceito que a APAEF guarde estes dados só para gerir o jantar. Depois do jantar, são apagados.</span></label>
+        <p class="erro-form" role="alert"></p>
+        <button class="botao botao-grande" type="submit">Reservar</button>
+      </form>
+      <div id="jantar-ok" class="sucesso" hidden tabindex="-1">
+        <img class="mascote mascote-salta" src="img/mascote/salta.webp" alt="" width="420" height="517" loading="lazy">
+        <h3>Obrigado!</h3>
+        <p>A reserva chegou. O lugar fica garantido quando pagares <b id="total-ok"></b>.</p>
+        <p id="lembrete-ok"></p>
       </div>
     </section>
   </main>
