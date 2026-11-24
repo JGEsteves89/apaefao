@@ -86,6 +86,9 @@ function desenharFaixa(el, lista) {
 
 // Página dos apoiantes: blocos de vários tamanhos que encaixam (estilo Mondrian) e contador.
 const CASAS = { grande: 4, alto: 2, largo: 2, pequeno: 1 };   // quantas casas da grelha ocupa cada tamanho
+// O tamanho do cartão segue o nível do jardim (o mesmo para os dois). Sem "nivel", usa o "tamanho" antigo.
+const DO_NIVEL = { sol: "grande", girassol: "alto", flor: "pequeno", botao: "pequeno" };
+const NOME_NIVEL = { sol: "Sol", girassol: "Girassol", flor: "Flor", botao: "Botão" };
 
 // Enquanto a lista chega: cartões "fantasma" a brilhar e o contador a rodar números.
 function mostrarCarregar(el, contador) {
@@ -124,7 +127,7 @@ async function grelhaApoiantes(el, contador) {
 function desenharGrelha(el, contador, lista, quieto) {
   el.innerHTML = "";
   const publicos = lista.map((a, i) => [a, i]).filter(([a]) => a.publicar);
-  const tamanho = a => CASAS[a.tamanho] ? a.tamanho : "pequeno";
+  const tamanho = a => DO_NIVEL[a.nivel] || (CASAS[a.tamanho] ? a.tamanho : "pequeno");
 
   // Ordem: 1.º grande, os altos com dois pequenos ao lado, os largos, os outros grandes, o resto.
   const por = { grande: [], alto: [], largo: [], pequeno: [] };
@@ -136,6 +139,8 @@ function desenharGrelha(el, contador, lista, quieto) {
   ordem.forEach(([a, i]) => {
     const c = cartaoApoiante(a, i);
     c.classList.add(tamanho(a));
+    if (NOME_NIVEL[a.nivel]) c.querySelector("h3").insertAdjacentHTML("afterbegin",
+      `<img class="ap-nivel" src="img/jardim/flores/${a.nivel}-1.svg" alt="${NOME_NIVEL[a.nivel]}" title="${NOME_NIVEL[a.nivel]}">`);
     el.appendChild(c);
   });
 

@@ -232,3 +232,10 @@ html.jardim-cheio-aberto, html.jardim-cheio-aberto body { overflow: hidden; over
 @media (max-width: 600px) { .jardim-vista:not(.cheio) { height: 52vh; min-height: 300px; } .jardim-entrar b { font-size: 18px; } .jardim-entrar img { width: 52px; height: 52px; } }
 /* Flores replantadas com dados novos (jardim.js → replantar): a procura aberta não volta a fazer saltar as flores. */
 .sem-salto .flor.achada .cabeca { animation: none; }
+
+/* ---------- Na página Apoiantes: o jardim em cima, a lista de todos por baixo ---------- */
+.titulo-seccao { text-align: center; font-size: clamp(24px, 5vw, 30px); margin: 28px 0 6px; }
+.jardim-seccao .jardim-topo { margin-top: 0; }
+.todos-apoiantes { margin-top: 36px; }
+.ap-nivel { display: inline-block; width: 22px; height: 22px; vertical-align: -4px; margin-right: 6px; }
+.grelha-apoiantes .grande .ap-nivel { width: 30px; height: 30px; vertical-align: -6px; }

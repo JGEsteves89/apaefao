@@ -25,6 +25,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css?v=20261120a">
+  <link rel="stylesheet" href="jardim.css?v=21">
+  <link rel="preload" as="image" href="img/jardim/fundo.svg?v=1">
   <link rel="preconnect" href="https://script.google.com">
   <link rel="preconnect" href="https://script.googleusercontent.com" crossorigin>
 </head>
@@ -74,9 +76,47 @@
       <p class="contador-linha">Este ano letivo já contamos com o apoio de <span class="contador" id="contador">0</span> empresas e amigos.</p>
       <p class="nota">Ofereceram prémios e produtos para as atividades da APAEF de 2026/27. Obrigado também a todos os que nos ajudaram nos anos anteriores! Visita-os!</p>
     </div>
+    <section class="jardim-seccao" id="jardim">
+    <div class="jardim-topo">
+      <h2 class="titulo-seccao">O jardim dos apoiantes</h2>
+      <p>Cada flor é alguém que ajudou a nossa escola. Quanto mais ajudou, maior a flor. Toca numa flor para saberes quem é!</p>
+      <form class="jardim-procura" role="search" onsubmit="return false">
+        <input id="jardim-procura" type="search" placeholder="Procura o teu nome…" aria-label="Procura um apoiante" autocomplete="off">
+        <button id="jardim-ir" type="button">Ir</button>
+      </form>
+      <p class="jardim-procura-msg" id="jardim-procura-msg" aria-live="polite"></p>
+      <ul class="jardim-resultados" id="jardim-resultados" hidden></ul>
+    </div>
+
+    <div class="jardim-vista" id="jardim-vista" tabindex="0" role="button" aria-label="Entrar no jardim da Lumi">
+      <div class="jardim-mundo" id="jardim-mundo"><img class="fundo" src="img/jardim/fundo.svg?v=1" alt="" width="2172" height="724" draggable="false"></div>
+      <div class="jardim-nomes" id="jardim-nomes" aria-hidden="true"></div>
+      <div class="jardim-zoom"><button id="zoom-mais" type="button" aria-label="Aproximar">+</button><button id="zoom-menos" type="button" aria-label="Afastar">−</button></div>
+      <div class="jardim-cartao" id="jardim-cartao" role="dialog" aria-live="polite" hidden></div>
+      <button class="jardim-cheio-botao" id="jardim-cheio" type="button" aria-label="Sair do jardim">✕ Sair</button>
+      <span class="jardim-entrar" aria-hidden="true"><img src="img/mascote/ola.webp" alt=""><span><b>Entrar no jardim da Lumi</b><small>Passeia pelas flores e joga às escondidas</small></span></span>
+      <p class="jardim-aviso-gesto" id="jardim-aviso-gesto" role="status" hidden></p>
+      <p class="jardim-carregar" id="jardim-carregar">A plantar as flores…</p>
+      <div id="jardim-aviso"></div>
+    </div>
+
+    <div class="jardim-legenda">
+      <span class="l-sol"><img src="img/jardim/flores/sol-1.svg" alt="">Sol <b data-conta="sol"></b></span>
+      <span class="l-girassol"><img src="img/jardim/flores/girassol-1.svg" alt="">Girassol <b data-conta="girassol"></b></span>
+      <span class="l-flor"><img src="img/jardim/flores/flor-1.svg" alt="">Flor <b data-conta="flor"></b></span>
+      <span class="l-botao"><img src="img/jardim/flores/botao-1.svg" alt="">Botão <b data-conta="botao"></b></span>
+    </div>
+    <p class="jardim-lema"><b id="jardim-conta">…</b> flores no jardim. Toda a ajuda floresce aqui.</p>
+    <section class="lumi-recordes" id="lumi-recordes" hidden>
+      <h2>Recordes da Lumi deste mês</h2>
+      <ol id="lumi-lista"></ol>
+    </section>
+    </section>
+
+    <h2 class="titulo-seccao todos-apoiantes">Todos os apoiantes</h2>
     <a class="chamada-ajuda" href="ajudar.html">
-      <span class="ca-ico" aria-hidden="true">🎁</span>
-      <span><b>Também queres ajudar?</b><small>Um prémio, bolos para a feira, roupa… Demora 1 minuto.</small></span>
+      <span class="ca-ico" aria-hidden="true">🌱</span>
+      <span><b>Planta a tua flor</b><small>Um prémio, bolos para a feira, roupa… Demora 1 minuto.</small></span>
       <span class="seta" aria-hidden="true">›</span>
     </a>
     <div class="grelha-apoiantes" data-todos-apoiantes></div>
@@ -102,7 +142,8 @@
   <script src="js/config.js"></script>
   <script src="js/comum.js?v=20261120b"></script>
   <script src="js/lumi-cenas.js"></script>
-  <script src="js/apoiantes.js?v=20261120a"></script>
+  <script src="js/apoiantes.js?v=20261124a"></script>
+  <script src="js/jardim.js?v=23"></script>
   <!-- Contador de visitas (GoatCounter: sem cookies) -->
   <script data-goatcounter="https://apaefao.goatcounter.com/count"
           async src="//gc.zgo.at/count.js"></script>

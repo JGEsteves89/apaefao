@@ -1,4 +1,4 @@
-// O jardim dos apoiantes (página de teste: jardim.html).
+// O jardim dos apoiantes (na página Apoiantes, apoiantes.html; jardim.html só reencaminha).
 // Cada apoiante é uma flor num jardim de Fão. Tamanho da flor = nível (vem da Sheet; nunca mostra €).
 // Arrastar para passear, zoom com + / − / roda do rato / dois dedos, tocar numa flor abre o cartão.
 // Lugares: gerados sempre iguais (semente fixa) e escolhidos pelo nome → cada flor fica sempre no mesmo sítio.
@@ -290,7 +290,7 @@ function mostrarNomes() {
   const ordem = flores.slice().sort((f, g) => ORDEM.indexOf(f.nv) - ORDEM.indexOf(g.nv) || g.y - f.y);
   for (const f of ordem) {
     const cabPx = f.cab * cam.s, x = cam.x + f.x * cam.s, topo = cam.y + (f.y - f.alto - f.cab * .1) * cam.s;
-    const quer = cabPx >= (f.nv === "sol" ? 30 : 46) || f === aberta || f.achada;
+    const quer = f === aberta || f.achada;   // só a flor tocada ou procurada (a lista de todos está por baixo)
     const n = f.nomeEl;
     if (!quer || x < -60 || x > W + 60 || topo < -20 || topo > H + 20) { n.hidden = true; continue; }
     n.hidden = false; n.style.left = x + "px"; n.style.top = topo + "px";
