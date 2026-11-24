@@ -571,7 +571,7 @@ $("adv-form").addEventListener("submit", async e => {
   if (!ok) { erro.textContent = "Não foi possível enviar. Tenta daqui a pouco."; return; }
   // Enviado: o desenho entra logo no mural (neste telemóvel) e a página vai para lá, com o obrigado.
   const meus = ler(CHAVE_MEUS, []);
-  meus.push({ id: "meu-" + Date.now().toString(36), dia: atual.dia, nome, cores: cores(), tracos, coracoes: 0, semana: 0, t: Date.now() });
+  meus.push({ id: "meu-" + Date.now().toString(36), dia: atual.dia, nome, cores: cores(), tracos, coracoes: 0, t: Date.now() - 3e6, t: Date.now() });
   gravar(CHAVE_MEUS, meus);
   mostrarMural(ultimoMural);
   setTimeout(carregarMural, 5000);   // a Sheet já deve ter a linha nova
@@ -586,23 +586,29 @@ const EXEMPLOS = () => {
   const p = ["#e53935", "#2e7d32", "#fdd835", "#1e5bd8", "#f48fb1", "#fb8c00", "#8e44ad", "#64b5f6", "#d4a017", "#8bc34a"];
   const cor = (s, n) => Array.from({ length: n }, (_, i) => p[(i * 3 + s) % p.length]);
   return [
-    { id: "ex1", dia: 1, nome: "Alba", idade: 5, cores: cor(1, 12), coracoes: 7, semana: 4, meu: true },
-    { id: "ex2", dia: 1, nome: "Tomás", idade: 7, cores: cor(2, 12), coracoes: 2, semana: 2 },
-    { id: "ex3", dia: 2, nome: "Leonor", idade: "", cores: cor(3, 13), coracoes: 12, semana: 9 },
-    { id: "ex4", dia: 2, nome: "Rui", idade: 4, cores: cor(4, 13), coracoes: 0, semana: 0 },
-    { id: "ex5", dia: 3, nome: "Matilde", idade: 8, cores: cor(5, 13), coracoes: 5, semana: 5 },
-    { id: "ex6", dia: 3, nome: "Gaspar", idade: 6, cores: cor(6, 13), coracoes: 1, semana: 1 },
+    { id: "ex1", dia: 1, nome: "Alba", idade: 5, cores: cor(1, 12), coracoes: 7, meu: true, t: Date.now() },
+    { id: "ex2", dia: 1, nome: "Tomás", idade: 7, cores: cor(2, 12), coracoes: 2, t: Date.now() - 1e6 },
+    { id: "ex3", dia: 2, nome: "Leonor", idade: "", cores: cor(3, 13), coracoes: 12, t: Date.now() - 2e6 },
+    { id: "ex4", dia: 2, nome: "Rui", idade: 4, cores: cor(4, 13), coracoes: 0, t: Date.now() - 3e6 },
+    { id: "ex5", dia: 3, nome: "Matilde", idade: 8, cores: cor(5, 13), coracoes: 5, t: Date.now() - 4e6 },
+    { id: "ex6", dia: 3, nome: "Gaspar", idade: 6, cores: cor(6, 13), coracoes: 1, t: Date.now() - 5e6 },
   ];
 };
 const CHAVE_MURAL = "advento-mural", CHAVE_GOSTOS = "advento-coracoes-v2", CHAVE_MEUS = "advento-meus", CHAVE_MEUS_IDS = "advento-meus-ids", CHAVE_VISTOS = "advento-vistos";
 let mural = [], filtro = "todos", ultimoMural = null;
-const gostos = ler(CHAVE_GOSTOS, {});      // { id: corações que a Sheet tinha quando dei o meu } (para não contar 2 vezes)
+const gostos = ler(CHAVE_GOSTOS, {});      // { id: votos que a Sheet tinha quando votei } (para não contar 2 vezes)
+const tirados = ler("advento-tirados", {}); // { id: votos que a Sheet tinha quando tirei o voto }
+const VER_VOTOS = P.has("votos");          // advento.html?votos=1 mostra o número de votos (para o Jose)
 const vistos = ler(CHAVE_VISTOS, {});      // { id: corações que vi da última vez no meu desenho }
 
-// Corações: cada desenho começa com 5 (BASE), para nunca haver um desenho com 0.
-// Os teus desenhos aparecem primeiro e, ao abrir a página, animam com os corações novos desde a última visita.
-const BASE = 5;
-const total = p => BASE + (p.coracoes || 0) + (gostos[p.id] != null && (p.coracoes || 0) <= gostos[p.id] ? 1 : 0);
+// Votos: tocar no coração dá +1; tocar outra vez tira o voto (-1). O número só aparece com ?votos=1.
+// Enquanto a Sheet não devolve o número novo, conta-se aqui o voto deste telemóvel.
+const total = p => {
+  const n = p.coracoes || 0;
+  if (gostos[p.id] != null && n <= gostos[p.id]) return n + 1;
+  if (tirados[p.id] != null && n >= tirados[p.id]) return Math.max(0, n - 1);
+  return n;
+};
 function cartaoMural(p) {
   const el = document.createElement("article");
   el.className = "adv-cartao" + (p.meu ? " meu" : ""); el.dataset.id = p.id;
@@ -612,10 +618,10 @@ function cartaoMural(p) {
   const b = el.querySelector(".adv-coracao");
   const mostrar = n => {
     const dei = gostos[p.id] != null;
-    // Sem números (pedido do Jose): só o coração. O n continua a contar por dentro (para a animação).
-    b.innerHTML = `<span class="adv-c-ico">${p.meu || dei ? "♥" : "♡"}</span>`;
+    // Sem números (pedido do Jose), menos com ?votos=1.
+    b.innerHTML = `<span class="adv-c-ico">${p.meu || dei ? "♥" : "♡"}</span>${VER_VOTOS ? `<span class="adv-c-n">${n}</span>` : ""}`;
     b.setAttribute("aria-pressed", String(dei));
-    b.setAttribute("aria-label", p.meu ? "Corações no teu desenho" : dei ? "Já deste um coração" : "Dar um coração");
+    b.setAttribute("aria-label", p.meu ? "Corações no teu desenho" : dei ? "Tirar o teu coração" : "Dar um coração");
   };
   if (p.meu) {
     b.disabled = true;   // não se dá coração ao próprio desenho
@@ -626,12 +632,15 @@ function cartaoMural(p) {
   } else {
     mostrar(total(p));
     b.addEventListener("click", () => {
-      if (gostos[p.id] != null) return;
-      gostos[p.id] = p.coracoes || 0; gravar(CHAVE_GOSTOS, gostos);
-      b.classList.remove("pop"); void b.offsetWidth; if (MOVIMENTO) b.classList.add("pop");
-      mostrar(total(p));
-      if (!/^(ex|meu-)/.test(p.id)) enviar("advento_voto", { id: p.id, voterId: votante() });
+      const tirar = gostos[p.id] != null;
+      if (tirar) { delete gostos[p.id]; tirados[p.id] = p.coracoes || 0; }
+      else { gostos[p.id] = p.coracoes || 0; delete tirados[p.id]; }
+      gravar(CHAVE_GOSTOS, gostos); gravar("advento-tirados", tirados);
+      b.classList.remove("pop"); void b.offsetWidth; if (MOVIMENTO && !tirar) b.classList.add("pop");
+      document.querySelectorAll(`.adv-cartao[data-id="${CSS.escape(p.id)}"] .adv-coracao`).forEach(x => x.atualizar && x.atualizar());
+      if (!/^(ex|meu-)/.test(p.id)) enviar("advento_voto", { id: p.id, voterId: votante(), voto: tirar ? -1 : 1 });
     });
+    b.atualizar = () => mostrar(total(p));
   }
   observar.observe(el);
   return el;
@@ -691,14 +700,21 @@ function grelha() {
   }
   lista.forEach(p => el.appendChild(cartaoMural(p)));
 }
-// "Os preferidos da semana": até 3 desenhos, sem números (corações da semana, segunda a domingo).
-// O desenho mais recente da criança está sempre lá; o resto são os com mais corações. Aparece logo com 1 desenho.
+// "Os preferidos da semana" (24/11, pedido do Jose): desenhos enviados esta semana (segunda a domingo):
+// os 2 com mais corações + o desenho com mais corações deste telemóvel (se não tiver nenhum: só os 2).
+// Empate: ganha o mais recente. O resto do mural segue a mesma ordem.
+const ordem = (a, b) => total(b) - total(a) || (b.t || 0) - (a.t || 0);
+function inicioSemana() {
+  const hoje = new Date(hojeISO() + "T00:00:00"), dow = (hoje.getDay() + 6) % 7;   // 0 = segunda
+  return hoje.getTime() - dow * 864e5;
+}
 function preferidos() {
   const caixa = $("adv-preferidos"), g = $("adv-preferidos-grelha");
-  const pontos = p => (p.semana || 0) * 1000 + (p.coracoes || 0);
-  const meu = mural.filter(p => p.meu).sort((a, b) => (b.t || 0) - (a.t || 0))[0];
-  const melhores = mural.filter(p => p !== meu).sort((a, b) => pontos(b) - pontos(a) || (b.t || 0) - (a.t || 0)).slice(0, meu ? 2 : 3);
-  const lista = (meu ? [meu] : []).concat(melhores);
+  const desde = inicioSemana();
+  const semana = mural.filter(p => (p.t || 0) >= desde).sort(ordem);
+  const melhores = semana.slice(0, 2);
+  const meu = semana.filter(p => p.meu && !melhores.includes(p))[0];
+  const lista = melhores.concat(meu ? [meu] : []);
   caixa.hidden = !lista.length;
   g.innerHTML = "";
   lista.forEach(p => g.appendChild(cartaoMural(p)));
@@ -716,11 +732,9 @@ function juntarMeus(lista) {
   gravar(CHAVE_MEUS, pendentes); gravar(CHAVE_MEUS_IDS, [...ids]);
   return pendentes.map(m => ({ ...m, meu: true })).concat(lista.map(p => ({ ...p, meu: ids.has(p.id) })));
 }
-// Ordem: os teus primeiro; depois os novos (menos de 1 dia), do mais recente; depois por corações.
+// Ordem do mural (24/11, pedido do Jose): mais corações primeiro; empate: o mais recente.
 function ordenar(lista) {
-  const agora = Date.now(), novo = p => p.t && agora - p.t < 864e5, recente = (a, b) => (b.t || 0) - (a.t || 0);
-  const meus = lista.filter(p => p.meu).sort(recente), outros = lista.filter(p => !p.meu);
-  return meus.concat(outros.filter(novo).sort(recente), outros.filter(p => !novo(p)).sort((a, b) => ((b.coracoes || 0) - (a.coracoes || 0)) || recente(a, b)));
+  return lista.slice().sort(ordem);
 }
 function mostrarMural(d) {
   ultimoMural = d;
