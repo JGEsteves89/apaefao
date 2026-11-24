@@ -596,17 +596,17 @@ const EXEMPLOS = () => {
 };
 const CHAVE_MURAL = "advento-mural", CHAVE_GOSTOS = "advento-coracoes-v2", CHAVE_MEUS = "advento-meus", CHAVE_MEUS_IDS = "advento-meus-ids", CHAVE_VISTOS = "advento-vistos";
 let mural = [], filtro = "todos", ultimoMural = null;
-const gostos = ler(CHAVE_GOSTOS, {});      // { id: votos que a Sheet tinha quando votei } (para não contar 2 vezes)
-const tirados = ler("advento-tirados", {}); // { id: votos que a Sheet tinha quando tirei o voto }
+const gostos = ler(CHAVE_GOSTOS, {});      // { id: ... } = desenhos a que este telemóvel deu coração
+const pendentes = ler("advento-pendentes", {}); // { id: [número da Sheet quando toquei, número a mostrar] } até a Sheet mudar
 const VER_VOTOS = P.has("votos");          // advento.html?votos=1 mostra o número de votos (para o Jose)
 const vistos = ler(CHAVE_VISTOS, {});      // { id: corações que vi da última vez no meu desenho }
 
 // Votos: tocar no coração dá +1; tocar outra vez tira o voto (-1). O número só aparece com ?votos=1.
-// Enquanto a Sheet não devolve o número novo, conta-se aqui o voto deste telemóvel.
+// Enquanto a Sheet não devolve um número novo, mostra-se o número que se via + ou - 1 (24/11: antes podia saltar 2).
 const total = p => {
-  const n = p.coracoes || 0;
-  if (gostos[p.id] != null && n <= gostos[p.id]) return n + 1;
-  if (tirados[p.id] != null && n >= tirados[p.id]) return Math.max(0, n - 1);
+  const n = p.coracoes || 0, pend = pendentes[p.id];
+  if (pend && pend[0] === n) return pend[1];
+  if (pend) { delete pendentes[p.id]; gravar("advento-pendentes", pendentes); }
   return n;
 };
 function cartaoMural(p) {
@@ -633,9 +633,9 @@ function cartaoMural(p) {
     mostrar(total(p));
     b.addEventListener("click", () => {
       const tirar = gostos[p.id] != null;
-      if (tirar) { delete gostos[p.id]; tirados[p.id] = p.coracoes || 0; }
-      else { gostos[p.id] = p.coracoes || 0; delete tirados[p.id]; }
-      gravar(CHAVE_GOSTOS, gostos); gravar("advento-tirados", tirados);
+      pendentes[p.id] = [p.coracoes || 0, Math.max(0, total(p) + (tirar ? -1 : 1))];
+      if (tirar) delete gostos[p.id]; else gostos[p.id] = 1;
+      gravar(CHAVE_GOSTOS, gostos); gravar("advento-pendentes", pendentes);
       b.classList.remove("pop"); void b.offsetWidth; if (MOVIMENTO && !tirar) b.classList.add("pop");
       document.querySelectorAll(`.adv-cartao[data-id="${CSS.escape(p.id)}"] .adv-coracao`).forEach(x => x.atualizar && x.atualizar());
       if (!/^(ex|meu-)/.test(p.id)) enviar("advento_voto", { id: p.id, voterId: votante(), voto: tirar ? -1 : 1 });
