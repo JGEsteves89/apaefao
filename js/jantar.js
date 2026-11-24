@@ -27,8 +27,42 @@ const PRECO_ADULTO = 15, PRECO_CRIANCA = 5;
     c.querySelector(".menos").addEventListener("click", () => mudar(-1));
     c.querySelector(".mais").addEventListener("click", () => mudar(1));
   });
-  const valor = () => (conta.adultosCarne + conta.adultosPeixe) * PRECO_ADULTO + (conta.criancasCarne + conta.criancasPeixe) * PRECO_CRIANCA;
-  const pessoasQuePagam = () => conta.adultosCarne + conta.adultosPeixe + conta.criancasCarne + conta.criancasPeixe;
+  const adultos = () => conta.adultosPato + conta.adultosBacalhau;
+  const criancas = () => conta.criancasPato + conta.criancasBacalhau;
+  const valor = () => adultos() * PRECO_ADULTO + criancas() * PRECO_CRIANCA;
+  const pessoasQuePagam = () => adultos() + criancas(); // = lugares (os bebés vão ao colo)
+
+  // Lugares: 300, menos os já reservados (Apps Script ?acao=jantar, conta a folha "jantar").
+  let livres = null;
+  async function verLugares() {
+    try {
+      const r = await fetch(ENDPOINT + "?acao=jantar", { signal: AbortSignal.timeout(15000) }).then(r => r.json());
+      if (typeof r.disponiveis !== "number") return;
+      livres = r.disponiveis;
+      const caixa = document.querySelector(".lugares");
+      caixa.querySelector(".lugares-livres").textContent = livres;
+      caixa.querySelector(".lugares-barra span").style.width = Math.round(100 * r.reservados / r.limite) + "%";
+      caixa.hidden = false;
+      if (livres <= 0) {
+        form.hidden = true;
+        const f = document.getElementById("jantar-fechado");
+        f.textContent = "Esgotado! Já não há lugares. Obrigado a todos.";
+        f.hidden = false;
+      }
+    } catch (e) { /* sem ligação: o formulário continua a funcionar */ }
+  }
+  if (!form.hidden && !MODO_TESTE) verLugares();
+
+  // Alergénios: tocar no "i" mostra e esconde (funciona no telemóvel).
+  form.querySelectorAll(".alergenos-botao").forEach(b => b.addEventListener("click", () => {
+    const t = b.nextElementSibling, abrir = t.hidden;
+    form.querySelectorAll(".alergenos-texto").forEach(x => { x.hidden = true; });
+    form.querySelectorAll(".alergenos-botao").forEach(x => x.setAttribute("aria-expanded", "false"));
+    t.hidden = !abrir; b.setAttribute("aria-expanded", String(abrir));
+  }));
+  document.addEventListener("click", e => {
+    if (!e.target.closest(".alergenos")) form.querySelectorAll(".alergenos-texto").forEach(x => { x.hidden = true; });
+  });
 
   function atualizar() {
     const v = valor() + " €";
@@ -39,7 +73,6 @@ const PRECO_ADULTO = 15, PRECO_CRIANCA = 5;
     mail.href = "mailto:apaefao@gmail.com?subject=" + encodeURIComponent("Comprovativo jantar de Natal " + quem);
     // A ajuda do pagamento aparece logo a seguir à escolha, só a do método escolhido.
     form.querySelectorAll(".pagar-info").forEach(d => { d.hidden = d.dataset.para !== form.pagamento.value; });
-    form.querySelector(".se-alergia").hidden = form.alergias.value !== "sim";
   }
   form.addEventListener("input", atualizar);
   form.addEventListener("change", atualizar);
@@ -51,7 +84,11 @@ const PRECO_ADULTO = 15, PRECO_CRIANCA = 5;
     e.preventDefault();
     erro.textContent = "";
     if (pessoasQuePagam() === 0) {
-      erro.textContent = "Escolhe pelo menos 1 adulto ou 1 criança (carne ou peixe).";
+      erro.textContent = "Escolhe pelo menos 1 adulto ou 1 criança, com o prato.";
+      return;
+    }
+    if (livres !== null && pessoasQuePagam() > livres) {
+      erro.textContent = "Só há " + livres + " lugares livres. Tira algumas pessoas, por favor.";
       return;
     }
     if (!form.checkValidity()) {
@@ -82,5 +119,6 @@ const PRECO_ADULTO = 15, PRECO_CRIANCA = 5;
     ok.hidden = false;
     ok.focus();
     confetti();
+    if (!MODO_TESTE) setTimeout(verLugares, 3000);
   });
 })();
