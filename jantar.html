@@ -37,10 +37,10 @@
     .conta-pessoas output { min-width: 1.5em; text-align: center; font-size: 1.3em; font-weight: 800; }
     .total-jantar { font-size: 1.3em; margin: 12px 0 0; }
     .pagar-info { margin: 0 0 16px; }
-    .aparte { background: #fff7d6; border-left: 4px solid var(--sol); border-radius: 8px; padding: 10px 12px; margin: 0 0 8px; font-size: .95em; }
     #jantar-ok + .pagar-info { margin-top: 24px; }
     .prato { padding: 4px 0 8px; }
-    .prato-nome { font-family: "Fredoka", sans-serif; font-size: 1.25em; margin: 12px 0 0; display: flex; align-items: center; gap: 8px; }
+    .pessoa .alergenos-lista { margin-left: 6px; vertical-align: middle; }
+    .tirar-aluno { justify-self: start; background: none; border: 0; text-decoration: underline; cursor: pointer; padding: 0; }
     .alergenos { position: relative; display: inline-block; }
     .alergenos-lista { display: inline-flex; gap: 6px; }
     .alergenos-botao { width: 32px; height: 32px; border-radius: 50%; border: 1.5px solid #d9c9a3; background: #fff; font-size: 17px; line-height: 1; padding: 0; cursor: pointer; display: grid; place-items: center; }
@@ -132,66 +132,51 @@
           </label>
         </div>
 
-        <fieldset class="escolha" id="turmas">
-          <legend>Turma ou sala dos teus filhos</legend>
-          <label><input type="checkbox" name="turmas" value="Pré A"> Pré A</label>
-          <label><input type="checkbox" name="turmas" value="Pré B"> Pré B</label>
-          <label><input type="checkbox" name="turmas" value="Pré C"> Pré C</label>
-          <label><input type="checkbox" name="turmas" value="Pré D"> Pré D</label>
-          <label><input type="checkbox" name="turmas" value="1.º ano"> 1.º ano</label>
-          <label><input type="checkbox" name="turmas" value="2.º ano"> 2.º ano</label>
-          <label><input type="checkbox" name="turmas" value="3.º A"> 3.º A</label>
-          <label><input type="checkbox" name="turmas" value="3.º B"> 3.º B</label>
-          <label><input type="checkbox" name="turmas" value="4.º A"> 4.º A</label>
-          <label><input type="checkbox" name="turmas" value="4.º B"> 4.º B</label>
-          <label><input type="checkbox" name="turmas" value="Não tenho filhos na escola"> Não tenho filhos na escola</label>
+        <div id="alunos">
+          <div class="campos aluno-linha">
+            <label>Nome do aluno
+              <input class="f-aluno" required maxlength="80" autocomplete="off">
+            </label>
+            <label>Sala ou turma
+              <select class="f-sala" required>
+                <option value="">Escolhe…</option>
+                <option>Pré-escolar Sala A</option>
+                <option>Pré-escolar Sala B</option>
+                <option>Pré-escolar Sala C</option>
+                <option>Pré-escolar Sala D</option>
+                <option>1.º ano</option>
+                <option>2.º ano</option>
+                <option>3.º A</option>
+                <option>3.º B</option>
+                <option>4.º A</option>
+                <option>4.º B</option>
+              </select>
+            </label>
+          </div>
+        </div>
+        <button type="button" class="botao botao-mais" id="mais-aluno">+ Outro aluno</button>
+
+        <fieldset class="pessoas">
+          <legend>Quantas pessoas?</legend>
+          <div class="pessoa"><span><b>Adultos</b> 15 €</span><span class="conta-pessoas"><button type="button" class="menos" aria-label="Menos">−</button><output data-campo="adultos">0</output><button type="button" class="mais" aria-label="Mais">+</button></span></div>
+          <div class="pessoa"><span><b>Crianças</b> 5 € <small>(3 a 12 anos)</small></span><span class="conta-pessoas"><button type="button" class="menos" aria-label="Menos">−</button><output data-campo="criancas">0</output><button type="button" class="mais" aria-label="Mais">+</button></span></div>
+          <div class="pessoa"><span><b>Bebés</b> grátis <small>(até 2 anos)</small></span><span class="conta-pessoas"><button type="button" class="menos" aria-label="Menos">−</button><output data-campo="bebes">0</output><button type="button" class="mais" aria-label="Mais">+</button></span></div>
         </fieldset>
 
         <fieldset class="pessoas">
-          <legend>Quantas pessoas, e que prato?</legend>
-          <p class="aparte"><b>Tens alergias ou és vegetariano?</b> Há uma opção vegetariana (lasanha). As alergias podes dizer-nos mais abaixo, a seguir aos pratos.</p>
-          <div class="prato">
-            <p class="prato-nome">Arroz de pato <span class="alergenos-lista"><span class="alergenos"><button type="button" class="alergenos-botao" aria-expanded="false" aria-label="Pode conter aipo" title="Pode conter aipo">🥬</button><span class="alergenos-texto" role="tooltip" hidden>Pode conter aipo</span></span><span class="alergenos"><button type="button" class="alergenos-botao" aria-expanded="false" aria-label="Pode conter sulfitos" title="Pode conter sulfitos">🍷</button><span class="alergenos-texto" role="tooltip" hidden>Pode conter sulfitos</span></span><span class="alergenos"><button type="button" class="alergenos-botao" aria-expanded="false" aria-label="Pode conter leite" title="Pode conter leite">🥛</button><span class="alergenos-texto" role="tooltip" hidden>Pode conter leite</span></span></span></p>
-            <div class="pessoa"><span><b>Adulto</b> 15 €</span><span class="conta-pessoas"><button type="button" class="menos" aria-label="Menos">−</button><output data-campo="adultosPato">0</output><button type="button" class="mais" aria-label="Mais">+</button></span></div>
-            <div class="pessoa"><span><b>Criança</b> 5 € <small>(3 a 12 anos)</small></span><span class="conta-pessoas"><button type="button" class="menos" aria-label="Menos">−</button><output data-campo="criancasPato">0</output><button type="button" class="mais" aria-label="Mais">+</button></span></div>
-          </div>
-          <div class="prato">
-            <p class="prato-nome">Bacalhau com natas <span class="alergenos-lista"><span class="alergenos"><button type="button" class="alergenos-botao" aria-expanded="false" aria-label="Peixe" title="Peixe">🐟</button><span class="alergenos-texto" role="tooltip" hidden>Peixe</span></span><span class="alergenos"><button type="button" class="alergenos-botao" aria-expanded="false" aria-label="Leite" title="Leite">🥛</button><span class="alergenos-texto" role="tooltip" hidden>Leite</span></span><span class="alergenos"><button type="button" class="alergenos-botao" aria-expanded="false" aria-label="Glúten" title="Glúten">🌾</button><span class="alergenos-texto" role="tooltip" hidden>Glúten</span></span></span></p>
-            <div class="pessoa"><span><b>Adulto</b> 15 €</span><span class="conta-pessoas"><button type="button" class="menos" aria-label="Menos">−</button><output data-campo="adultosBacalhau">0</output><button type="button" class="mais" aria-label="Mais">+</button></span></div>
-            <div class="pessoa"><span><b>Criança</b> 5 € <small>(3 a 12 anos)</small></span><span class="conta-pessoas"><button type="button" class="menos" aria-label="Menos">−</button><output data-campo="criancasBacalhau">0</output><button type="button" class="mais" aria-label="Mais">+</button></span></div>
-          </div>
-          <div class="prato">
-            <p class="prato-nome">Lasanha vegetariana <span class="alergenos-lista"><span class="alergenos"><button type="button" class="alergenos-botao" aria-expanded="false" aria-label="Leite" title="Leite">🥛</button><span class="alergenos-texto" role="tooltip" hidden>Leite</span></span><span class="alergenos"><button type="button" class="alergenos-botao" aria-expanded="false" aria-label="Glúten" title="Glúten">🌾</button><span class="alergenos-texto" role="tooltip" hidden>Glúten</span></span><span class="alergenos"><button type="button" class="alergenos-botao" aria-expanded="false" aria-label="Ovo" title="Ovo">🥚</button><span class="alergenos-texto" role="tooltip" hidden>Ovo</span></span></span></p>
-            <div class="pessoa"><span><b>Adulto</b> 15 €</span><span class="conta-pessoas"><button type="button" class="menos" aria-label="Menos">−</button><output data-campo="adultosVeg">0</output><button type="button" class="mais" aria-label="Mais">+</button></span></div>
-            <div class="pessoa"><span><b>Criança</b> 5 € <small>(3 a 12 anos)</small></span><span class="conta-pessoas"><button type="button" class="menos" aria-label="Menos">−</button><output data-campo="criancasVeg">0</output><button type="button" class="mais" aria-label="Mais">+</button></span></div>
-          </div>
-          <div class="prato">
-            <p class="prato-nome">Bebés</p>
-            <div class="pessoa"><span><b>Até 2 anos</b> grátis <small>(ao colo)</small></span><span class="conta-pessoas"><button type="button" class="menos" aria-label="Menos">−</button><output data-campo="bebes">0</output><button type="button" class="mais" aria-label="Mais">+</button></span></div>
-          </div>
-          <p class="pequeno">Todos os pratos têm sopa, bebida e sobremesa. Os ícones ao lado de cada prato são os alergénios: toca para ver o nome.</p>
+          <legend>Quantos pratos de cada?</legend>
+          <div class="pessoa"><span><b>Carne:</b> arroz de pato <span class="alergenos-lista"><span class="alergenos"><button type="button" class="alergenos-botao" aria-expanded="false" aria-label="Pode conter aipo" title="Pode conter aipo">🥬</button><span class="alergenos-texto" role="tooltip" hidden>Pode conter aipo</span></span><span class="alergenos"><button type="button" class="alergenos-botao" aria-expanded="false" aria-label="Pode conter sulfitos" title="Pode conter sulfitos">🍷</button><span class="alergenos-texto" role="tooltip" hidden>Pode conter sulfitos</span></span><span class="alergenos"><button type="button" class="alergenos-botao" aria-expanded="false" aria-label="Pode conter leite" title="Pode conter leite">🥛</button><span class="alergenos-texto" role="tooltip" hidden>Pode conter leite</span></span></span></span><span class="conta-pessoas"><button type="button" class="menos" aria-label="Menos">−</button><output data-campo="carne">0</output><button type="button" class="mais" aria-label="Mais">+</button></span></div>
+          <div class="pessoa"><span><b>Peixe:</b> bacalhau com natas <span class="alergenos-lista"><span class="alergenos"><button type="button" class="alergenos-botao" aria-expanded="false" aria-label="Peixe" title="Peixe">🐟</button><span class="alergenos-texto" role="tooltip" hidden>Peixe</span></span><span class="alergenos"><button type="button" class="alergenos-botao" aria-expanded="false" aria-label="Leite" title="Leite">🥛</button><span class="alergenos-texto" role="tooltip" hidden>Leite</span></span><span class="alergenos"><button type="button" class="alergenos-botao" aria-expanded="false" aria-label="Glúten" title="Glúten">🌾</button><span class="alergenos-texto" role="tooltip" hidden>Glúten</span></span></span></span><span class="conta-pessoas"><button type="button" class="menos" aria-label="Menos">−</button><output data-campo="peixe">0</output><button type="button" class="mais" aria-label="Mais">+</button></span></div>
+          <p class="pequeno" id="pratos-aviso"></p>
+          <p class="pequeno">Todos os pratos têm sopa, bebida e sobremesa. Os ícones são os alergénios: toca para ver o nome.</p>
           <p class="total-jantar">Total: <b id="total">0 €</b></p>
         </fieldset>
 
-        <fieldset class="escolha">
-          <legend>Alguém tem alergias ou intolerâncias?</legend>
-          <label><input type="radio" name="temAlergias" value="não" required> Não</label>
-          <label><input type="radio" name="temAlergias" value="sim"> Sim</label>
-          <div class="se-alergia" hidden>
-            <p class="pequeno">A quê? Escolhe todas as que se aplicam. Se for "Outra", ligamos-te.</p>
-            <label><input type="checkbox" name="alergiasQuais" value="Glúten"> Glúten</label>
-            <label><input type="checkbox" name="alergiasQuais" value="Leite"> Leite</label>
-            <label><input type="checkbox" name="alergiasQuais" value="Ovo"> Ovo</label>
-            <label><input type="checkbox" name="alergiasQuais" value="Peixe"> Peixe</label>
-            <label><input type="checkbox" name="alergiasQuais" value="Marisco"> Marisco</label>
-            <label><input type="checkbox" name="alergiasQuais" value="Frutos de casca rija"> Frutos de casca rija</label>
-            <label><input type="checkbox" name="alergiasQuais" value="Amendoim"> Amendoim</label>
-            <label><input type="checkbox" name="alergiasQuais" value="Soja"> Soja</label>
-            <label><input type="checkbox" name="alergiasQuais" value="Aipo"> Aipo</label>
-            <label><input type="checkbox" name="alergiasQuais" value="Sulfitos"> Sulfitos</label>
-            <label><input type="checkbox" name="alergiasQuais" value="Outra"> Outra</label>
-          </div>
-        </fieldset>
+        <div class="campos">
+          <label class="largo">Alguém tem alergias ou é vegetariano? (opcional)
+            <textarea name="alergias" rows="2" maxlength="300" placeholder="Ex.: 1 adulto vegetariano; o Tomás não pode comer glúten"></textarea>
+          </label>
+        </div>
 
         <fieldset class="escolha">
           <legend>Como vais pagar?</legend>

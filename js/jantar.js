@@ -1,5 +1,5 @@
 // Jantar de Natal 12/12: reserva online (folha "jantar" da Sheet), total calculado e dados para pagar.
-// Para fechar as reservas mais cedo (ex.: lugares esgotados): mudar JANTAR_FECHA para a data de hoje.
+// Para fechar as reservas mais cedo: mudar JANTAR_FECHA para a data de hoje. O limite de lugares está no Code.gs (JANTAR_LIMITE).
 const JANTAR_FECHA = new Date("2026-12-10T00:00:00Z"); // fecha no fim de quarta 9/12 (Lisboa = UTC+0 em dezembro)
 const PRECO_ADULTO = 15, PRECO_CRIANCA = 5;
 
@@ -12,13 +12,29 @@ const PRECO_ADULTO = 15, PRECO_CRIANCA = 5;
   const erro = form.querySelector(".erro-form");
   const ref = document.getElementById("referencia");
   const mail = document.getElementById("mail-comprovativo");
+  const avisoPratos = document.getElementById("pratos-aviso");
 
   if (new Date() >= JANTAR_FECHA) {
     form.hidden = true;
     document.getElementById("jantar-fechado").hidden = false;
   }
 
-  // Contadores − / +: um por tipo de pessoa e prato (sem texto livre).
+  // Alunos: nome + sala; "+ Outro aluno" junta mais uma linha.
+  const alunos = document.getElementById("alunos");
+  const modelo = alunos.querySelector(".aluno-linha").cloneNode(true);
+  document.getElementById("mais-aluno").addEventListener("click", () => {
+    const l = modelo.cloneNode(true);
+    const tirar = document.createElement("button");
+    tirar.type = "button"; tirar.className = "tirar-aluno"; tirar.textContent = "Tirar este aluno";
+    tirar.addEventListener("click", () => l.remove());
+    l.append(tirar);
+    alunos.append(l);
+    l.querySelector(".f-aluno").focus();
+  });
+  const listaAlunos = () => [...alunos.querySelectorAll(".aluno-linha")]
+    .map(l => l.querySelector(".f-aluno").value.trim() + " (" + l.querySelector(".f-sala").value + ")").join("; ");
+
+  // Contadores − / +: pessoas (adultos, crianças, bebés) e pratos (carne, peixe).
   const conta = {};
   form.querySelectorAll(".conta-pessoas").forEach(c => {
     const out = c.querySelector("output");
@@ -27,13 +43,11 @@ const PRECO_ADULTO = 15, PRECO_CRIANCA = 5;
     c.querySelector(".menos").addEventListener("click", () => mudar(-1));
     c.querySelector(".mais").addEventListener("click", () => mudar(1));
   });
-  const adultos = () => conta.adultosPato + conta.adultosBacalhau + conta.adultosVeg;
-  const criancas = () => conta.criancasPato + conta.criancasBacalhau + conta.criancasVeg;
-  const marcados = nome => [...form.querySelectorAll('input[name="' + nome + '"]:checked')].map(i => i.value);
-  const valor = () => adultos() * PRECO_ADULTO + criancas() * PRECO_CRIANCA;
-  const pessoasQuePagam = () => adultos() + criancas(); // = lugares (os bebés vão ao colo)
+  const valor = () => conta.adultos * PRECO_ADULTO + conta.criancas * PRECO_CRIANCA;
+  const lugares = () => conta.adultos + conta.criancas; // os bebés vão ao colo
+  const pratos = () => conta.carne + conta.peixe;
 
-  // Lugares: 250, menos os já reservados (Apps Script ?acao=jantar, conta a folha "jantar").
+  // Lugares: limite menos os já reservados (Apps Script ?acao=jantar, conta a folha "jantar").
   let livres = null;
   async function verLugares() {
     try {
@@ -70,12 +84,14 @@ const PRECO_ADULTO = 15, PRECO_CRIANCA = 5;
     const v = valor() + " €";
     document.getElementById("total").textContent = v;
     form.querySelectorAll(".pagar-info .valor").forEach(b => { b.textContent = v; });
+    const falta = lugares() - pratos();
+    avisoPratos.textContent = !lugares() ? "" : falta > 0 ? "Falta escolher " + falta + (falta === 1 ? " prato." : " pratos.")
+      : falta < 0 ? "Há " + (-falta) + " prato(s) a mais: são " + lugares() + " pessoas (adultos + crianças)." : "Pratos certos.";
     const quem = form.nome.value.trim() || "O teu nome";
     ref.textContent = "JANTAR " + quem;
     mail.href = "mailto:apaefao@gmail.com?subject=" + encodeURIComponent("Comprovativo jantar de Natal " + quem);
     // A ajuda do pagamento aparece logo a seguir à escolha, só a do método escolhido.
     form.querySelectorAll(".pagar-info").forEach(d => { d.hidden = d.dataset.para !== form.pagamento.value; });
-    form.querySelector(".se-alergia").hidden = form.temAlergias.value !== "sim";
   }
   form.addEventListener("input", atualizar);
   form.addEventListener("change", atualizar);
@@ -86,19 +102,15 @@ const PRECO_ADULTO = 15, PRECO_CRIANCA = 5;
   form.addEventListener("submit", async e => {
     e.preventDefault();
     erro.textContent = "";
-    if (pessoasQuePagam() === 0) {
-      erro.textContent = "Escolhe pelo menos 1 adulto ou 1 criança, com o prato.";
+    if (!lugares()) {
+      erro.textContent = "Escolhe pelo menos 1 adulto ou 1 criança.";
       return;
     }
-    if (!marcados("turmas").length) {
-      erro.textContent = "Escolhe a turma ou sala dos teus filhos (ou \"Não tenho filhos na escola\").";
+    if (pratos() !== lugares()) {
+      erro.textContent = "O número de pratos (carne + peixe) tem de ser igual ao de adultos + crianças (" + lugares() + ").";
       return;
     }
-    if (form.temAlergias.value === "sim" && !marcados("alergiasQuais").length) {
-      erro.textContent = "Diz-nos a que alergias (ou escolhe \"Outra\").";
-      return;
-    }
-    if (livres !== null && pessoasQuePagam() > livres) {
+    if (livres !== null && lugares() > livres) {
       erro.textContent = "Só há " + livres + " lugares livres. Tira algumas pessoas, por favor.";
       return;
     }
@@ -110,9 +122,7 @@ const PRECO_ADULTO = 15, PRECO_CRIANCA = 5;
       return;
     }
     const dados = Object.assign(Object.fromEntries(new FormData(form)), conta);
-    dados.turmas = marcados("turmas").join(", ");
-    dados.alergias = form.temAlergias.value === "sim" ? marcados("alergiasQuais").join(", ") : "não";
-    delete dados.temAlergias; delete dados.alergiasQuais;
+    dados.alunos = listaAlunos();
     dados.rgpd = form.rgpd.checked;
     dados.total = valor();
 
