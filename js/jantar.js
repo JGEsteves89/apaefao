@@ -32,7 +32,7 @@ const PRECO_ADULTO = 15, PRECO_CRIANCA = 5;
   const valor = () => adultos() * PRECO_ADULTO + criancas() * PRECO_CRIANCA;
   const pessoasQuePagam = () => adultos() + criancas(); // = lugares (os bebés vão ao colo)
 
-  // Lugares: 300, menos os já reservados (Apps Script ?acao=jantar, conta a folha "jantar").
+  // Lugares: 250, menos os já reservados (Apps Script ?acao=jantar, conta a folha "jantar").
   let livres = null;
   async function verLugares() {
     try {
@@ -41,6 +41,7 @@ const PRECO_ADULTO = 15, PRECO_CRIANCA = 5;
       livres = r.disponiveis;
       const caixa = document.querySelector(".lugares");
       caixa.querySelector(".lugares-livres").textContent = livres;
+      caixa.querySelector(".lugares-limite").textContent = r.limite;
       caixa.querySelector(".lugares-barra span").style.width = Math.round(100 * r.reservados / r.limite) + "%";
       caixa.hidden = false;
       if (livres <= 0) {
