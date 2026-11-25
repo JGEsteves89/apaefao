@@ -38,7 +38,7 @@ const EMOJI = {
   particular: "coracao", supermercado: "carrinho", beleza: "massagem", pastelaria: "bolo", cafe: "cafe", cafetaria: "cafe",
   desporto: "biceps", barbearia: "poste-barbeiro", cabeleireiro: "tesoura", diversao: "macaco", tecnologia: "telemovel",
   lavandaria: "bolhas", talho: "carne", otica: "oculos", farmacia: "comprimido", musica: "nota-musica", grafica: "impressora",
-  construcao: "tijolos", serralharia: "chave-inglesa", estufas: "vaso-planta", jardim: "vaso-planta", associacao: "aperto-de-mao",
+  construcao: "tijolos", serralharia: "chave-inglesa", estufas: "vaso-planta", jardim: "vaso-planta", associacao: "aperto-de-mao", workshops: "paleta",
 };
 // Enquanto o Apps Script não manda "nivel", usa o tamanho antigo.
 const DO_TAMANHO = { grande: "girassol", alto: "flor", largo: "flor", pequeno: "botao" };
