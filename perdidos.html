@@ -5,7 +5,7 @@
   <meta name="robots" content="noindex">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Perdidos e achados — APAEF Fão</title>
-  <meta name="description" content="Objetos perdidos na Escola Básica de Fão: fotos, número e data de doação.">
+  <meta name="description" content="Perdidos e achados da Escola Básica de Fão: encontraste ou perdeste alguma coisa? Põe aqui.">
   <link rel="canonical" href="https://apaefao.pt/perdidos.html">
   <meta name="theme-color" content="#ebce58">
   <meta property="og:type" content="website">
@@ -13,7 +13,7 @@
   <meta property="og:locale" content="pt_PT">
   <meta property="og:url" content="https://apaefao.pt/perdidos.html">
   <meta property="og:title" content="Perdidos e achados — APAEF">
-  <meta property="og:description" content="Objetos perdidos na Escola Básica de Fão: fotos, número e data de doação.">
+  <meta property="og:description" content="Perdidos e achados da Escola Básica de Fão: encontraste ou perdeste alguma coisa? Põe aqui.">
   <meta property="og:image" content="https://apaefao.pt/img/preview.jpg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
@@ -25,7 +25,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=20261127p">
+  <link rel="stylesheet" href="style.css?v=20261127q">
   <link rel="preconnect" href="https://script.google.com">
   <link rel="preconnect" href="https://script.googleusercontent.com" crossorigin>
 </head>
@@ -72,15 +72,75 @@
     <div class="cabeca-lumi esq">
       <button class="mascote-zona mascote-lado" type="button" data-fala="Será que é teu?" aria-label="Toca na Lumi"><img class="mascote" src="img/mascote/lupa.webp" alt="A Lumi, a mascote da APAEF, com uma lupa" width="420" height="508"></button>
       <h1 class="titulo-pagina">Perdidos e achados</h1>
-      <p class="intro">Casacos, garrafas e lancheiras esquecidos na escola. Vê se há alguma coisa tua.</p>
+      <p class="intro">Encontraste uma coisa que não é tua? Perdeste alguma coisa? Põe aqui. Quando alguém responder, recebes um email.</p>
+    </div>
+
+    <div class="pa-acoes">
+      <button class="botao" type="button" data-novo="encontrei">Encontrei uma coisa</button>
+      <button class="botao" type="button" data-novo="perdi">Perdi uma coisa</button>
+    </div>
+
+    <div class="cartao pa-resolver" id="pa-resolver" hidden></div>
+
+    <form class="formulario pa-form" id="pa-form" hidden novalidate>
+      <h2 class="categoria" id="pa-form-titulo">Encontrei uma coisa</h2>
+      <label class="pn-foto" for="pa-ficheiro">
+        <span id="pa-foto-txt">Tirar foto</span>
+        <img id="pa-previa" alt="Foto do objeto" hidden>
+        <input type="file" id="pa-ficheiro" accept="image/*">
+      </label>
+      <small class="pa-foto-nota" id="pa-foto-nota">Só o objeto: sem crianças e sem nomes à vista.</small>
+      <fieldset><legend>O que é?</legend><div class="pa-opcoes" id="pa-tipos"></div></fieldset>
+      <fieldset><legend>Cor <small>(opcional)</small></legend><div class="pa-opcoes" id="pa-cores"></div></fieldset>
+      <label>Descrição <small>(opcional, sem nomes de crianças)</small>
+        <input type="text" id="pa-descricao" maxlength="200" placeholder="Ex.: tem um dinossauro à frente">
+      </label>
+      <fieldset id="pa-onde-campo"><legend>Onde está agora?</legend>
+        <div class="pa-opcoes">
+          <label class="pa-opcao"><input type="radio" name="onde" value="escola"><span>Deixei na escola</span></label>
+          <label class="pa-opcao"><input type="radio" name="onde" value="comigo"><span>Está comigo</span></label>
+        </div>
+      </fieldset>
+      <div class="campos">
+        <label>O teu nome <input type="text" id="pa-nome" maxlength="60" autocomplete="name"></label>
+        <label>O teu email <input type="email" id="pa-email" maxlength="120" autocomplete="email"></label>
+      </div>
+      <input type="text" name="site_web" class="pa-armadilha" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <label class="check"><input type="checkbox" id="pa-rgpd"><span>Aceito que o meu nome e email sejam enviados, por email, a quem responder. Não aparecem no site.</span></label>
+      <button class="botao botao-grande" type="submit" id="pa-enviar">Publicar</button>
+      <p class="pn-estado" id="pa-estado" role="status" aria-live="polite"></p>
+    </form>
+
+    <div class="pa-abas" role="tablist">
+      <button type="button" role="tab" class="pa-aba" data-aba="encontrei" aria-selected="true">Encontrados <span id="pa-n-encontrei"></span></button>
+      <button type="button" role="tab" class="pa-aba" data-aba="perdi" aria-selected="false">Procuram-se <span id="pa-n-perdi"></span></button>
     </div>
     <p class="pa-resumo" id="pa-resumo" hidden></p>
     <div class="pa-filtros" id="pa-filtros" role="group" aria-label="Filtrar por tipo" hidden></div>
     <div class="pa-grelha" id="perdidos"></div>
+
+    <dialog class="pa-dialogo" id="pa-dialogo">
+      <form class="formulario" id="pa-resp" method="dialog" novalidate>
+        <h2 class="categoria" id="pa-resp-titulo">É teu?</h2>
+        <p id="pa-resp-texto"></p>
+        <label>O teu nome <input type="text" id="pa-r-nome" maxlength="60" autocomplete="name"></label>
+        <label>O teu email <input type="email" id="pa-r-email" maxlength="120" autocomplete="email"></label>
+        <label>Mensagem <small>(opcional)</small><textarea id="pa-r-msg" maxlength="500" rows="3"></textarea></label>
+        <input type="text" name="site_web" class="pa-armadilha" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <label class="check"><input type="checkbox" id="pa-r-rgpd"><span>Aceito que o meu nome e email sejam enviados, por email, à outra pessoa.</span></label>
+        <div class="pa-dialogo-botoes">
+          <button class="botao" type="submit" id="pa-r-enviar">Enviar</button>
+          <button class="botao pa-secundario" type="button" id="pa-r-fechar">Fechar</button>
+        </div>
+        <p class="pn-estado" id="pa-r-estado" role="status" aria-live="polite"></p>
+      </form>
+    </dialog>
+
     <div class="cartao pa-como">
-      <h3>É teu?</h3>
-      <p>Diz o <b>número</b> do objeto (ex.: #12) à funcionária, ou procura na caixa dos perdidos à saída.</p>
-      <p>Depois da data, o que ninguém levou vai para doação.</p>
+      <h3>Como funciona</h3>
+      <p><b>Encontraste?</b> Tira foto e publica. Se o dono disser "É meu!", recebem os dois um email para combinar.</p>
+      <p><b>Perdeste?</b> Descreve e publica. Se alguém disser "Está aqui!", recebem os dois um email.</p>
+      <p><b>Na escola:</b> o que está na caixa dos perdidos pede-se à funcionária pelo número (ex.: #12). Depois da data, o que ninguém levou vai para doação.</p>
       <p><b>Dica:</b> põe o nome nas roupas e lancheiras. As coisas com nome voltam logo à sala.</p>
     </div>
   </main>
@@ -105,7 +165,8 @@
   <script src="js/config.js"></script>
   <script src="js/comum.js?v=20261120b"></script>
   <script src="js/lumi-cenas.js"></script>
-  <script src="js/perdidos.js?v=20261127a"></script>
+  <script src="js/perdidos-comum.js?v=20261127b"></script>
+  <script src="js/perdidos.js?v=20261127b"></script>
   <!-- Contador de visitas (GoatCounter: sem cookies) -->
   <script data-goatcounter="https://apaefao.goatcounter.com/count"
           async src="//gc.zgo.at/count.js"></script>

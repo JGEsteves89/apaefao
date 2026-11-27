@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="robots" content="noindex">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Pôr nos perdidos — APAEF Fão</title>
+  <title>Perdidos: escola — APAEF Fão</title>
   <meta name="description" content="Página interna da APAEF.">
   <link rel="canonical" href="https://apaefao.pt/perdidos-novo.html">
   <meta name="theme-color" content="#ebce58">
@@ -25,7 +25,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=20261127p">
+  <link rel="stylesheet" href="style.css?v=20261127q">
   <link rel="preconnect" href="https://script.google.com">
   <link rel="preconnect" href="https://script.googleusercontent.com" crossorigin>
 </head>
@@ -37,42 +37,49 @@
   </header>
 
   <main class="wrap pagina">
-    <h1 class="titulo-pagina">Pôr nos perdidos</h1>
-    <p class="intro">Uma foto por objeto. Só o objeto: sem crianças e sem nomes à vista. Coisas com nome não vêm para aqui: vão logo para a sala.</p>
+    <h1 class="titulo-pagina">Perdidos: escola</h1>
     <p class="vazio" id="pn-sem-chave" hidden>Falta a chave. Abre o link que recebeste da APAEF.</p>
 
-    <form class="formulario" id="pn-form" hidden>
-      <label class="pn-foto" for="pn-ficheiro">
-        <span id="pn-foto-txt">Tirar foto</span>
-        <img id="pn-previa" alt="Foto do objeto" hidden>
-        <input type="file" id="pn-ficheiro" accept="image/*" capture="environment">
-      </label>
-      <fieldset>
-        <legend>O que é?</legend>
-        <div class="pa-opcoes" id="pn-tipos"></div>
-      </fieldset>
-      <fieldset>
-        <legend>Cor <small>(opcional)</small></legend>
-        <div class="pa-opcoes" id="pn-cores"></div>
-      </fieldset>
-      <label>Onde está guardado
-        <input type="text" id="pn-onde" maxlength="80">
-      </label>
-      <button class="botao botao-grande" type="submit" id="pn-enviar">Enviar</button>
-      <p class="pn-estado" id="pn-estado" role="status" aria-live="polite"></p>
-    </form>
+    <div id="pn-tudo" hidden>
+      <div class="pa-abas" role="tablist">
+        <button type="button" role="tab" class="pa-aba" data-sec="pn-sec-pedidos" aria-selected="true">Os pais procuram <span id="pn-n-pedidos"></span></button>
+        <button type="button" role="tab" class="pa-aba" data-sec="pn-sec-novo" aria-selected="false">Pôr objeto</button>
+        <button type="button" role="tab" class="pa-aba" data-sec="pn-sec-caixa" aria-selected="false">Na caixa <span id="pn-n-caixa"></span></button>
+      </div>
 
-    <section id="pn-lista-sec" hidden>
-      <h2 class="categoria">Na caixa agora</h2>
-      <p class="intro">Se um objeto já não está na caixa, toca em "Já não está".</p>
-      <div class="pa-grelha" id="pn-lista"></div>
-    </section>
+      <section id="pn-sec-pedidos" class="pn-sec">
+        <p class="intro">Se uma destas coisas está na escola, toca em "Está na escola". O pai recebe logo um email.</p>
+        <div class="pa-grelha" id="pn-pedidos"></div>
+      </section>
+
+      <section id="pn-sec-novo" class="pn-sec" hidden>
+        <p class="intro">Uma foto por objeto. Só o objeto: sem crianças e sem nomes à vista. Coisas com nome não vêm para aqui: vão logo para a sala.</p>
+        <form class="formulario" id="pn-form">
+          <label class="pn-foto" for="pn-ficheiro">
+            <span id="pn-foto-txt">Tirar foto</span>
+            <img id="pn-previa" alt="Foto do objeto" hidden>
+            <input type="file" id="pn-ficheiro" accept="image/*" capture="environment">
+          </label>
+          <fieldset><legend>O que é?</legend><div class="pa-opcoes" id="pn-tipos"></div></fieldset>
+          <fieldset><legend>Cor <small>(opcional)</small></legend><div class="pa-opcoes" id="pn-cores"></div></fieldset>
+          <label>Descrição <small>(opcional)</small><input type="text" id="pn-descricao" maxlength="200"></label>
+          <button class="botao botao-grande" type="submit" id="pn-enviar">Enviar</button>
+          <p class="pn-estado" id="pn-estado" role="status" aria-live="polite"></p>
+        </form>
+      </section>
+
+      <section id="pn-sec-caixa" class="pn-sec" hidden>
+        <p class="intro">Se um objeto já não está na caixa, toca em "Já não está".</p>
+        <div class="pa-grelha" id="pn-lista"></div>
+      </section>
+    </div>
   </main>
 
   
 
   <script src="js/config.js"></script>
   <script src="js/comum.js?v=20261120b"></script>
-  <script src="js/perdidos-novo.js?v=20261127a"></script>
+  <script src="js/perdidos-comum.js?v=20261127b"></script>
+  <script src="js/perdidos-novo.js?v=20261127b"></script>
 </body>
 </html>

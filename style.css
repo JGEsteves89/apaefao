@@ -1330,3 +1330,21 @@ header.topo .menu { order: 2; margin-left: auto; align-items: center; }
 .pn-estado { margin: 0; font-weight: 700; min-height: 1.5em; }
 .pn-link { font: inherit; background: none; border: 0; padding: 0; color: var(--vermelho); text-decoration: underline; cursor: pointer; }
 .pn-saiu { margin-top: 6px; font-size: 14px; padding: 6px 10px; }
+.pa-acoes { display: flex; flex-wrap: wrap; gap: 10px; margin: 0 0 16px; }
+.pa-acoes .botao { flex: 1 1 160px; justify-content: center; }
+.pa-form { margin-bottom: 18px; }
+.pa-foto-nota { margin-top: -8px; color: var(--suave); font-weight: 600; }
+.pa-armadilha { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+.pa-abas { display: flex; gap: 6px; margin: 4px 0 12px; border-bottom: 2px solid var(--linha); flex-wrap: wrap; }
+.pa-aba { font: inherit; font-weight: 800; background: none; border: 0; border-bottom: 3px solid transparent; padding: 8px 10px; margin-bottom: -2px; color: var(--suave); cursor: pointer; }
+.pa-aba[aria-selected="true"] { color: var(--tinta); border-bottom-color: var(--sol-escuro); }
+.pa-desc { color: var(--tinta) !important; font-size: 14px; }
+.pa-etiqueta { display: inline-block; justify-self: start; background: var(--sol-claro); border-radius: 999px; padding: 1px 9px; font-size: 13px !important; font-weight: 700; color: var(--tinta) !important; }
+.pa-etiqueta.escola { background: #e3f1e2; }
+.pa-responder, .pn-acao { margin-top: 6px; font-size: 14px; padding: 6px 10px; justify-content: center; }
+.pa-dialogo { border: 0; padding: 0; background: transparent; width: min(480px, 94vw); }
+.pa-dialogo::backdrop { background: rgba(31, 26, 20, .5); }
+.pa-dialogo-botoes { display: flex; gap: 10px; flex-wrap: wrap; }
+.pa-secundario { background: var(--cartao); }
+.pa-resolver { margin-bottom: 16px; border-color: var(--sol-escuro); }
+.pa-resolver h3 + p { margin-bottom: 10px; }
