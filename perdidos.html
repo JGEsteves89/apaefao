@@ -25,7 +25,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=20261127q">
+  <link rel="stylesheet" href="style.css?v=20261127r">
   <link rel="preconnect" href="https://script.google.com">
   <link rel="preconnect" href="https://script.googleusercontent.com" crossorigin>
 </head>
@@ -81,6 +81,7 @@
     </div>
 
     <div class="cartao pa-resolver" id="pa-resolver" hidden></div>
+    <div class="cartao pa-resolver" id="pa-aviso" role="status" hidden></div>
 
     <form class="formulario pa-form" id="pa-form" hidden novalidate>
       <h2 class="categoria" id="pa-form-titulo">Encontrei uma coisa</h2>
@@ -112,12 +113,13 @@
     </form>
 
     <div class="pa-abas" role="tablist">
-      <button type="button" role="tab" class="pa-aba" data-aba="encontrei" aria-selected="true">Encontrados <span id="pa-n-encontrei"></span></button>
+      <button type="button" role="tab" class="pa-aba" data-aba="todos" aria-selected="true">Todos <span id="pa-n-todos"></span></button>
+      <button type="button" role="tab" class="pa-aba" data-aba="encontrei" aria-selected="false">Encontrados <span id="pa-n-encontrei"></span></button>
       <button type="button" role="tab" class="pa-aba" data-aba="perdi" aria-selected="false">Procuram-se <span id="pa-n-perdi"></span></button>
     </div>
     <p class="pa-resumo" id="pa-resumo" hidden></p>
     <div class="pa-filtros" id="pa-filtros" role="group" aria-label="Filtrar por tipo" hidden></div>
-    <div class="pa-grelha" id="perdidos"></div>
+    <div id="perdidos"></div>
 
     <dialog class="pa-dialogo" id="pa-dialogo">
       <form class="formulario" id="pa-resp" method="dialog" novalidate>
@@ -166,7 +168,7 @@
   <script src="js/comum.js?v=20261120b"></script>
   <script src="js/lumi-cenas.js"></script>
   <script src="js/perdidos-comum.js?v=20261127b"></script>
-  <script src="js/perdidos.js?v=20261127b"></script>
+  <script src="js/perdidos.js?v=20261127c"></script>
   <!-- Contador de visitas (GoatCounter: sem cookies) -->
   <script data-goatcounter="https://apaefao.goatcounter.com/count"
           async src="//gc.zgo.at/count.js"></script>

@@ -5,37 +5,17 @@
   const $ = id => document.getElementById(id);
   const el = $("perdidos"), resumo = $("pa-resumo"), filtros = $("pa-filtros");
   const CONTACTO_LS = "apaef-perdidos-contacto";
-  let lista = [], aba = "encontrei", filtro = "";
+  let lista = [], aba = "todos", filtro = "";
 
   // ---------- Lista ----------
   carregarDados("perdidos", el, paLista).then(d => { if (d) { lista = d.lista || []; desenhar(); } });
 
-  function desenhar() {
-    const deAba = lista.filter(o => o.pedido === aba);
-    ["encontrei", "perdi"].forEach(a => { $("pa-n-" + a).textContent = "(" + lista.filter(o => o.pedido === a).length + ")"; });
-    document.querySelectorAll(".pa-aba").forEach(b => b.setAttribute("aria-selected", b.dataset.aba === aba));
-    const naEscola = deAba.filter(o => o.onde === "escola");
-    const proxima = naEscola.map(o => o.sai_a).sort()[0];
-    resumo.hidden = !(aba === "encontrei" && proxima);
-    if (proxima) resumo.innerHTML = `<b>${naEscola.length} na escola</b> · os próximos saem para doação a <b>${paDia(proxima)}</b>`;
-    const conta = {};
-    deAba.forEach(o => { conta[o.tipo] = (conta[o.tipo] || 0) + 1; });
-    const tipos = PERDIDOS_TIPOS.filter(t => conta[t]);
-    if (filtro && !conta[filtro]) filtro = "";
-    filtros.hidden = tipos.length < 2;
-    filtros.innerHTML = [["", "Todos"]].concat(tipos.map(t => [t, paMaiuscula(PA_PLURAL[t] || t) + " (" + conta[t] + ")"]))
-      .map(([v, txt]) => `<button type="button" class="pa-filtro" data-tipo="${escapar(v)}" aria-pressed="${v === filtro}">${escapar(txt)}</button>`).join("");
-    const mostrar = deAba.filter(o => !filtro || o.tipo === filtro);
-    if (!mostrar.length) {
-      el.innerHTML = `<p class="vazio">${aba === "encontrei" ? "Não há nada encontrado por agora." : "Ninguém está à procura de nada por agora."}</p>`;
-      return;
-    }
-    el.innerHTML = mostrar.map(o => {
-      const perdi = o.pedido === "perdi";
-      const etiqueta = perdi
-        ? (o.na_escola ? '<span class="pa-etiqueta escola">A escola diz que está lá</span>' : `<span>Desde ${paCurto(o.data)}</span>`)
-        : o.onde === "escola" ? `<span class="pa-etiqueta escola">Na escola · sai a ${paCurto(o.sai_a)}</span>` : '<span class="pa-etiqueta">Com quem encontrou</span>';
-      return `
+  function cartao(o, proxima) {
+    const perdi = o.pedido === "perdi";
+    const etiqueta = perdi
+      ? (o.na_escola ? '<span class="pa-etiqueta escola">A escola diz que está lá</span>' : `<span>Desde ${paCurto(o.data)}</span>`)
+      : o.onde === "escola" ? `<span class="pa-etiqueta escola">Na escola · sai a ${paCurto(o.sai_a)}</span>` : '<span class="pa-etiqueta">Com quem encontrou</span>';
+    return `
       <article class="pa-cartao${!perdi && o.onde === "escola" && o.sai_a === proxima ? " pa-sai" : ""}">
         ${paFotoHTML(o, 600, true)}
         <div class="pa-info">
@@ -45,7 +25,36 @@
           <button type="button" class="botao pa-responder" data-numero="${o.numero}">${perdi ? "Está aqui!" : "É meu!"}</button>
         </div>
       </article>`;
-    }).join("");
+  }
+
+  // "Todos": as duas listas lado a lado (no telemóvel, uma por cima da outra).
+  function desenhar() {
+    const deAba = aba === "todos" ? lista : lista.filter(o => o.pedido === aba);
+    $("pa-n-todos").textContent = "(" + lista.length + ")";
+    ["encontrei", "perdi"].forEach(a => { $("pa-n-" + a).textContent = "(" + lista.filter(o => o.pedido === a).length + ")"; });
+    document.querySelectorAll(".pa-aba").forEach(b => b.setAttribute("aria-selected", b.dataset.aba === aba));
+    const naEscola = lista.filter(o => o.pedido === "encontrei" && o.onde === "escola");
+    const proxima = naEscola.map(o => o.sai_a).sort()[0];
+    resumo.hidden = !(aba !== "perdi" && proxima);
+    if (proxima) resumo.innerHTML = `<b>${naEscola.length} na escola</b> · os próximos saem para doação a <b>${paDia(proxima)}</b>`;
+    const conta = {};
+    deAba.forEach(o => { conta[o.tipo] = (conta[o.tipo] || 0) + 1; });
+    const tipos = PERDIDOS_TIPOS.filter(t => conta[t]);
+    if (filtro && !conta[filtro]) filtro = "";
+    filtros.hidden = tipos.length < 2;
+    filtros.innerHTML = [["", "Todos os tipos"]].concat(tipos.map(t => [t, paMaiuscula(PA_PLURAL[t] || t) + " (" + conta[t] + ")"]))
+      .map(([v, txt]) => `<button type="button" class="pa-filtro" data-tipo="${escapar(v)}" aria-pressed="${v === filtro}">${escapar(txt)}</button>`).join("");
+    const grelha = (pedido, vazio) => {
+      const l = deAba.filter(o => o.pedido === pedido && (!filtro || o.tipo === filtro));
+      return l.length ? `<div class="pa-grelha">${l.map(o => cartao(o, proxima)).join("")}</div>` : `<p class="vazio">${vazio}</p>`;
+    };
+    const VAZIO = { encontrei: "Não há nada encontrado por agora.", perdi: "Ninguém está à procura de nada por agora." };
+    el.innerHTML = aba === "todos"
+      ? `<div class="pa-colunas">
+          <section><h2 class="categoria">Encontrados</h2>${grelha("encontrei", VAZIO.encontrei)}</section>
+          <section><h2 class="categoria">Procuram-se</h2>${grelha("perdi", VAZIO.perdi)}</section>
+        </div>`
+      : grelha(aba, VAZIO[aba]);
   }
 
   document.querySelector(".pa-abas").addEventListener("click", e => {
@@ -77,7 +86,7 @@
     const c = contacto();
     if (c.nome && !$("pa-nome").value) $("pa-nome").value = c.nome;
     if (c.email && !$("pa-email").value) $("pa-email").value = c.email;
-    form.hidden = false; estado.textContent = "";
+    form.hidden = false; estado.textContent = ""; $("pa-aviso").hidden = true;
     form.scrollIntoView({ behavior: MOVIMENTO ? "smooth" : "auto", block: "start" });
   }));
 
@@ -109,10 +118,15 @@
         cor: (form.querySelector("[name=cor]:checked") || {}).value || "", descricao: $("pa-descricao").value.trim(),
         site_web: form.querySelector("[name=site_web]").value });
       if (!r.ok) { estado.textContent = paErro(r.erro); return; }
-      estado.innerHTML = `Publicado! <b>#${r.numero}</b>. Enviámos-te um email com um link para tirares do site quando estiver resolvido.`;
       foto = ""; previa.hidden = true; previa.removeAttribute("src"); $("pa-ficheiro").value = "";
-      $("pa-descricao").value = ""; form.querySelectorAll("[type=radio]").forEach(i => { i.checked = false; });
-      aba = pedido; recarregar();
+      $("pa-descricao").value = ""; $("pa-rgpd").checked = false; form.querySelectorAll("[type=radio]").forEach(i => { i.checked = false; });
+      form.hidden = true; estado.textContent = "";
+      const aviso = $("pa-aviso");
+      aviso.innerHTML = `<h3>Publicado! O teu pedido é o #${r.numero}.</h3><p>Enviámos-te um email. Quando alguém responder, recebes outro.</p>`;
+      aviso.hidden = false;
+      aba = "todos"; filtro = "";
+      window.scrollTo({ top: 0, behavior: MOVIMENTO ? "smooth" : "auto" });
+      recarregar();
     } catch (err) { estado.textContent = paErro(); }
     finally { botao.disabled = false; }
   });

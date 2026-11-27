@@ -1348,3 +1348,9 @@ header.topo .menu { order: 2; margin-left: auto; align-items: center; }
 .pa-secundario { background: var(--cartao); }
 .pa-resolver { margin-bottom: 16px; border-color: var(--sol-escuro); }
 .pa-resolver h3 + p { margin-bottom: 10px; }
+.pa-colunas { display: grid; gap: 18px; }
+.pa-colunas > section { min-width: 0; }
+.pa-colunas .categoria { margin-top: 0; }
+@media (min-width: 760px) { .pa-colunas { grid-template-columns: 1fr 1fr; } }
+.pa-abas { flex-wrap: nowrap; overflow-x: auto; gap: 2px; }
+.pa-aba { white-space: nowrap; padding: 8px 8px; font-size: 15px; }
