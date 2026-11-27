@@ -1299,3 +1299,34 @@ header.topo .menu { order: 2; margin-left: auto; align-items: center; }
   .cal .mini .mg, .cal .mini .resumo { grid-column: 1; }
   .cal .mini-lista { grid-column: 2; grid-row: 2 / span 2; margin: 0; padding: 0 0 0 10px; border-top: 0; border-left: 1.5px dashed var(--linha); align-self: stretch; }
 }
+
+/* ---------- Perdidos e achados (perdidos.html, perdidos-novo.html) ---------- */
+.pa-resumo { background: var(--sol-claro); border: 2px solid var(--sol-escuro); border-radius: var(--raio); padding: 10px 14px; margin: 0 0 12px; }
+.pa-filtros { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 14px; }
+.pa-filtro { font: inherit; font-weight: 700; border: 1.5px solid var(--sol-escuro); background: var(--cartao); color: var(--tinta); border-radius: 999px; padding: 6px 14px; cursor: pointer; }
+.pa-filtro[aria-pressed="true"] { background: var(--sol); border-color: var(--tinta); }
+.pa-grelha { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; margin-bottom: 18px; }
+.pa-cartao { background: var(--cartao); border: 2px solid var(--tinta); border-radius: var(--raio); overflow: hidden; display: flex; flex-direction: column; }
+.pa-cartao.pa-sai { border-color: var(--vermelho); }
+.pa-foto { position: relative; display: block; aspect-ratio: 1; background: #fff; border-bottom: 2px dashed var(--linha); }
+.pa-foto img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.pa-foto.sem-foto::before { content: "📦"; position: absolute; inset: 0; display: grid; place-items: center; font-size: 48px; }
+.pa-num { position: absolute; left: 8px; top: 8px; background: var(--tinta); color: #fff; font-weight: 800; border-radius: 999px; padding: 2px 10px; font-size: 15px; }
+.pa-info { padding: 8px 10px 10px; display: grid; gap: 2px; }
+.pa-info b { font-size: 16px; line-height: 1.25; }
+.pa-info span { font-size: 14px; color: var(--suave); }
+.pa-sai .pa-info span { color: var(--vermelho); font-weight: 800; }
+.pa-como { margin-top: 8px; }
+.pa-como p + p { margin-top: 8px; }
+.pa-opcoes { display: flex; flex-wrap: wrap; gap: 8px; }
+.pa-opcao { display: inline-flex !important; cursor: pointer; }
+.pa-opcao input { position: absolute; opacity: 0; pointer-events: none; }
+.pa-opcao span { border: 1.5px solid var(--sol-escuro); background: #fff; border-radius: 999px; padding: 8px 14px; font-weight: 700; }
+.pa-opcao input:checked + span { background: var(--sol); border-color: var(--tinta); }
+.pa-opcao input:focus-visible + span { outline: 3px solid var(--sol-escuro); outline-offset: 1px; }
+.pn-foto { display: grid !important; place-items: center; gap: 8px; min-height: 140px; border: 2px dashed var(--sol-escuro); border-radius: var(--raio); background: var(--sol-claro); padding: 12px; cursor: pointer; text-align: center; font-size: 18px; }
+.pn-foto input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.pn-foto img { max-width: 100%; max-height: 50vh; border-radius: 10px; }
+.pn-estado { margin: 0; font-weight: 700; min-height: 1.5em; }
+.pn-link { font: inherit; background: none; border: 0; padding: 0; color: var(--vermelho); text-decoration: underline; cursor: pointer; }
+.pn-saiu { margin-top: 6px; font-size: 14px; padding: 6px 10px; }

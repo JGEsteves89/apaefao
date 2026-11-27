@@ -16,3 +16,11 @@ const MBWAY_NUMERO = "";
 const REFERENCIA_MB = false;
 // MB WAY e Multibanco automáticos (Eupago/ifthenpay através do Apps Script). false = só transferência (e MB WAY manual se houver MBWAY_NUMERO).
 const PAGAMENTOS_ONLINE = false;
+
+// Perdidos e achados: as fotos estão no Google Drive (pasta "APAEF perdidos"). O link de imagem direta do Drive
+// não é oficial e já mudou em 2024: se as fotos deixarem de aparecer, mudar só aqui
+// (alternativa: "https://drive.google.com/thumbnail?id=" + id + "&sz=w" + largura).
+function fotoPerdido(id, largura) {
+  return "https://lh3.googleusercontent.com/d/" + encodeURIComponent(id) + "=w" + (largura || 600);
+}
+const PERDIDOS_TIPOS = ["casaco", "camisola", "garrafa", "lancheira", "mochila", "chapéu", "calçado", "outro"];
